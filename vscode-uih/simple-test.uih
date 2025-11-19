@@ -1,0 +1,16 @@
+meta {
+  title: "Test"
+  route: "/"
+}
+
+style {
+  color.primary: "#0E5EF7"
+}
+
+layout {
+  Div(class:"p-4") {
+    H1(class:"text-2xl") {
+      "Hello"
+    }
+  }
+}

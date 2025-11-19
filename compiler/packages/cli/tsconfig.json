@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "tests"],
+  "references": [
+    { "path": "../tokenizer" },
+    { "path": "../parser" },
+    { "path": "../validator" },
+    { "path": "../ir" },
+    { "path": "../codegen/react" },
+    { "path": "../codegen/vue" },
+    { "path": "../codegen/svelte" }
+  ]
+}

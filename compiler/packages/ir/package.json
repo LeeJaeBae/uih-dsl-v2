@@ -1,0 +1,41 @@
+{
+  "name": "@uih-dsl/ir",
+  "version": "0.0.1",
+  "description": "UIH DSL Intermediate Representation (IR) Generator",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "ir",
+    "intermediate-representation",
+    "compiler"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@uih-dsl/parser": "workspace:*"
+  },
+  "devDependencies": {
+    "@uih-dsl/tokenizer": "workspace:*",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.4.3",
+    "vitest": "^1.6.1"
+  }
+}

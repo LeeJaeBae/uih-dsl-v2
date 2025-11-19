@@ -1,0 +1,9 @@
+{
+  "name": "uih-dsl-compiler",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.6.5",
+  "devDependencies": {
+    "jsdom": "^27.2.0"
+  }
+}

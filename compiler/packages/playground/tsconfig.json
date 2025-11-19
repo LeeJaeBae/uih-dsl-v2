@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../tokenizer" },
+    { "path": "../parser" },
+    { "path": "../validator" },
+    { "path": "../ir" },
+    { "path": "../codegen/react" },
+    { "path": "../codegen/vue" },
+    { "path": "../codegen/svelte" }
+  ]
+}

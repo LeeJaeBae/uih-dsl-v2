@@ -1,0 +1,7 @@
+meta {
+  route: "/test";
+}
+
+layout {
+  Button(variant:"primary") { "Click me" }
+}

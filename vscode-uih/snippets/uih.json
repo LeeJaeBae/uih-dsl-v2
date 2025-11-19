@@ -1,0 +1,129 @@
+{
+  "Meta Block": {
+    "prefix": "meta",
+    "body": [
+      "meta {",
+      "\ttitle: \"${1:Page Title}\"",
+      "\troute: \"${2:/}\"",
+      "}"
+    ],
+    "description": "Create a meta block with title and route"
+  },
+  "Style Block": {
+    "prefix": "style",
+    "body": [
+      "style {",
+      "\tcolor.primary: \"${1:#0E5EF7}\"",
+      "\tradius.card: \"${2:12px}\"",
+      "}"
+    ],
+    "description": "Create a style block with design tokens"
+  },
+  "Components Block": {
+    "prefix": "components",
+    "body": [
+      "components {",
+      "\t${1:Card}",
+      "\t${2:Button}",
+      "}"
+    ],
+    "description": "Create a components block"
+  },
+  "Layout Block": {
+    "prefix": "layout",
+    "body": [
+      "layout {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a layout block"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": [
+      "script {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a script block"
+  },
+  "Div Component": {
+    "prefix": "div",
+    "body": [
+      "Div(class:\"${1:}\") {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Insert a Div component"
+  },
+  "Card Component": {
+    "prefix": "card",
+    "body": [
+      "Card(class:\"${1:}\") {",
+      "\t\"${2:Content}\"",
+      "}"
+    ],
+    "description": "Insert a Card component"
+  },
+  "Button Component": {
+    "prefix": "button",
+    "body": [
+      "Button(class:\"${1:}\") {",
+      "\t\"${2:Label}\"",
+      "}"
+    ],
+    "description": "Insert a Button component"
+  },
+  "Input Component": {
+    "prefix": "input",
+    "body": [
+      "Input(placeholder:\"${1:Enter text}\")"
+    ],
+    "description": "Insert an Input component"
+  },
+  "H1 Component": {
+    "prefix": "h1",
+    "body": [
+      "H1(class:\"${1:}\") {",
+      "\t\"${2:Heading}\"",
+      "}"
+    ],
+    "description": "Insert an H1 heading"
+  },
+  "H2 Component": {
+    "prefix": "h2",
+    "body": [
+      "H2(class:\"${1:}\") {",
+      "\t\"${2:Heading}\"",
+      "}"
+    ],
+    "description": "Insert an H2 heading"
+  },
+  "P Component": {
+    "prefix": "p",
+    "body": [
+      "P(class:\"${1:}\") {",
+      "\t\"${2:Text}\"",
+      "}"
+    ],
+    "description": "Insert a paragraph"
+  },
+  "Complete UIH File": {
+    "prefix": "uih",
+    "body": [
+      "meta {",
+      "\ttitle: \"${1:Page Title}\"",
+      "\troute: \"${2:/}\"",
+      "}",
+      "",
+      "style {",
+      "\tcolor.primary: \"${3:#0E5EF7}\"",
+      "}",
+      "",
+      "layout {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a complete UIH file template"
+  }
+}

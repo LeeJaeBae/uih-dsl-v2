@@ -1,0 +1,47 @@
+# Pricing Table Example
+
+meta {
+  route: "/pricing";
+  theme: "light";
+}
+
+style {
+  color.primary: "#0E5EF7";
+}
+
+layout {
+  # Header
+  Div(class:"text-center mb-16") {
+    H1(class:"text-5xl font-bold mb-4") { "간단하고 투명한 가격" }
+    P(class:"text-xl text-gray-600") {
+      "프로젝트 규모에 맞는 플랜을 선택하세요"
+    }
+  }
+
+  # Pricing Cards
+  Div(class:"grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto") {
+    # Free Plan
+    Card(class:"p-8 bg-white rounded-2xl shadow-sm border-2 border-gray-200") {
+      H3(class:"text-2xl font-bold mb-2") { "무료" }
+      Div(class:"mb-6") {
+        Span(class:"text-5xl font-bold") { "₩0" }
+        Span(class:"text-gray-600") { "/월" }
+      }
+      Button(class:"w-full py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-semibold") {
+        "시작하기"
+      }
+    }
+
+    # Pro Plan
+    Card(class:"p-8 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-2xl shadow-xl") {
+      H3(class:"text-2xl font-bold mb-2") { "프로" }
+      Div(class:"mb-6") {
+        Span(class:"text-5xl font-bold") { "₩29,000" }
+        Span(class:"text-blue-100") { "/월" }
+      }
+      Button(class:"w-full py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-semibold") {
+        "지금 시작"
+      }
+    }
+  }
+}

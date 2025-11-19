@@ -1,0 +1,150 @@
+{
+  "name": "vscode-uih",
+  "displayName": "UIH",
+  "description": "UIH DSL v2 - LLM-friendly UI language with zero ambiguity, live preview, and multi-framework compilation",
+  "version": "2.0.0",
+  "publisher": "LeeJaeWon",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeeJaeBae/uih.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "uih",
+    "ui",
+    "meta-language",
+    "react",
+    "vue",
+    "svelte",
+    "ai",
+    "code-generator",
+    "claude"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "uih",
+        "aliases": [
+          "UIH",
+          "uih"
+        ],
+        "extensions": [
+          ".uih"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "uih",
+        "scopeName": "source.uih",
+        "path": "./syntaxes/uih.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "uih",
+        "path": "./snippets/uih.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "uih.generate",
+        "title": "UIH: Generate from Description",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "uih.preview",
+        "title": "UIH: Preview UI",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "uih.compile",
+        "title": "UIH: Compile to Framework",
+        "icon": "$(gear)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == uih",
+          "command": "uih.preview",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == uih",
+          "command": "uih.compile",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == uih",
+          "command": "uih.generate",
+          "group": "1_modification"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "UIH",
+      "properties": {
+        "uih.targetFramework": {
+          "type": "string",
+          "enum": ["react", "vue", "svelte"],
+          "default": "react",
+          "description": "Default target framework for compilation"
+        },
+        "uih.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key for AI code generation"
+        },
+        "uih.autoPreview": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically show preview when opening .uih files"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm build",
+    "build": "tsup src/extension.ts --external vscode",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.21.0",
+    "@uih-dsl/tokenizer": "workspace:*",
+    "@uih-dsl/parser": "workspace:*",
+    "@uih-dsl/ir": "workspace:*",
+    "@uih-dsl/codegen-react": "workspace:*",
+    "@uih-dsl/codegen-vue": "workspace:*",
+    "@uih-dsl/codegen-svelte": "workspace:*",
+    "prettier": "^3.6.2",
+    "prettier-plugin-svelte": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.2.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  }
+}

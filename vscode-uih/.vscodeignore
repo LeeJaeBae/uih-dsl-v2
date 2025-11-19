@@ -1,0 +1,12 @@
+.vscode/**
+.vscode-test/**
+!node_modules/prettier/**
+!node_modules/prettier-plugin-svelte/**
+node_modules/**
+src/**
+.gitignore
+tsconfig.json
+tsup.config.ts
+**/*.ts
+**/*.map
+*.vsix

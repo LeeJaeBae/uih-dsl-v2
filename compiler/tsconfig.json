@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/tokenizer" },
+    { "path": "./packages/parser" },
+    { "path": "./packages/validator" },
+    { "path": "./packages/ir" },
+    { "path": "./packages/codegen/react" },
+    { "path": "./packages/codegen/vue" },
+    { "path": "./packages/codegen/svelte" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/playground" }
+  ]
+}

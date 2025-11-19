@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "uih-ai": ["../packages/ai/src/index.ts"],
+      "uih-codegen-react": ["../packages/codegen-react/src/index.ts"],
+      "uih-parser": ["../packages/parser/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "../packages/*/src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

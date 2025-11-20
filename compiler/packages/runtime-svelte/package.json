@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/runtime-svelte",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "UIH DSL Runtime for Svelte 5",
   "type": "module",
   "main": "./dist/index.js",

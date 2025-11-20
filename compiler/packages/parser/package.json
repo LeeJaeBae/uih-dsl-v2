@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parser for UIH DSL - Converts tokens to Abstract Syntax Tree (AST)",
   "type": "module",
   "main": "./dist/index.js",

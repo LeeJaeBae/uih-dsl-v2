@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/ir",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "UIH DSL Intermediate Representation (IR) Generator",
   "type": "module",
   "main": "./dist/index.js",

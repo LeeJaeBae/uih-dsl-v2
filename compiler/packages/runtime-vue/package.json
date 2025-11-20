@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/runtime-vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "UIH DSL Runtime for Vue 3",
   "type": "module",
   "main": "./dist/index.js",

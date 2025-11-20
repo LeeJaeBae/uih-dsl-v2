@@ -1439,7 +1439,10 @@ ${childrenStr}
 ${indentStr}</${tag}>`;
 }
 function generateAttributes(attrs) {
-  return attrs.map((attr) => `${attr.key}="${escapeAttributeValue(attr.value)}"`).join(" ");
+  return attrs.map((attr) => {
+    const key = attr.key === "class" ? "className" : attr.key;
+    return `${key}="${escapeAttributeValue(attr.value)}"`;
+  }).join(" ");
 }
 function escapeJSXText(text) {
   return text.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");

@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/runtime-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "UIH DSL Runtime Core - Framework-agnostic runtime utilities",
   "type": "module",
   "main": "./dist/index.js",

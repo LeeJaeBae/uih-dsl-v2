@@ -31,17 +31,20 @@ program
   .command("codegen <file>")
   .description("Generate code for target framework")
   .requiredOption("--out <dir>", "Output directory")
+  .option("-t, --target <target>", "Target framework (react|vue|svelte)", "react")
   .action(codegenCommand);
 
 program
   .command("compile <file>")
   .description("Compile UIH file to target framework")
   .requiredOption("--out <dir>", "Output directory")
+  .option("-t, --target <target>", "Target framework (react|vue|svelte)", "react")
   .action(compileCommand);
 
 program
   .command("dev <file>")
   .description("Development mode with file watching")
+  .option("-t, --target <target>", "Target framework (react|vue|svelte)", "react")
   .action(devCommand);
 
 program.parse();

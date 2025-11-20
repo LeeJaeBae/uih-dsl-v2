@@ -1,0 +1,14 @@
+meta {
+  title: "Simple Test"
+}
+
+style {
+  color.primary: "#0E5EF7"
+  spacing.md: "16px"
+}
+
+layout {
+  Div {
+    "Hello World"
+  }
+}

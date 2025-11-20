@@ -11,6 +11,7 @@ import { irCommand } from "./commands/ir.js";
 import { codegenCommand } from "./commands/codegen.js";
 import { compileCommand } from "./commands/compile.js";
 import { devCommand } from "./commands/dev.js";
+import { genContextCommand } from "./commands/gen-context.js";
 
 program
   .name("uih")
@@ -47,4 +48,11 @@ program
   .option("-t, --target <target>", "Target framework (react|vue|svelte)", "react")
   .action(devCommand);
 
+program
+  .command("gen-context <file>")
+  .description("Generate LLM context from UIH file")
+  .option("--out <file>", "Output file (default: stdout)")
+  .action(genContextCommand);
+
 program.parse();
+

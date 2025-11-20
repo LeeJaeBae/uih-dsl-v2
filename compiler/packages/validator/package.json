@@ -28,6 +28,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@uih-dsl/tokenizer": "workspace:*",
     "@uih-dsl/parser": "workspace:*",
     "@uih-dsl/ir": "workspace:*"
   },

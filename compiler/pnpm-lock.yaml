@@ -214,7 +214,21 @@ importers:
 
   packages/tokenizer: {}
 
-  packages/validator: {}
+  packages/validator:
+    dependencies:
+      '@uih-dsl/ir':
+        specifier: workspace:*
+        version: link:../ir
+      '@uih-dsl/parser':
+        specifier: workspace:*
+        version: link:../parser
+      '@uih-dsl/tokenizer':
+        specifier: workspace:*
+        version: link:../tokenizer
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.25
 
 packages:
 

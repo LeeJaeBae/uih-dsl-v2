@@ -1,0 +1,42 @@
+meta {
+  title: "Test Context Generation"
+  route: "/"
+}
+
+style {
+  color.primary: "#0E5EF7"
+  color.secondary: "#8B5CF6"
+  color.text: "#333333"
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  radius.default: "8px"
+}
+
+components {
+  Card
+  Button
+  Input
+}
+
+layout {
+  Div(class:"container") {
+    Header(class:"header") {
+      H1 {
+        "Test Application"
+      }
+    }
+    Main {
+      Card(class:"shadow") {
+        P {
+          "This is a test file for gen-context command."
+        }
+      }
+    }
+  }
+}
+
+script {
+  onClick: "handleClick"
+  onLoad: "initApp"
+}

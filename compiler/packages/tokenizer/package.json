@@ -1,6 +1,7 @@
 {
   "name": "@uih-dsl/tokenizer",
   "version": "0.0.1",
+  "description": "Tokenizer for UIH DSL - AI-friendly UI declaration language",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,5 +13,22 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "tokenizer",
+    "lexer",
+    "compiler",
+    "ui",
+    "ai"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -26,8 +26,11 @@
     "runtime",
     "svelte"
   ],
-  "author": "",
+  "author": "UIH DSL Team",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@uih-dsl/runtime-core": "workspace:*"
   },

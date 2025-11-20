@@ -1,0 +1,75 @@
+meta {
+  title: "User Profile"
+  route: "/profile"
+  description: "User profile card with avatar and details"
+}
+
+style {
+  color.primary: "#0E5EF7"
+  color.text: "#333333"
+  color.textSecondary: "#6B7280"
+  color.border: "#E0E0E0"
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  borderRadius.md: "8px"
+  borderRadius.full: "9999px"
+}
+
+layout {
+  Container {
+    maxWidth: "600px"
+    centered: "true"
+    padding: "spacing.lg"
+    Card {
+      padding: "spacing.lg"
+      border: "1px solid color.border"
+      borderRadius: "borderRadius.md"
+      HStack {
+        spacing: "spacing.md"
+        align: "start"
+        Avatar {
+          src: "https://via.placeholder.com/64"
+          alt: "User Avatar"
+          size: "64px"
+          borderRadius: "borderRadius.full"
+        }
+        VStack {
+          spacing: "spacing.sm"
+          H3 {
+            color: "color.text"
+            "John Doe"
+          }
+          Text {
+            color: "color.textSecondary"
+            "Software Engineer"
+          }
+          Text {
+            color: "color.textSecondary"
+            "San Francisco, CA"
+          }
+          HStack {
+            spacing: "spacing.sm"
+            Button {
+              variant: "primary"
+              size: "small"
+              onClick: "handleMessage"
+              "Message"
+            }
+            Button {
+              variant: "outline"
+              size: "small"
+              onClick: "handleFollow"
+              "Follow"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+script {
+  onClick: "handleMessage"
+  onClick: "handleFollow"
+}

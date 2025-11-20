@@ -26,8 +26,11 @@
     "runtime",
     "core"
   ],
-  "author": "",
+  "author": "UIH DSL Team",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "typescript": "^5.7.3",

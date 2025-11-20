@@ -1,6 +1,7 @@
 {
   "name": "@uih-dsl/parser",
   "version": "0.0.1",
+  "description": "Parser for UIH DSL - Converts tokens to Abstract Syntax Tree (AST)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +18,20 @@
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "parser",
+    "ast",
+    "compiler",
+    "ui",
+    "ai"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@uih-dsl/tokenizer": "workspace:*"

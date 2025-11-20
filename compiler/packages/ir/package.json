@@ -29,6 +29,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@uih-dsl/parser": "workspace:*"
   },

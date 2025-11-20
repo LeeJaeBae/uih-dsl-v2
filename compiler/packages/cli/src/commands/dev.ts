@@ -8,17 +8,19 @@ import { watchFile } from "node:fs";
 import { resolve } from "node:path";
 import { loadFile } from "../core/load-file.js";
 import { runPipeline } from "../core/run-pipeline.js";
+import { normalizeTarget } from "../utils/target.js";
 import * as logger from "../utils/logger.js";
 
-export function devCommand(filePath: string): void {
+export function devCommand(filePath: string, options: { target?: string }): void {
   const absolutePath = resolve(filePath);
+  const target = normalizeTarget(options.target);
 
   logger.info(`Watching: ${absolutePath}`);
 
   const compile = () => {
     try {
       const source = loadFile(absolutePath);
-      const result = runPipeline(source);
+      const result = runPipeline(source, target);
 
       if (result.errors.length > 0) {
         logger.error("Errors:");

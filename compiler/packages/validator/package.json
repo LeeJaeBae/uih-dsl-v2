@@ -1,5 +1,37 @@
 {
   "name": "@uih-dsl/validator",
-  "version": "0.0.1",
-  "type": "module"
+  "version": "0.0.2",
+  "description": "Validator for UIH DSL AST and IR",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "test": "../cli/node_modules/.bin/vitest run"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "validator",
+    "compiler"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@uih-dsl/parser": "workspace:*",
+    "@uih-dsl/ir": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
 }

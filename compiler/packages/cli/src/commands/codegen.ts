@@ -8,12 +8,17 @@ import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { loadFile } from "../core/load-file.js";
 import { runPipeline } from "../core/run-pipeline.js";
+import { normalizeTarget, type TargetFramework } from "../utils/target.js";
 import * as logger from "../utils/logger.js";
 
-export function codegenCommand(filePath: string, options: { out: string }): void {
+export function codegenCommand(
+  filePath: string,
+  options: { out: string; target?: string }
+): void {
   try {
+    const target = normalizeTarget(options.target);
     const source = loadFile(filePath);
-    const result = runPipeline(source);
+    const result = runPipeline(source, target);
 
     if (result.errors.length > 0) {
       logger.warn("Warnings during code generation:");
@@ -33,7 +38,7 @@ export function codegenCommand(filePath: string, options: { out: string }): void
       mkdirSync(outDir, { recursive: true });
     }
 
-    const componentPath = join(outDir, "component.tsx");
+    const componentPath = join(outDir, `component.${extensionFor(target)}`);
     writeFileSync(componentPath, result.code, "utf-8");
 
     logger.success(`Code generated: ${componentPath}`);
@@ -41,5 +46,16 @@ export function codegenCommand(filePath: string, options: { out: string }): void
     const error = err as Error;
     logger.error(error.message);
     process.exit(1);
+  }
+}
+
+function extensionFor(target: TargetFramework): string {
+  switch (target) {
+    case "vue":
+      return "vue";
+    case "svelte":
+      return "svelte";
+    default:
+      return "tsx";
   }
 }

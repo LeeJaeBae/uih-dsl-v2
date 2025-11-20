@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "playground": "Playground",
+    "docs": "Docs",
+    "api": "API",
+    "tutorial": "Tutorial"
+  },
+  "common": {
+    "uihDsl": "UIH DSL"
+  },
+  "tutorial": {
+    "sidebarTitle": "Tutorial Steps",
+    "tryYourself": "Try it yourself!",
+    "goToPlayground": "Go to Playground →",
+    "previous": "← Previous",
+    "next": "Next →"
+  },
+  "apiReference": {
+    "sidebarTitle": "API Reference"
+  }
+}

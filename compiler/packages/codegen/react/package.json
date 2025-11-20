@@ -1,6 +1,7 @@
 {
   "name": "@uih-dsl/codegen-react",
   "version": "0.0.1",
+  "description": "React code generator for UIH DSL - Generate React/Next.js components",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,6 +19,21 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "codegen",
+    "react",
+    "nextjs",
+    "compiler",
+    "ui",
+    "ai"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@uih-dsl/ir": "workspace:*"

@@ -1,6 +1,7 @@
 {
   "name": "@uih-dsl/codegen-vue",
   "version": "0.0.1",
+  "description": "Vue code generator for UIH DSL - Generate Vue 3 SFC components",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,6 +19,21 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "codegen",
+    "vue",
+    "vue3",
+    "compiler",
+    "ui",
+    "ai"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@uih-dsl/ir": "workspace:*"

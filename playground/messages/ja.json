@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "playground": "プレイグラウンド",
+    "docs": "ドキュメント",
+    "api": "API",
+    "tutorial": "チュートリアル"
+  },
+  "common": {
+    "uihDsl": "UIH DSL"
+  },
+  "tutorial": {
+    "sidebarTitle": "チュートリアルステップ",
+    "tryYourself": "自分で試してみよう！",
+    "goToPlayground": "プレイグラウンドへ →",
+    "previous": "← 前へ",
+    "next": "次へ →"
+  },
+  "apiReference": {
+    "sidebarTitle": "APIリファレンス"
+  }
+}

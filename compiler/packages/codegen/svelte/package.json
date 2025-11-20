@@ -1,6 +1,7 @@
 {
   "name": "@uih-dsl/codegen-svelte",
   "version": "0.0.1",
+  "description": "Svelte code generator for UIH DSL - Generate Svelte 4/5 components",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,6 +19,21 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "keywords": [
+    "uih",
+    "dsl",
+    "codegen",
+    "svelte",
+    "svelte5",
+    "compiler",
+    "ui",
+    "ai"
+  ],
+  "author": "UIH DSL Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@uih-dsl/ir": "workspace:*"

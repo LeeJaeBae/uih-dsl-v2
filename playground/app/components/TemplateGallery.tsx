@@ -198,13 +198,13 @@ layout {
 
 style {
   color.bg: "#09090b"
-  color.surface: "#18181b"
-  color.surfaceHighlight: "#27272a"
-  color.border: "#27272a"
-  color.primary: "#8b5cf6"
-  color.primaryGlow: "rgba(139, 92, 246, 0.5)"
-  color.text: "#f4f4f5"
-  color.textMuted: "#71717a"
+  color.surface: "rgba(24, 24, 27, 0.8)"
+  color.surfaceHighlight: "rgba(63, 63, 70, 0.4)"
+  color.border: "rgba(255, 255, 255, 0.08)"
+  color.primary: "#7c3aed"
+  color.primaryGlow: "rgba(124, 58, 237, 0.5)"
+  color.text: "#fafafa"
+  color.textMuted: "#a1a1aa"
   color.success: "#10b981"
   
   radius.lg: "16px"
@@ -213,154 +213,182 @@ style {
   
   spacing.sm: "8px"
   spacing.md: "16px"
-  spacing.lg: "24px"
+  spacing.lg: "32px"
+  spacing.xl: "48px"
+  
+  shadow.glow: "0 0 40px rgba(124, 58, 237, 0.15)"
 }
 
 layout {
-  Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: sans-serif; overflow: hidden") {
+  Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: 'Inter', system-ui, sans-serif; overflow: hidden") {
     
     // Glass Sidebar
-    Div(style: "width: 280px; background-color: rgba(24, 24, 27, 0.6); backdrop-filter: blur(20px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 10") {
+    Div(style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20") {
       // Logo
-      Div(style: "display: flex; items-center: center; gap: spacing.sm; margin-bottom: 40px") {
-        Div(style: "width: 32px; height: 32px; background-color: color.primary; border-radius: 8px; box-shadow: 0 0 15px color.primaryGlow") {}
-        H3(style: "font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.5px") { "NEXUS" }
+      Div(style: "display: flex; items-center: center; gap: spacing.md; margin-bottom: 60px; padding-left: 8px") {
+        Div(style: "width: 40px; height: 40px; background-image: linear-gradient(135deg, color.primary, #c084fc); border-radius: 12px; box-shadow: 0 0 20px color.primaryGlow; display: flex; align-items: center; justify-content: center") {
+           // Simple geometric logo shape
+           Div(style: "width: 20px; height: 20px; border: 3px solid white; border-radius: 6px") {}
+        }
+        H3(style: "font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.5px; background: linear-gradient(to right, #fff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent") { "NEXUS" }
       }
       
       // Navigation
-      Div(style: "display: flex; flex-direction: column; gap: 8px") {
-        Button(style: "text-align: left; padding: 12px 16px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
-          Span { "📊" }
+      Div(style: "display: flex; flex-direction: column; gap: 12px") {
+        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2)") { 
+          // Icon: Grid
+          Div(style: "width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.8); border-radius: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 2px") {
+             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
+             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
+             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
+             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
+          }
           Span { "Dashboard" }
         }
-        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px; transition: color 0.2s") { 
-          Span { "⚡️" }
+        
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
+          // Icon: Activity
+          Div(style: "width: 20px; height: 20px; border: 2px solid currentColor; border-radius: 50%; position: relative") {}
           Span { "Activity" }
         }
-        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
-          Span { "💳" }
+        
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
+          // Icon: Wallet
+          Div(style: "width: 20px; height: 16px; border: 2px solid currentColor; border-radius: 4px") {}
           Span { "Wallet" }
         }
-        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
-          Span { "⚙️" }
+        
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
+          // Icon: Settings
+          Div(style: "width: 20px; height: 20px; border: 2px solid currentColor; border-radius: 50%; border-style: dashed") {}
           Span { "Settings" }
         }
       }
       
       // User Profile
-      Div(style: "margin-top: auto; background-color: color.surface; padding: 12px; border-radius: radius.lg; border: 1px solid color.border; display: flex; items-center: center; gap: 12px") {
-        Div(style: "width: 36px; height: 36px; border-radius: radius.full; background-image: linear-gradient(135deg, #8b5cf6, #ec4899)") {}
+      Div(style: "margin-top: auto; background-color: rgba(255,255,255,0.03); padding: 16px; border-radius: radius.lg; border: 1px solid color.border; display: flex; items-center: center; gap: 16px; backdrop-filter: blur(10px)") {
+        Div(style: "width: 44px; height: 44px; border-radius: 14px; background-image: linear-gradient(135deg, #8b5cf6, #ec4899); box-shadow: 0 4px 12px rgba(0,0,0,0.3)") {}
         Div {
-          Div(style: "font-size: 13px; font-weight: 600") { "Alex Morgan" }
-          Div(style: "font-size: 11px; color: color.textMuted") { "Pro Plan" }
+          Div(style: "font-size: 14px; font-weight: 600; color: white") { "Alex Morgan" }
+          Div(style: "font-size: 12px; color: color.textMuted; margin-top: 2px") { "Pro Plan" }
         }
       }
     }
 
     // Main Content
-    Div(style: "flex: 1; display: flex; flex-direction: column; position: relative") {
-      // Background decorative gradients
-      Div(style: "position: absolute; top: -10%; right: -5%; width: 500px; height: 500px; background-color: color.primary; opacity: 0.05; filter: blur(100px); border-radius: radius.full; pointer-events: none") {}
+    Div(style: "flex: 1; display: flex; flex-direction: column; position: relative; background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 60%)") {
       
       // Header
-      Div(style: "height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px") {
+      Div(style: "height: 100px; display: flex; align-items: center; justify-content: space-between; padding: 0 spacing.xl; border-bottom: 1px solid color.border; background: rgba(9,9,11,0.4); backdrop-filter: blur(10px); z-index: 10") {
         Div {
-          H2(style: "font-size: 24px; font-weight: 700; margin: 0") { "Overview" }
-          P(style: "font-size: 14px; color: color.textMuted; margin: 4px 0 0") { "Welcome back to your command center." }
+          H2(style: "font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -1px; color: white") { "Overview" }
+          P(style: "font-size: 15px; color: color.textMuted; margin: 6px 0 0") { "Welcome back to your command center." }
         }
-        Div(style: "display: flex; gap: 12px") {
-          Button(style: "width: 40px; height: 40px; border-radius: radius.full; border: 1px solid color.border; background-color: color.surface; color: color.text; cursor: pointer; display: flex; align-items: center; justify-content: center") { "🔔" }
-          Button(style: "padding: 0 20px; height: 40px; background-color: color.text; color: color.bg; border: none; border-radius: radius.full; font-weight: 600; font-size: 14px; cursor: pointer") { "+ Add Widget" }
+        Div(style: "display: flex; gap: 16px") {
+          Button(style: "width: 48px; height: 48px; border-radius: radius.full; border: 1px solid color.border; background-color: rgba(255,255,255,0.03); color: color.text; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s") { 
+             // Bell Icon
+             Div(style: "width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; top: 12px; right: 14px") {}
+             Span { "🔔" } 
+          }
+          Button(style: "padding: 0 24px; height: 48px; background-color: white; color: black; border: none; border-radius: radius.full; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 0 20px rgba(255,255,255,0.2); transition: transform 0.2s") { "+ Add Widget" }
         }
       }
 
       // Scroll Area
-      Div(style: "flex: 1; padding: 0 40px 40px; overflow-y: auto") {
+      Div(style: "flex: 1; padding: spacing.xl; overflow-y: auto") {
         
         // Stats Cards
         Div(style: "display: grid; grid-template-columns: repeat(3, 1fr); gap: spacing.lg; margin-bottom: spacing.lg") {
           // Card 1
-          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 24px; border-radius: radius.xl; position: relative; overflow: hidden") {
-            Div(style: "position: absolute; top: 0; right: 0; padding: 20px; opacity: 0.1; font-size: 40px") { "📈" }
-            Div(style: "color: color.textMuted; font-size: 14px; font-weight: 500; margin-bottom: 8px") { "Total Revenue" }
-            Div(style: "font-size: 32px; font-weight: 800; letter-spacing: -1px") { "$124,500" }
-            Div(style: "display: flex; items-center: center; gap: 6px; margin-top: 12px") {
-              Span(style: "background-color: rgba(16, 185, 129, 0.15); color: color.success; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 600") { "+12.5%" }
-              Span(style: "color: color.textMuted; font-size: 12px") { "vs last month" }
+          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 32px; border-radius: radius.xl; position: relative; overflow: hidden; box-shadow: shadow.glow; transition: transform 0.2s; hover: { transform: translateY(-4px) }") {
+            Div(style: "position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: linear-gradient(135deg, rgba(124,58,237,0.1), transparent); border-radius: 0 0 0 100%") {}
+            
+            Div(style: "color: color.textMuted; font-size: 15px; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px") { "Total Revenue" }
+            Div(style: "font-size: 42px; font-weight: 800; letter-spacing: -2px; color: white") { "$124,500" }
+            
+            Div(style: "display: flex; items-center: center; gap: 8px; margin-top: 16px") {
+              Span(style: "background-color: rgba(16, 185, 129, 0.2); color: color.success; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2)") { "+12.5%" }
+              Span(style: "color: color.textMuted; font-size: 13px") { "vs last month" }
             }
           }
+          
           // Card 2
-          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 24px; border-radius: radius.xl") {
-            Div(style: "color: color.textMuted; font-size: 14px; font-weight: 500; margin-bottom: 8px") { "Active Users" }
-            Div(style: "font-size: 32px; font-weight: 800; letter-spacing: -1px") { "8,249" }
-            Div(style: "display: flex; items-center: center; gap: 6px; margin-top: 12px") {
-              Span(style: "background-color: rgba(16, 185, 129, 0.15); color: color.success; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 600") { "+5.2%" }
-              Span(style: "color: color.textMuted; font-size: 12px") { "vs last month" }
+          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 32px; border-radius: radius.xl; transition: transform 0.2s; hover: { transform: translateY(-4px) }") {
+            Div(style: "color: color.textMuted; font-size: 15px; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px") { "Active Users" }
+            Div(style: "font-size: 42px; font-weight: 800; letter-spacing: -2px; color: white") { "8,249" }
+            
+            Div(style: "display: flex; items-center: center; gap: 8px; margin-top: 16px") {
+              Span(style: "background-color: rgba(16, 185, 129, 0.2); color: color.success; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2)") { "+5.2%" }
+              Span(style: "color: color.textMuted; font-size: 13px") { "vs last month" }
             }
           }
+          
           // Card 3 (Gradient)
-          Div(style: "background-color: color.primary; padding: 24px; border-radius: radius.xl; color: white; background-image: linear-gradient(135deg, #8b5cf6, #6366f1)") {
-            Div(style: "font-size: 14px; font-weight: 500; margin-bottom: 8px; opacity: 0.8") { "Pro Subscription" }
-            Div(style: "font-size: 28px; font-weight: 800; margin-bottom: 20px") { "Active" }
-            Button(style: "width: 100%; padding: 10px; background-color: rgba(255,255,255,0.2); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px)") { "Manage Plan" }
+          Div(style: "background-image: linear-gradient(135deg, #7c3aed, #db2777); padding: 32px; border-radius: radius.xl; color: white; box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4); position: relative; overflow: hidden") {
+            Div(style: "position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; border: 20px solid rgba(255,255,255,0.1); border-radius: 50%") {}
+            
+            Div(style: "font-size: 15px; font-weight: 600; margin-bottom: 12px; opacity: 0.9") { "Pro Subscription" }
+            Div(style: "font-size: 36px; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px") { "Active Plan" }
+            Button(style: "width: 100%; padding: 14px; background-color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 14px; color: white; font-weight: 700; cursor: pointer; backdrop-filter: blur(10px); transition: background 0.2s; font-size: 14px") { "Manage Subscription" }
           }
         }
 
         // Bento Grid
-        Div(style: "display: grid; grid-template-columns: 2fr 1fr; gap: spacing.lg") {
+        Div(style: "display: grid; grid-template-columns: 2fr 1fr; gap: spacing.lg; height: 400px") {
           
           // Large Chart Area
-          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px") {
-            Div(style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px") {
-              H3(style: "margin: 0; font-size: 18px; font-weight: 600") { "Revenue Analytics" }
-              Div(style: "display: flex; gap: 8px") {
-                Button(style: "padding: 6px 12px; background-color: color.surfaceHighlight; border: none; border-radius: 8px; color: color.text; font-size: 12px; cursor: pointer") { "7D" }
-                Button(style: "padding: 6px 12px; background-color: transparent; border: none; border-radius: 8px; color: color.textMuted; font-size: 12px; cursor: pointer") { "1M" }
+          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px; display: flex; flex-direction: column") {
+            Div(style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px") {
+              H3(style: "margin: 0; font-size: 20px; font-weight: 700; color: white") { "Revenue Analytics" }
+              Div(style: "display: flex; gap: 8px; background-color: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; border: 1px solid color.border") {
+                Button(style: "padding: 8px 16px; background-color: color.surfaceHighlight; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2)") { "7D" }
+                Button(style: "padding: 8px 16px; background-color: transparent; border: none; border-radius: 8px; color: color.textMuted; font-size: 13px; font-weight: 600; cursor: pointer") { "1M" }
+                Button(style: "padding: 8px 16px; background-color: transparent; border: none; border-radius: 8px; color: color.textMuted; font-size: 13px; font-weight: 600; cursor: pointer") { "1Y" }
               }
             }
             
-            // Fake Chart
-            Div(style: "display: flex; items-end: flex-end; height: 200px; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid color.border") {
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 40%; border-radius: 8px 8px 0 0") {}
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 60%; border-radius: 8px 8px 0 0") {}
-              Div(style: "flex: 1; background-color: color.primary; height: 85%; border-radius: 8px 8px 0 0; box-shadow: 0 0 20px color.primaryGlow") {}
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 50%; border-radius: 8px 8px 0 0") {}
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 65%; border-radius: 8px 8px 0 0") {}
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 75%; border-radius: 8px 8px 0 0") {}
-              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 55%; border-radius: 8px 8px 0 0") {}
+            // Fake Chart Bars
+            Div(style: "flex: 1; display: flex; items-end: flex-end; gap: 24px; padding-bottom: 10px; border-bottom: 1px solid color.border") {
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 40%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 60%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, #7c3aed, #c084fc); height: 85%; border-radius: 8px 8px 0 0; box-shadow: 0 0 30px color.primaryGlow") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 50%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 65%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 75%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background: linear-gradient(to top, color.surfaceHighlight, rgba(255,255,255,0.1)); height: 55%; border-radius: 8px 8px 0 0") {}
             }
           }
 
           // Right Column (Transactions)
-          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
-            H3(style: "margin: 0 0 20px 0; font-size: 18px; font-weight: 600") { "Recent Transactions" }
+          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px; display: flex; flex-direction: column") {
+            H3(style: "margin: 0 0 24px 0; font-size: 20px; font-weight: 700; color: white") { "Recent" }
             
-            Div(style: "display: flex; flex-direction: column; gap: 16px") {
+            Div(style: "display: flex; flex-direction: column; gap: 20px; flex: 1") {
               // Item 1
-              Div(style: "display: flex; align-items: center; justify-content: space-between") {
-                Div(style: "display: flex; align-items: center; gap: 12px") {
-                  Div(style: "width: 40px; height: 40px; border-radius: 12px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px") { "🍎" }
+              Div(style: "display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
+                Div(style: "display: flex; align-items: center; gap: 16px") {
+                  Div(style: "width: 48px; height: 48px; border-radius: 16px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 24px") { "🍎" }
                   Div {
-                    Div(style: "font-weight: 500; font-size: 14px") { "Apple Store" }
-                    Div(style: "font-size: 12px; color: color.textMuted") { "Electronics" }
+                    Div(style: "font-weight: 600; font-size: 15px; color: white") { "Apple Store" }
+                    Div(style: "font-size: 13px; color: color.textMuted") { "Electronics" }
                   }
                 }
-                Div(style: "font-weight: 600; font-size: 14px") { "-$999" }
+                Div(style: "font-weight: 700; font-size: 15px; color: white") { "-$999" }
               }
               // Item 2
-              Div(style: "display: flex; align-items: center; justify-content: space-between") {
-                Div(style: "display: flex; align-items: center; gap: 12px") {
-                  Div(style: "width: 40px; height: 40px; border-radius: 12px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px") { "🍟" }
+              Div(style: "display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
+                Div(style: "display: flex; align-items: center; gap: 16px") {
+                  Div(style: "width: 48px; height: 48px; border-radius: 16px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 24px") { "🍟" }
                   Div {
-                    Div(style: "font-weight: 500; font-size: 14px") { "Uber Eats" }
-                    Div(style: "font-size: 12px; color: color.textMuted") { "Food" }
+                    Div(style: "font-weight: 600; font-size: 15px; color: white") { "Uber Eats" }
+                    Div(style: "font-size: 13px; color: color.textMuted") { "Food" }
                   }
                 }
-                Div(style: "font-weight: 600; font-size: 14px") { "-$32.50" }
+                Div(style: "font-weight: 700; font-size: 15px; color: white") { "-$32.50" }
               }
             }
             
-            Button(style: "width: 100%; padding: 12px; margin-top: 24px; background-color: transparent; border: 1px solid color.border; border-radius: 12px; color: color.text; font-size: 13px; font-weight: 500; cursor: pointer") { "View All History" }
+            Button(style: "width: 100%; padding: 16px; margin-top: auto; background-color: transparent; border: 1px solid color.border; border-radius: 16px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; hover: { background-color: rgba(255,255,255,0.05) }") { "View All History" }
           }
         }
       }

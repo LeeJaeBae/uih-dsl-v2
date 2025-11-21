@@ -377,7 +377,7 @@ export class Tokenizer {
       while (this.index < this.input.length) {
         const char = this.peek();
 
-        if (this.isLowerCase(char) || this.isDigit(char)) {
+        if (this.isLowerCase(char) || this.isUpperCase(char) || this.isDigit(char)) {
           value += char;
           lastWasDot = false;
           this.advance();

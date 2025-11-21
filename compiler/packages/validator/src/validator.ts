@@ -65,7 +65,7 @@ export function validateAST(ast: ASTRoot | null): ValidationResult {
     validateComponentNames(ast.components.components, errors);
   }
 
-  validateLayout(ast.layout.children, errors);
+  validateLayout(ast.layout.children, errors, true);
 
   if (ast.script) {
     validateScript(ast.script.events, errors);
@@ -173,8 +173,8 @@ function validateComponentNames(
   });
 }
 
-function validateLayout(elements: LayoutElement[], errors: ValidationError[]): void {
-  if (elements.length === 0) {
+function validateLayout(elements: LayoutElement[], errors: ValidationError[], isRoot: boolean = false): void {
+  if (isRoot && elements.length === 0) {
     errors.push({
       message: "Layout must contain at least one element",
       target: "ast",
@@ -216,10 +216,8 @@ function validateLayoutComponent(
   });
 }
 
-function validateLayoutText(textNode: LayoutText, errors: ValidationError[]): void {
-  if (textNode.value.trim() === "") {
-    pushError(errors, "ast", "Text node cannot be empty", textNode.location);
-  }
+function validateLayoutText(_textNode: LayoutText, _errors: ValidationError[]): void {
+  // Text nodes are allowed to be empty (e.g. placeholders)
 }
 
 function validateScript(events: ScriptProperty[], errors: ValidationError[]): void {

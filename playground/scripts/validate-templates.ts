@@ -1,11 +1,9 @@
-import { motion } from "framer-motion";
+import { tokenize } from "@uih-dsl/tokenizer";
+import { parse } from "@uih-dsl/parser";
 
-const TEMPLATES = [
+const templates = [
   {
     id: "landing-saas",
-    title: "SaaS Landing",
-    description: "Modern dark-themed landing page with hero, features, and CTA.",
-    category: "Landing Page",
     code: `meta {
   title: "Future SaaS"
   description: "The future of software"
@@ -56,9 +54,6 @@ layout {
   },
   {
     id: "dashboard-analytics",
-    title: "Analytics Dashboard",
-    description: "Grid layout with sidebar, stats cards, and charts area.",
-    category: "Dashboard",
     code: `meta {
   title: "Analytics"
 }
@@ -127,9 +122,6 @@ layout {
   },
   {
     id: "mobile-profile",
-    title: "Mobile Profile",
-    description: "Clean mobile-first profile page with avatar and list.",
-    category: "Mobile",
     code: `meta {
   title: "Profile"
 }
@@ -188,74 +180,23 @@ layout {
   }
 ];
 
-interface TemplateGalleryProps {
-  onSelect: (code: string) => void;
-  onClose: () => void;
-}
+console.log("Validating templates...");
 
-export function TemplateGallery({ onSelect, onClose }: TemplateGalleryProps) {
-  return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-8">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-5xl h-[80vh] bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-      >
-        {/* Header */}
-        <div className="p-6 border-b border-gray-800 flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Start with a Template</h2>
-            <p className="text-gray-400 mt-1">Kickstart your project with professionally designed UIH layouts.</p>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Grid */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TEMPLATES.map((template) => (
-              <motion.div
-                key={template.id}
-                whileHover={{ y: -4 }}
-                className="group relative bg-gray-800 border border-gray-700 rounded-xl overflow-hidden cursor-pointer hover:border-gray-600 transition-all"
-                onClick={() => {
-                  onSelect(template.code);
-                  onClose();
-                }}
-              >
-                {/* Preview Skeleton */}
-                <div className="h-40 bg-gray-900 border-b border-gray-700 p-4 flex flex-col gap-2 group-hover:bg-gray-850 transition-colors">
-                  <div className="w-1/3 h-2 bg-gray-700 rounded-full mb-2"></div>
-                  <div className="w-full h-20 bg-gray-800 rounded-lg border border-gray-700/50"></div>
-                  <div className="flex gap-2 mt-auto">
-                    <div className="w-8 h-8 rounded-full bg-gray-700"></div>
-                    <div className="flex-1 h-2 bg-gray-700 rounded-full self-center"></div>
-                  </div>
-                </div>
-
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                      {template.category}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                    {template.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 line-clamp-2">
-                    {template.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+templates.forEach((template) => {
+  console.log(`\nTesting template: ${template.id}`);
+  try {
+    const tokens = tokenize(template.code);
+    const result = parse(tokens);
+    
+    if (result.errors.length > 0) {
+      console.error("❌ Validation failed:");
+      result.errors.forEach((err) => {
+        console.error(`  - Line ${err.line}, Col ${err.column}: ${err.message}`);
+      });
+    } else {
+      console.log("✅ Validation passed");
+    }
+  } catch (e: any) {
+    console.error("❌ Unexpected error:", e.message);
+  }
+});

@@ -26,10 +26,10 @@ export function IframePreview({ code, cssVars, framework }: IframePreviewProps) 
     if (framework === "react") {
       const rewrittenCode = code
         .replace(/from\s+["']@\/components\/([^"']+)["']/g, (_, name) => {
-          return `from "data:text/javascript,export function ${name}(props) { return React.createElement('div', { ...props, 'data-uih-dummy': '${name}' }, props.children); } export default ${name};"`;
+          // Mock local components
+          return `from "data:text/javascript,import React from 'https://esm.sh/react@18'; export function ${name}(props) { return React.createElement('div', { ...props, 'data-uih-dummy': '${name}' }, props.children); } export default ${name};"`;
         })
-        .replace(/from\s+["']react["']/g, 'from "https://esm.sh/react@18"')
-        .replace(/from\s+["']react-dom\/client["']/g, 'from "https://esm.sh/react-dom@18/client"');
+        .replace(/from\s+["']react["']/g, 'from "https://esm.sh/react@18"');
 
       html = `<!DOCTYPE html>
 <html>
@@ -57,21 +57,19 @@ ${cssVarsString}
     const code = ${JSON.stringify(rewrittenCode)};
 
     try {
+      // Transform the entire code module including imports and logic
       const transformed = Babel.transform(code, {
         presets: ['react'],
         filename: 'component.jsx'
       }).code;
 
-      const wrappedCode = \`
-        \${transformed}
-      \`;
-
-      const blob = new Blob([wrappedCode], { type: "text/javascript" });
+      const blob = new Blob([transformed], { type: "text/javascript" });
       const url = URL.createObjectURL(blob);
 
       import(url)
         .then((mod) => {
           const Component = mod.default;
+          if (!Component) throw new Error("No default export found in generated code");
           const root = ReactDOM.createRoot(document.getElementById("root"));
           root.render(React.createElement(Component));
         })

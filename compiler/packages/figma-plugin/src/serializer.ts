@@ -1,31 +1,23 @@
 export interface SimplifiedNode {
-  id: string;
-  name: string;
   type: string;
   children?: SimplifiedNode[];
   layout?: {
     mode: string;
-    primaryAxisAlign?: string;
-    counterAxisAlign?: string;
+    align?: string; // Combined alignment
     gap?: number;
-    padding?: { t: number; r: number; b: number; l: number };
+    pad?: string; // Combined padding "10 20"
   };
   style?: {
-    width?: number;
-    height?: number;
-    fills?: any[];
-    strokes?: any[];
+    w?: number; // width
+    h?: number; // height
+    bg?: string; // background color (first solid fill)
     radius?: number;
-    opacity?: number;
-    effects?: any[];
   };
   text?: {
     content: string;
-    fontSize: number;
-    fontWeight: string;
-    fontFamily: string;
-    textAlign: string;
-    color: string;
+    size?: number;
+    weight?: string;
+    color?: string;
   };
 }
 
@@ -33,60 +25,60 @@ export function serializeNode(node: SceneNode): SimplifiedNode | null {
   if (!node.visible) return null;
 
   const base: SimplifiedNode = {
-    id: node.id,
-    name: node.name,
-    type: node.type,
+    type: node.type === "INSTANCE" || node.type === "COMPONENT" ? "FRAME" : node.type, // Simplify types
   };
 
   // 1. Layout Props (Frame/Instance)
-  if ("layoutMode" in node) {
-    base.layout = {
-      mode: node.layoutMode,
-      primaryAxisAlign: node.primaryAxisAlignItems,
-      counterAxisAlign: node.counterAxisAlignItems,
-      gap: node.itemSpacing,
-      padding: {
-        t: node.paddingTop,
-        r: node.paddingRight,
-        b: node.paddingBottom,
-        l: node.paddingLeft,
-      },
-    };
+  if ("layoutMode" in node && node.layoutMode !== "NONE") {
+    const layout: any = { mode: node.layoutMode === "HORIZONTAL" ? "H" : "V" };
+    
+    // Simplify alignment
+    const prime = node.primaryAxisAlignItems === "CENTER" ? "C" : node.primaryAxisAlignItems === "SPACE_BETWEEN" ? "SB" : "S";
+    const counter = node.counterAxisAlignItems === "CENTER" ? "C" : "S";
+    if (prime !== "S" || counter !== "S") layout.align = `${prime} ${counter}`;
+
+    if (node.itemSpacing > 0) layout.gap = Math.round(node.itemSpacing);
+    
+    // Simplify padding
+    const pt = node.paddingTop || 0;
+    const pr = node.paddingRight || 0;
+    const pb = node.paddingBottom || 0;
+    const pl = node.paddingLeft || 0;
+    if (pt + pr + pb + pl > 0) {
+        layout.pad = `${Math.round(pt)} ${Math.round(pr)} ${Math.round(pb)} ${Math.round(pl)}`;
+    }
+    base.layout = layout;
   }
 
   // 2. Geometry & Style
   const style: any = {};
-  if ("width" in node) style.width = node.width;
-  if ("height" in node) style.height = node.height;
+  if ("width" in node) style.w = Math.round(node.width);
+  if ("height" in node) style.h = Math.round(node.height);
   
-  if ("fills" in node && node.fills !== figma.mixed) {
-    style.fills = simplifyPaints(node.fills as ReadonlyArray<Paint>);
-  }
-  
-  if ("cornerRadius" in node) {
-    if (node.cornerRadius !== figma.mixed) {
-        style.radius = node.cornerRadius;
+  // Extract only the first solid fill as background
+  if ("fills" in node && node.fills !== figma.mixed && node.fills.length > 0) {
+    const fill = node.fills[0];
+    if (fill.type === 'SOLID') {
+        style.bg = rgbToHex(fill.color);
+    } else if (fill.type === 'IMAGE') {
+        style.bg = 'IMG';
     }
   }
   
-  if ("opacity" in node) style.opacity = node.opacity;
-
-  if (Object.keys(style).length > 0) {
-      base.style = style;
+  if ("cornerRadius" in node && typeof node.cornerRadius === "number" && node.cornerRadius > 0) {
+    style.radius = node.cornerRadius;
   }
+
+  if (Object.keys(style).length > 0) base.style = style;
 
   // 3. Text Specific
   if (node.type === "TEXT") {
     base.text = {
-      content: node.characters,
-      fontSize: typeof node.fontSize === "number" ? node.fontSize : 16,
-      fontWeight: "normal", // fontName 처리 필요
-      fontFamily: (node.fontName as FontName)?.family || "sans-serif",
-      textAlign: node.textAlignHorizontal,
-      color: "#000000",
+      content: node.characters.substring(0, 50), // Truncate text
     };
-
-    // 텍스트 컬러 추출
+    if (typeof node.fontSize === "number") base.text.size = node.fontSize;
+    
+    // Text Color
     if (node.fills !== figma.mixed && node.fills.length > 0 && node.fills[0].type === 'SOLID') {
         base.text.color = rgbToHex(node.fills[0].color);
     }
@@ -94,24 +86,16 @@ export function serializeNode(node: SceneNode): SimplifiedNode | null {
 
   // 4. Children (Recursive)
   if ("children" in node) {
-    base.children = node.children
+    const children = node.children
       .map((child) => serializeNode(child))
       .filter((n): n is SimplifiedNode => n !== null);
+    
+    if (children.length > 0) {
+        base.children = children;
+    }
   }
 
   return base;
-}
-
-function simplifyPaints(paints: ReadonlyArray<Paint>) {
-  return paints.map(p => {
-    if (p.type === 'SOLID') {
-      return { type: 'SOLID', color: rgbToHex(p.color), opacity: p.opacity };
-    }
-    if (p.type === 'IMAGE') {
-      return { type: 'IMAGE', scaleMode: p.scaleMode };
-    }
-    return { type: p.type };
-  });
 }
 
 function rgbToHex(color: RGB): string {

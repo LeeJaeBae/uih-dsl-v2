@@ -4,7 +4,7 @@ import path from "path";
 export default defineConfig({
   root: "./src",
   build: {
-    target: "es2020",
+    target: "es2017",
     minify: false, // 디버깅을 위해
     outDir: "../dist",
     emptyOutDir: false,

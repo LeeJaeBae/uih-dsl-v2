@@ -5,10 +5,15 @@
   "main": "dist/code.js",
   "scripts": {
     "build": "rm -rf dist && vite build -c vite.config.ui.ts && vite build -c vite.config.code.ts",
-    "watch": "npm run build",
+    "dev": "npm run watch",
+    "watch": "npm run build -- --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@uih-dsl/codegen-react": "^0.0.2",
+    "@uih-dsl/ir": "^0.0.2",
+    "@uih-dsl/parser": "^0.0.2",
+    "@uih-dsl/tokenizer": "^0.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

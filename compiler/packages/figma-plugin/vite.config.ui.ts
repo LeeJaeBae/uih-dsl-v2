@@ -8,6 +8,7 @@ export default defineConfig({
   root: "./src",
   build: {
     target: "esnext",
+    minify: false, // Disable minification for debugging
     assetsInlineLimit: 100000000,
     chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,

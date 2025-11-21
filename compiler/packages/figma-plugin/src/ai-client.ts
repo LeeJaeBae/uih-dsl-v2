@@ -22,7 +22,7 @@ Return ONLY the raw UIH code (inside 'layout {}' block). Do not include markdown
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,15 +33,21 @@ Return ONLY the raw UIH code (inside 'layout {}' block). Do not include markdown
     );
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      const errorBody = await response.text();
+      throw new Error(`API Error (${response.status}): ${errorBody}`);
     }
 
     const data = await response.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
     
     // Cleanup markdown code blocks if present
-    return text.replace(/^```uih\s*/, "").replace(/^```\s*/, "").replace(/```$/, "").trim();
+    let cleanCode = text.replace(/^```uih\s*/, "").replace(/^```\s*/, "").replace(/```$/, "").trim();
 
+    // Post-processing to fix common AI syntax errors (e.g. using = instead of :)
+    // Look for patterns like: word="value" or word=123
+    cleanCode = cleanCode.replace(/([a-zA-Z0-9_-]+)=(".*?"|\d+)/g, "$1:$2");
+
+    return cleanCode;
   } catch (error: any) {
     console.error("AI Generation Failed:", error);
     return `// Error generating code: ${error.message}`;

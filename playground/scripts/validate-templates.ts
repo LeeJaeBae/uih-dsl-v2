@@ -177,6 +177,185 @@ layout {
     }
   }
 }`
+  },
+  {
+    id: "dark-modern-dashboard",
+    code: `meta {
+  title: "Nexus Dashboard"
+  description: "Futuristic dark dashboard"
+}
+
+style {
+  color.bg: "#09090b"
+  color.surface: "#18181b"
+  color.surfaceHighlight: "#27272a"
+  color.border: "#27272a"
+  color.primary: "#8b5cf6"
+  color.primaryGlow: "rgba(139, 92, 246, 0.5)"
+  color.text: "#f4f4f5"
+  color.textMuted: "#71717a"
+  color.success: "#10b981"
+  
+  radius.lg: "16px"
+  radius.xl: "24px"
+  radius.full: "9999px"
+  
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+}
+
+layout {
+  Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: sans-serif; overflow: hidden") {
+    
+    // Glass Sidebar
+    Div(style: "width: 280px; background-color: rgba(24, 24, 27, 0.6); backdrop-filter: blur(20px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 10") {
+      // Logo
+      Div(style: "display: flex; items-center: center; gap: spacing.sm; margin-bottom: 40px") {
+        Div(style: "width: 32px; height: 32px; background-color: color.primary; border-radius: 8px; box-shadow: 0 0 15px color.primaryGlow") {}
+        H3(style: "font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.5px") { "NEXUS" }
+      }
+      
+      // Navigation
+      Div(style: "display: flex; flex-direction: column; gap: 8px") {
+        Button(style: "text-align: left; padding: 12px 16px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
+          Span { "📊" }
+          Span { "Dashboard" }
+        }
+        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
+          Span { "⚡️" }
+          Span { "Activity" }
+        }
+        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
+          Span { "💳" }
+          Span { "Wallet" }
+        }
+        Button(style: "text-align: left; padding: 12px 16px; background-color: transparent; color: color.textMuted; border: none; border-radius: radius.lg; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; items-center: center; gap: 12px") { 
+          Span { "⚙️" }
+          Span { "Settings" }
+        }
+      }
+      
+      // User Profile
+      Div(style: "margin-top: auto; background-color: color.surface; padding: 12px; border-radius: radius.lg; border: 1px solid color.border; display: flex; items-center: center; gap: 12px") {
+        Div(style: "width: 36px; height: 36px; border-radius: radius.full; background-image: linear-gradient(135deg, #8b5cf6, #ec4899)") {}
+        Div {
+          Div(style: "font-size: 13px; font-weight: 600") { "Alex Morgan" }
+          Div(style: "font-size: 11px; color: color.textMuted") { "Pro Plan" }
+        }
+      }
+    }
+
+    // Main Content
+    Div(style: "flex: 1; display: flex; flex-direction: column; position: relative") {
+      // Background decorative gradients
+      Div(style: "position: absolute; top: -10%; right: -5%; width: 500px; height: 500px; background-color: color.primary; opacity: 0.05; filter: blur(100px); border-radius: radius.full; pointer-events: none") {}
+      
+      // Header
+      Div(style: "height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px") {
+        Div {
+          H2(style: "font-size: 24px; font-weight: 700; margin: 0") { "Overview" }
+          P(style: "font-size: 14px; color: color.textMuted; margin: 4px 0 0") { "Welcome back to your command center." }
+        }
+        Div(style: "display: flex; gap: 12px") {
+          Button(style: "width: 40px; height: 40px; border-radius: radius.full; border: 1px solid color.border; background-color: color.surface; color: color.text; cursor: pointer; display: flex; align-items: center; justify-content: center") { "🔔" }
+          Button(style: "padding: 0 20px; height: 40px; background-color: color.text; color: color.bg; border: none; border-radius: radius.full; font-weight: 600; font-size: 14px; cursor: pointer") { "+ Add Widget" }
+        }
+      }
+
+      // Scroll Area
+      Div(style: "flex: 1; padding: 0 40px 40px; overflow-y: auto") {
+        
+        // Stats Cards
+        Div(style: "display: grid; grid-template-columns: repeat(3, 1fr); gap: spacing.lg; margin-bottom: spacing.lg") {
+          // Card 1
+          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 24px; border-radius: radius.xl; position: relative; overflow: hidden") {
+            Div(style: "position: absolute; top: 0; right: 0; padding: 20px; opacity: 0.1; font-size: 40px") { "📈" }
+            Div(style: "color: color.textMuted; font-size: 14px; font-weight: 500; margin-bottom: 8px") { "Total Revenue" }
+            Div(style: "font-size: 32px; font-weight: 800; letter-spacing: -1px") { "$124,500" }
+            Div(style: "display: flex; items-center: center; gap: 6px; margin-top: 12px") {
+              Span(style: "background-color: rgba(16, 185, 129, 0.15); color: color.success; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 600") { "+12.5%" }
+              Span(style: "color: color.textMuted; font-size: 12px") { "vs last month" }
+            }
+          }
+          // Card 2
+          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 24px; border-radius: radius.xl") {
+            Div(style: "color: color.textMuted; font-size: 14px; font-weight: 500; margin-bottom: 8px") { "Active Users" }
+            Div(style: "font-size: 32px; font-weight: 800; letter-spacing: -1px") { "8,249" }
+            Div(style: "display: flex; items-center: center; gap: 6px; margin-top: 12px") {
+              Span(style: "background-color: rgba(16, 185, 129, 0.15); color: color.success; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 600") { "+5.2%" }
+              Span(style: "color: color.textMuted; font-size: 12px") { "vs last month" }
+            }
+          }
+          // Card 3 (Gradient)
+          Div(style: "background-color: color.primary; padding: 24px; border-radius: radius.xl; color: white; background-image: linear-gradient(135deg, #8b5cf6, #6366f1)") {
+            Div(style: "font-size: 14px; font-weight: 500; margin-bottom: 8px; opacity: 0.8") { "Pro Subscription" }
+            Div(style: "font-size: 28px; font-weight: 800; margin-bottom: 20px") { "Active" }
+            Button(style: "width: 100%; padding: 10px; background-color: rgba(255,255,255,0.2); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px)") { "Manage Plan" }
+          }
+        }
+
+        // Bento Grid
+        Div(style: "display: grid; grid-template-columns: 2fr 1fr; gap: spacing.lg") {
+          
+          // Large Chart Area
+          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px") {
+            Div(style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px") {
+              H3(style: "margin: 0; font-size: 18px; font-weight: 600") { "Revenue Analytics" }
+              Div(style: "display: flex; gap: 8px") {
+                Button(style: "padding: 6px 12px; background-color: color.surfaceHighlight; border: none; border-radius: 8px; color: color.text; font-size: 12px; cursor: pointer") { "7D" }
+                Button(style: "padding: 6px 12px; background-color: transparent; border: none; border-radius: 8px; color: color.textMuted; font-size: 12px; cursor: pointer") { "1M" }
+              }
+            }
+            
+            // Fake Chart
+            Div(style: "display: flex; items-end: flex-end; height: 200px; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid color.border") {
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 40%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 60%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background-color: color.primary; height: 85%; border-radius: 8px 8px 0 0; box-shadow: 0 0 20px color.primaryGlow") {}
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 50%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 65%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 75%; border-radius: 8px 8px 0 0") {}
+              Div(style: "flex: 1; background-color: color.surfaceHighlight; height: 55%; border-radius: 8px 8px 0 0") {}
+            }
+          }
+
+          // Right Column (Transactions)
+          Div(style: "background-color: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
+            H3(style: "margin: 0 0 20px 0; font-size: 18px; font-weight: 600") { "Recent Transactions" }
+            
+            Div(style: "display: flex; flex-direction: column; gap: 16px") {
+              // Item 1
+              Div(style: "display: flex; align-items: center; justify-content: space-between") {
+                Div(style: "display: flex; align-items: center; gap: 12px") {
+                  Div(style: "width: 40px; height: 40px; border-radius: 12px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px") { "🍎" }
+                  Div {
+                    Div(style: "font-weight: 500; font-size: 14px") { "Apple Store" }
+                    Div(style: "font-size: 12px; color: color.textMuted") { "Electronics" }
+                  }
+                }
+                Div(style: "font-weight: 600; font-size: 14px") { "-$999" }
+              }
+              // Item 2
+              Div(style: "display: flex; align-items: center; justify-content: space-between") {
+                Div(style: "display: flex; align-items: center; gap: 12px") {
+                  Div(style: "width: 40px; height: 40px; border-radius: 12px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px") { "🍟" }
+                  Div {
+                    Div(style: "font-weight: 500; font-size: 14px") { "Uber Eats" }
+                    Div(style: "font-size: 12px; color: color.textMuted") { "Food" }
+                  }
+                }
+                Div(style: "font-weight: 600; font-size: 14px") { "-$32.50" }
+              }
+            }
+            
+            Button(style: "width: 100%; padding: 12px; margin-top: 24px; background-color: transparent; border: 1px solid color.border; border-radius: 12px; color: color.text; font-size: 13px; font-weight: 500; cursor: pointer") { "View All History" }
+          }
+        }
+      }
+    }
+  }
+}`
   }
 ];
 

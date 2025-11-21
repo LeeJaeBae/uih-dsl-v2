@@ -166,13 +166,23 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
         return `style={${JSON.stringify(styleObj)}}`;
       }
 
-      // Handle toggle() magic syntax in events
-      if (key.startsWith("on") && attr.value.includes("toggle(")) {
-        const match = attr.value.match(/toggle\((.*)\)/);
-        if (match) {
-          const target = match[1];
-                     return `${key}={${"()"} => set${capitalize(target)}(!${target})}`;        }
-      }
+            // Handle toggle() magic syntax in events
+
+            if (key.startsWith("on") && attr.value.includes("toggle(")) {
+
+              const match = attr.value.match(/toggle\((.*)\)/);
+
+              if (match) {
+
+                const target = match[1];
+
+                const handlerCode = `() => set${capitalize(target)}(!${target})`;
+
+                return `${key}={${handlerCode}}`;
+
+              }
+
+            }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;
     })

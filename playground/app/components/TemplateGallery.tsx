@@ -185,6 +185,180 @@ layout {
     }
   }
 }`
+  },
+  {
+    id: "super-dashboard",
+    title: "Ultimate Dashboard",
+    description: "A feature-rich dashboard showcasing all UIH capabilities including grid, flexbox, forms, and complex styling.",
+    category: "Showcase",
+    code: `meta {
+  title: "Ultimate Dashboard"
+  description: "A feature-rich dashboard showcasing all UIH capabilities"
+}
+
+style {
+  color.primary: "#4F46E5"
+  color.primaryHover: "#4338CA"
+  color.bg: "#F3F4F6"
+  color.surface: "#FFFFFF"
+  color.text.main: "#111827"
+  color.text.muted: "#6B7280"
+  color.border: "#E5E7EB"
+  color.success: "#10B981"
+  color.danger: "#EF4444"
+  
+  shadow.sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+  shadow.md: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+  
+  radius.md: "8px"
+  radius.full: "9999px"
+  
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  spacing.xl: "32px"
+}
+
+layout {
+  Div(style: "display: flex; min-height: 100vh; background-color: color.bg; font-family: system-ui, sans-serif; color: color.text.main") {
+    
+    // Sidebar
+    Div(style: "width: 280px; background-color: color.surface; border-right: 1px solid color.border; display: flex; flex-direction: column") {
+      Div(style: "padding: spacing.lg; border-bottom: 1px solid color.border") {
+        H3(style: "font-size: 20px; font-weight: 800; color: color.primary; margin: 0") { "UIH SuperBoard" }
+      }
+      
+      Div(style: "padding: spacing.md; display: flex; flex-direction: column; gap: 4px") {
+        Button(style: "text-align: left; padding: 12px; background-color: #EEF2FF; color: color.primary; border: none; border-radius: radius.md; font-weight: 600; cursor: pointer") { "📊 Dashboard" }
+        Button(style: "text-align: left; padding: 12px; background-color: transparent; color: color.text.muted; border: none; border-radius: radius.md; cursor: pointer; hover: { background-color: color.bg }") { "👥 Users" }
+        Button(style: "text-align: left; padding: 12px; background-color: transparent; color: color.text.muted; border: none; border-radius: radius.md; cursor: pointer") { "⚙️ Settings" }
+      }
+      
+      Div(style: "margin-top: auto; padding: spacing.md; border-top: 1px solid color.border") {
+        Div(style: "display: flex; items-center: center; gap: 12px") {
+          Div(style: "width: 40px; height: 40px; border-radius: radius.full; background-color: color.primary; display: flex; align-items: center; justify-content: center; color: white") { "JD" }
+          Div {
+            Div(style: "font-weight: 600; font-size: 14px") { "John Doe" }
+            Div(style: "color: color.text.muted; font-size: 12px") { "Admin" }
+          }
+        }
+      }
+    }
+
+    // Main Area
+    Div(style: "flex: 1; display: flex; flex-direction: column") {
+      
+      // Header
+      Div(style: "height: 64px; background-color: color.surface; border-bottom: 1px solid color.border; display: flex; align-items: center; justify-content: space-between; padding: 0 spacing.xl") {
+        H2(style: "font-size: 18px; font-weight: 600") { "Overview" }
+        Div(style: "display: flex; gap: spacing.md") {
+          Button(style: "padding: 8px 16px; background-color: white; border: 1px solid color.border; border-radius: radius.md; cursor: pointer") { "🔔 Notifications" }
+          Button(style: "padding: 8px 16px; background-color: color.primary; color: white; border: none; border-radius: radius.md; cursor: pointer") { "+ New Project" }
+        }
+      }
+
+      // Content Scrollable
+      Div(style: "flex: 1; padding: spacing.xl; overflow-y: auto") {
+        
+        // Stats Grid
+        Div(style: "display: grid; grid-template-columns: repeat(4, 1fr); gap: spacing.lg; margin-bottom: spacing.xl") {
+          Div(style: "background-color: color.surface; padding: spacing.lg; border-radius: radius.md; box-shadow: shadow.sm") {
+            Div(style: "color: color.text.muted; font-size: 14px; margin-bottom: 8px") { "Total Revenue" }
+            Div(style: "font-size: 24px; font-weight: 700") { "$124,500" }
+            Div(style: "color: color.success; font-size: 12px; margin-top: 8px") { "↗ 12% increase" }
+          }
+          Div(style: "background-color: color.surface; padding: spacing.lg; border-radius: radius.md; box-shadow: shadow.sm") {
+            Div(style: "color: color.text.muted; font-size: 14px; margin-bottom: 8px") { "Active Users" }
+            Div(style: "font-size: 24px; font-weight: 700") { "8,249" }
+            Div(style: "color: color.success; font-size: 12px; margin-top: 8px") { "↗ 5% increase" }
+          }
+          Div(style: "background-color: color.surface; padding: spacing.lg; border-radius: radius.md; box-shadow: shadow.sm") {
+            Div(style: "color: color.text.muted; font-size: 14px; margin-bottom: 8px") { "Bounce Rate" }
+            Div(style: "font-size: 24px; font-weight: 700") { "24.5%" }
+            Div(style: "color: color.danger; font-size: 12px; margin-top: 8px") { "↘ 2% decrease" }
+          }
+          Div(style: "background-color: color.surface; padding: spacing.lg; border-radius: radius.md; box-shadow: shadow.sm") {
+            Div(style: "color: color.text.muted; font-size: 14px; margin-bottom: 8px") { "Server Uptime" }
+            Div(style: "font-size: 24px; font-weight: 700") { "99.9%" }
+            Div(style: "color: color.success; font-size: 12px; margin-top: 8px") { "Perfect" }
+          }
+        }
+
+        // Two Columns (Table + Form)
+        Div(style: "display: grid; grid-template-columns: 2fr 1fr; gap: spacing.lg") {
+          
+          // Recent Transactions Table
+          Div(style: "background-color: color.surface; border-radius: radius.md; box-shadow: shadow.sm; overflow: hidden") {
+            Div(style: "padding: spacing.lg; border-bottom: 1px solid color.border") {
+              H3(style: "margin: 0; font-size: 16px") { "Recent Transactions" }
+            }
+            Div(style: "padding: 0") {
+              // Table Header
+              Div(style: "display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 12px spacing.lg; background-color: #F9FAFB; border-bottom: 1px solid color.border; font-size: 12px; font-weight: 600; color: color.text.muted") {
+                Div { "Customer" }
+                Div { "Date" }
+                Div(style: "text-align: right") { "Amount" }
+              }
+              // Row 1
+              Div(style: "display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 16px spacing.lg; border-bottom: 1px solid color.border") {
+                Div(style: "display: flex; align-items: center; gap: 8px") {
+                  Div(style: "width: 24px; height: 24px; background-color: #E0E7FF; border-radius: radius.full") {}
+                  Span { "Apple Inc." }
+                }
+                Div(style: "color: color.text.muted") { "Oct 24, 2025" }
+                Div(style: "text-align: right; font-weight: 500") { "$999.00" }
+              }
+              // Row 2
+              Div(style: "display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 16px spacing.lg; border-bottom: 1px solid color.border") {
+                Div(style: "display: flex; align-items: center; gap: 8px") {
+                  Div(style: "width: 24px; height: 24px; background-color: #DCFCE7; border-radius: radius.full") {}
+                  Span { "Spotify" }
+                }
+                Div(style: "color: color.text.muted") { "Oct 23, 2025" }
+                Div(style: "text-align: right; font-weight: 500") { "$12.99" }
+              }
+              // Row 3
+              Div(style: "display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 16px spacing.lg") {
+                Div(style: "display: flex; align-items: center; gap: 8px") {
+                  Div(style: "width: 24px; height: 24px; background-color: #FEF3C7; border-radius: radius.full") {}
+                  Span { "Amazon" }
+                }
+                Div(style: "color: color.text.muted") { "Oct 22, 2025" }
+                Div(style: "text-align: right; font-weight: 500") { "$49.50" }
+              }
+            }
+          }
+
+          // Quick Action Form
+          Div(style: "background-color: color.surface; padding: spacing.lg; border-radius: radius.md; box-shadow: shadow.sm; height: fit-content") {
+            H3(style: "margin: 0 0 spacing.md 0; font-size: 16px") { "Quick Transfer" }
+            
+            Div(style: "display: flex; flex-direction: column; gap: spacing.md") {
+              Div {
+                Label(style: "display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: color.text.muted") { "Recipient Email" }
+                Input(style: "width: 100%; padding: 8px 12px; border: 1px solid color.border; border-radius: 6px; font-size: 14px" placeholder: "name@company.com") {}
+              }
+              
+              Div {
+                Label(style: "display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: color.text.muted") { "Amount ($)" }
+                Input(style: "width: 100%; padding: 8px 12px; border: 1px solid color.border; border-radius: 6px; font-size: 14px" placeholder: "0.00") {}
+              }
+
+              Button(style: "background-color: color.primary; color: white; padding: 10px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 8px") {
+                "Send Money"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+script {
+  onClick: "handleClick"
+  onSubmit: "handleTransfer"
+}`
   }
 ];
 

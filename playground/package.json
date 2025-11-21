@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd .. && pnpm --filter \"./compiler/packages/**\" build && cd playground && next build",
+    "build": "cd .. && pnpm --filter \"./compiler/packages/**...\" build && cd playground && next build",
     "start": "next start",
     "lint": "eslint"
   },

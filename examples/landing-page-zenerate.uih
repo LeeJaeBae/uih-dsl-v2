@@ -1,0 +1,282 @@
+meta {
+  title: "Zenerate Landing Page"
+}
+
+style {
+  color.primary: "#4d49f4"
+  color.text.dark: "#000729"
+  color.text.gray: "#484a4f"
+  color.bg.dark: "#262626"
+  color.bg.light: "#f4f6f9"
+  spacing.sm: "10px"
+  spacing.md: "20px"
+  spacing.lg: "40px"
+  spacing.xl: "80px"
+}
+
+components {
+  Header
+  Hero
+  FeatureSection
+  Testimonial
+  UserClients
+  TrustedBy
+  FAQ
+  CTA
+  Footer
+}
+
+layout {
+  Div(class: "landing-page", style: "display: flex; flex-direction: column; width: 100%; font-family: Pretendard, sans-serif") {
+    
+    // 1. Hero Section
+    Hero(style: "display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; background: var(--color-bg-dark); color: white; overflow: hidden") {
+      // Background Video/Image placeholder
+      Img(src: "https://placehold.co/1920x1080", style: "width: 100%; height: 1080px; object-fit: cover; position: absolute; opacity: 0.5")
+      
+      // Header
+      Header(style: "display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1600px; padding: 35px 0; position: relative; z-index: 10") {
+        // Logo
+        Div(style: "width: 132px; height: 52px; display: flex; align-items: center") {
+          Img(src: "https://placehold.co/131x27/white/transparent?text=LOGO", style: "height: 27px")
+        }
+
+        // Nav
+        Nav(style: "display: flex; gap: 32px; align-items: center") {
+          Div(style: "display: flex; align-items: center; gap: 4px; cursor: pointer") {
+            Span(style: "font-size: 18px; font-weight: 500") { "Solutions" }
+            Img(src: "https://placehold.co/10x10", style: "width: 8px")
+          }
+          A(href: "#", style: "font-size: 18px; font-weight: 500; text-decoration: none; color: white") { "Tutorials" }
+          A(href: "#", style: "font-size: 18px; font-weight: 500; text-decoration: none; color: white") { "Blog" }
+          A(href: "#", style: "font-size: 18px; font-weight: 500; text-decoration: none; color: white") { "About" }
+          A(href: "#", style: "font-size: 18px; font-weight: 500; text-decoration: none; color: white") { "Contact" }
+        }
+
+        // Button
+        Button(style: "padding: 14px 24px; background: white; color: var(--color-primary); border-radius: 4px; font-weight: 600; font-size: 19px; border: none; cursor: pointer") {
+          "Request Demo"
+        }
+      }
+
+      // Hero Content
+      Div(style: "display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1600px; padding: 50px 0 200px; position: relative; z-index: 10; gap: 40px") {
+        Div(style: "display: flex; flex-direction: column; gap: 40px; max-width: 500px") {
+          H1(style: "font-size: 64px; font-weight: 700; line-height: 1.2") {
+            "Real-time Feasibility Design"
+          }
+          P(style: "font-size: 24px; color: #c5cbff") {
+            "AI-powered Generative Design Software for Real Estate Development"
+          }
+          Button(style: "display: flex; align-items: center; gap: 20px; padding: 16px 16px 16px 40px; background: white; border-radius: 60px; width: fit-content; cursor: pointer; border: none") {
+            Span(style: "color: var(--color-primary); font-size: 20px; font-weight: 600") { "Request Demo" }
+            Div(style: "width: 48px; height: 48px; background: #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center") {
+              Span(style: "color: var(--color-primary)") { "→" }
+            }
+          }
+        }
+        // Decorative Element
+        Div(style: "width: 68px; height: 68px; background: white; display: flex; align-items: center; justify-content: center") {
+            Div(style: "width: 51px; height: 51px; background: #a2efca")
+        }
+      }
+    }
+
+    // 2. Feature Section (How it Works)
+    FeatureSection(style: "display: flex; flex-direction: column; align-items: center; gap: 100px; padding: 100px 180px; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; z-index: 20; margin-top: -100px; border-radius: 20px") {
+      Div(style: "text-align: center") {
+        H2(style: "font-size: 74px; font-weight: 700; color: var(--color-text-dark); margin-bottom: 20px") { "How it Works" }
+        P(style: "font-size: 24px; color: var(--color-text-gray)") { "From small infill to urban planning, make your site studies easier." }
+      }
+
+      Div(style: "display: flex; gap: 40px; width: 100%") {
+        // Left: Video Placeholder
+        Div(style: "flex: 2") {
+            Img(src: "https://placehold.co/860x592", style: "width: 100%; height: auto; border-radius: 8px")
+            Div(style: "margin-top: 20px") {
+                Button(style: "display: flex; align-items: center; gap: 20px; padding: 16px 16px 16px 40px; border: 1px solid var(--color-primary); border-radius: 60px; background: white; cursor: pointer") {
+                    Span(style: "color: var(--color-primary); font-size: 24px; font-weight: 600") { "Learn more about Zenerate App" }
+                    Div(style: "width: 48px; height: 48px; background: #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center") {
+                        Span(style: "color: var(--color-primary)") { "→" }
+                    }
+                }
+            }
+        }
+
+        // Right: Steps
+        Div(style: "flex: 1; display: flex; flex-direction: column; gap: 16px") {
+            // Step 1 (Active)
+            Div(style: "display: flex; gap: 24px; align-items: flex-start") {
+                Div(style: "width: 72px; height: 72px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 700") { "1" }
+                Div {
+                    H3(style: "font-size: 28px; color: var(--color-primary); font-weight: 700; margin: 0 0 8px 0") { "Project Setup" }
+                    P(style: "font-size: 16px; color: var(--color-primary)") { "Define your site, then easily input your site constraints." }
+                }
+            }
+            // Steps 2-5 (Inactive)
+            Div(style: "display: flex; gap: 24px; align-items: center") {
+                Div(style: "width: 72px; height: 72px; border: 1px solid #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #bec2dd; font-size: 32px") { "2" }
+                H3(style: "font-size: 28px; color: #c4c7dd; font-weight: 500") { "AI Generate" }
+            }
+            Div(style: "display: flex; gap: 24px; align-items: center") {
+                Div(style: "width: 72px; height: 72px; border: 1px solid #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #bec2dd; font-size: 32px") { "3" }
+                H3(style: "font-size: 28px; color: #c4c7dd; font-weight: 500") { "Floor Plan Editing" }
+            }
+            Div(style: "display: flex; gap: 24px; align-items: center") {
+                Div(style: "width: 72px; height: 72px; border: 1px solid #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #bec2dd; font-size: 32px") { "4" }
+                H3(style: "font-size: 28px; color: #c4c7dd; font-weight: 500") { "Financial Analysis" }
+            }
+            Div(style: "display: flex; gap: 24px; align-items: center") {
+                Div(style: "width: 72px; height: 72px; border: 1px solid #ecefff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #bec2dd; font-size: 32px") { "5" }
+                H3(style: "font-size: 28px; color: #c4c7dd; font-weight: 500") { "Export" }
+            }
+        }
+      }
+    }
+
+    // 3. Testimonial
+    Testimonial(style: "padding: 100px 0; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); text-align: center") {
+      Div(style: "max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 60px") {
+        P(style: "font-size: 34px; font-weight: 500; line-height: 1.4") {
+          "\"Zenerate is redefining feasibility modeling and setting a new standard for the market.\""
+        }
+        Div(style: "display: flex; align-items: center; gap: 20px") {
+          Span(style: "font-size: 24px; font-weight: 700") { "Sami Khoury, AIA" }
+          Div(style: "width: 1px; height: 20px; background: #d3d5ea")
+          Span(style: "font-size: 24px") { "Principal at AC Martin" }
+        }
+        Div(style: "display: flex; gap: 20px") {
+            Button(style: "width: 60px; height: 60px; border-radius: 50%; background: white; border: none; cursor: pointer") { "←" }
+            Button(style: "width: 60px; height: 60px; border-radius: 50%; background: white; border: none; cursor: pointer") { "→" }
+        }
+      }
+    }
+
+    // 4. User / Clients
+    UserClients(style: "padding: 100px 48px; background: white; display: flex; flex-direction: column; gap: 180px") {
+        Div(style: "text-align: center; display: flex; flex-direction: column; gap: 20px") {
+            H2(style: "font-size: 58px; font-weight: 700; color: var(--color-text-dark)") { "Developed for AEC Professionals" }
+            P(style: "font-size: 24px; color: var(--color-text-gray)") { "Streamline your workflow with AI-powered tools that accelerate design studies and decision-making" }
+        }
+
+        // Rows
+        Div(style: "display: flex; gap: 48px") {
+            // Developers
+            Div(style: "flex: 1; display: flex; flex-direction: column; gap: 32px") {
+                Img(src: "https://placehold.co/600x400", style: "width: 100%; border-radius: 8px")
+                H3(style: "font-size: 36px; font-weight: 600; color: var(--color-text-dark)") { "Developers" }
+                P(style: "font-size: 22px; color: var(--color-text-dark)") { "Quickly generate design options to assess development potential." }
+            }
+            // Architects
+            Div(style: "flex: 1; display: flex; flex-direction: column; gap: 32px") {
+                Img(src: "https://placehold.co/600x400", style: "width: 100%; border-radius: 8px")
+                H3(style: "font-size: 36px; font-weight: 600; color: var(--color-text-dark)") { "Architects" }
+                P(style: "font-size: 22px; color: var(--color-text-dark)") { "Design with clients in real time. Create building layouts instantly." }
+            }
+            // Contractors
+            Div(style: "flex: 1; display: flex; flex-direction: column; gap: 32px") {
+                Img(src: "https://placehold.co/600x400", style: "width: 100%; border-radius: 8px")
+                H3(style: "font-size: 36px; font-weight: 600; color: var(--color-text-dark)") { "Contractors" }
+                P(style: "font-size: 22px; color: var(--color-text-dark)") { "Quickly lay out buildings to meet floor area ratio requirements." }
+            }
+            // Brokers
+            Div(style: "flex: 1; display: flex; flex-direction: column; gap: 32px") {
+                Img(src: "https://placehold.co/600x400", style: "width: 100%; border-radius: 8px")
+                H3(style: "font-size: 36px; font-weight: 600; color: var(--color-text-dark)") { "CRE Brokers" }
+                P(style: "font-size: 22px; color: var(--color-text-dark)") { "Calculate development yield for buyers with quick AI testfits." }
+            }
+        }
+    }
+
+    // 5. Trusted By
+    TrustedBy(style: "padding: 80px 48px; text-align: center; background: #f9fafb") {
+        H2(style: "font-size: 58px; font-weight: 700; color: var(--color-text-dark); margin-bottom: 20px") { "Trusted by" }
+        P(style: "font-size: 24px; color: var(--color-text-gray); margin-bottom: 60px") { "Already trusted by leading firms, join the new era of feasibility studies" }
+        Img(src: "https://placehold.co/1600x100?text=LOGOS", style: "width: 100%; max-width: 1600px")
+    }
+
+    // 6. FAQ
+    FAQ(style: "padding: 100px 228px; background: var(--color-bg-light)") {
+        Div(style: "display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 60px") {
+            H2(style: "font-size: 48px; font-weight: 700; color: #7b7e84") { "FAQ" }
+            Div(style: "width: 400px; border-bottom: 1px solid #8d9095; padding-bottom: 10px; display: flex; justify-content: space-between") {
+                Span(style: "color: #a6a9b0; font-size: 22px") { "Search Keywords" }
+                Span { "🔍" }
+            }
+        }
+        
+        Div(style: "display: flex; flex-direction: column; gap: 28px") {
+            Div(style: "display: flex; justify-content: space-between; border-bottom: 1px solid #a6a9b0; padding-bottom: 28px") {
+                P(style: "font-size: 28px; font-weight: 600; color: var(--color-text-gray)") { "Q. What is Zenerate App?" }
+                Span { "▼" }
+            }
+            Div(style: "display: flex; justify-content: space-between; border-bottom: 1px solid #a6a9b0; padding-bottom: 28px") {
+                P(style: "font-size: 28px; font-weight: 600; color: var(--color-text-gray)") { "Q. Does it generate building layouts automatically?" }
+                Span { "▼" }
+            }
+            Div(style: "display: flex; justify-content: space-between; border-bottom: 1px solid #a6a9b0; padding-bottom: 28px") {
+                P(style: "font-size: 28px; font-weight: 600; color: var(--color-text-gray)") { "Q. Can I edit floor plans?" }
+                Span { "▼" }
+            }
+        }
+        
+        // Pagination
+        Div(style: "display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 40px") {
+            Span { "←" }
+            Span(style: "color: #6a6d73") { "1/20 Page" }
+            Span { "→" }
+        }
+    }
+
+    // 7. CTA
+    CTA(style: "padding: 100px 48px; background: linear-gradient(90deg, #4d49f4 0%, #8B5CF6 100%); color: white; display: flex; justify-content: space-between; align-items: center") {
+        Div(style: "max-width: 600px") {
+            H2(style: "font-size: 42px; font-weight: 700; margin-bottom: 20px") { "Ready to Transform Your Feasibility Process?" }
+            P(style: "font-size: 24px") { "Join the growing number of professionals using Zenerate app." }
+            Button(style: "margin-top: 40px; padding: 16px 32px; background: white; color: #3e425b; font-size: 19px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer") {
+                "Request Demo"
+            }
+        }
+        Img(src: "https://placehold.co/500x300", style: "border-radius: 8px")
+    }
+
+    // 8. Footer
+    Footer(style: "padding: 80px; background: white") {
+        Div(style: "display: flex; justify-content: space-between; margin-bottom: 60px") {
+            Div(style: "display: flex; gap: 20px") {
+                Img(src: "https://placehold.co/32x32", style: "width: 32px")
+                Div(style: "display: flex; flex-direction: column; gap: 10px") {
+                    P(style: "font-size: 14px; font-weight: 500") { "Subscribe Latest Updates!" }
+                    Div(style: "display: flex; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px") {
+                        Span(style: "color: #b9bac1") { "Enter email" }
+                    }
+                }
+            }
+            Div(style: "display: flex; gap: 60px") {
+                Div {
+                    P(style: "font-weight: 600; margin-bottom: 10px") { "Solutions" }
+                    P(style: "color: var(--color-text-gray)") { "Zenerate App" }
+                    P(style: "color: var(--color-text-gray)") { "Feasibility Report" }
+                }
+                Div {
+                    P(style: "font-weight: 600; margin-bottom: 10px") { "Resources" }
+                    P(style: "color: var(--color-text-gray)") { "Tutorials" }
+                    P(style: "color: var(--color-text-gray)") { "Blog" }
+                }
+                Div {
+                    P(style: "font-weight: 600; margin-bottom: 10px") { "Company" }
+                    P(style: "color: var(--color-text-gray)") { "About" }
+                    P(style: "color: var(--color-text-gray)") { "Contact" }
+                }
+            }
+        }
+        Div(style: "border-top: 1px solid #eee; padding-top: 20px; display: flex; justify-content: space-between; color: var(--color-text-gray)") {
+            Div(style: "display: flex; gap: 20px") {
+                Span { "Terms & Conditions" }
+                Span { "Privacy Policy" }
+            }
+            Span { "© Zenerate, Inc. 2025. All rights reserved." }
+        }
+    }
+  }
+}

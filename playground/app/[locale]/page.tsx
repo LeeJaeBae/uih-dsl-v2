@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useCompiler } from "../hooks/useCompiler";
 import { IframePreview } from "../components/IframePreview";
+import { ChatInterface } from "../components/ChatInterface";
 import type { Framework } from "../types";
 
 import { EXAMPLES } from "../examples";
@@ -14,6 +15,7 @@ export default function Playground() {
   const [uihCode, setUihCode] = useState(EXAMPLES["Hello World"]);
   const [framework, setFramework] = useState<Framework>("react");
   const [viewMode, setViewMode] = useState<"split" | "code" | "preview">("split");
+  const [leftMode, setLeftMode] = useState<"editor" | "chat">("chat");
 
   const { ast, ir, code, errors } = useCompiler(uihCode, framework);
 
@@ -109,47 +111,82 @@ export default function Playground() {
       <div className="flex flex-1">
         <div className="w-1/2 border-r border-gray-700 flex flex-col">
           <div className="h-10 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 shrink-0">
-            <span className="text-gray-400 text-sm font-medium">UIH Code</span>
-            <select
-              className="bg-gray-700 text-gray-300 text-sm rounded px-2 py-1 border border-gray-600 focus:outline-none focus:border-blue-500"
-              onChange={(e) => setUihCode(EXAMPLES[e.target.value])}
-              defaultValue="Hello World"
-            >
-              {Object.keys(EXAMPLES).map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2 bg-gray-900 rounded p-1 border border-gray-700">
+              <button
+                onClick={() => setLeftMode("editor")}
+                className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
+                  leftMode === "editor"
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                Code
+              </button>
+              <button
+                onClick={() => setLeftMode("chat")}
+                className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
+                  leftMode === "chat"
+                    ? "bg-purple-600 text-white"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                Chat AI
+              </button>
+            </div>
+            
+            {leftMode === "editor" && (
+              <select
+                className="bg-gray-700 text-gray-300 text-sm rounded px-2 py-1 border border-gray-600 focus:outline-none focus:border-blue-500"
+                onChange={(e) => setUihCode(EXAMPLES[e.target.value])}
+                defaultValue="Hello World"
+              >
+                {Object.keys(EXAMPLES).map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="flex-1 relative">
-            <Editor
-              height="100%"
-              defaultLanguage="plaintext"
-              theme="vs-dark"
-              value={uihCode}
-              onChange={(value) => value && setUihCode(value)}
-              onMount={(editor, monaco) => {
-                const model = editor.getModel();
-                if (model) {
-                  monaco.editor.setModelMarkers(model, "uih", editorMarkers);
-                }
-              }}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 14,
-                fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-                lineNumbers: "on",
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                tabSize: 2,
-                insertSpaces: true,
-                wordWrap: "on",
-                renderLineHighlight: "all",
-                cursorBlinking: "smooth",
-                smoothScrolling: true,
-              }}
-            />
+            {leftMode === "editor" ? (
+              <Editor
+                height="100%"
+                defaultLanguage="plaintext"
+                theme="vs-dark"
+                value={uihCode}
+                onChange={(value) => value && setUihCode(value)}
+                onMount={(editor, monaco) => {
+                  const model = editor.getModel();
+                  if (model) {
+                    monaco.editor.setModelMarkers(model, "uih", editorMarkers);
+                  }
+                }}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
+                  lineNumbers: "on",
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  tabSize: 2,
+                  insertSpaces: true,
+                  wordWrap: "on",
+                  renderLineHighlight: "all",
+                  cursorBlinking: "smooth",
+                  smoothScrolling: true,
+                }}
+              />
+            ) : (
+              <ChatInterface 
+                currentCode={uihCode} 
+                onCodeGenerated={(code) => {
+                  setUihCode(code);
+                  // Optional: Switch back to editor to show the changes?
+                  // setLeftMode("editor"); 
+                }} 
+              />
+            )}
           </div>
         </div>
 

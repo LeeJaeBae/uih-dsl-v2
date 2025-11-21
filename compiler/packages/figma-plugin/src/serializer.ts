@@ -118,7 +118,7 @@ export function serializeNode(node: SceneNode): SimplifiedNode | null {
   // 3. Text Specific
   if (node.type === "TEXT") {
     base.text = {
-      content: node.characters.substring(0, 100),
+      content: node.characters,
     };
     if (typeof node.fontSize === "number") base.text.size = node.fontSize;
     

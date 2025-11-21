@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UIH Playground
+
+The interactive playground for the UIH (User Interface for Humans) DSL.
+Experience the power of AI-driven UI generation and instant compilation to React, Vue, and Svelte.
+
+## Features
+
+- **Live Editor:** Write UIH code and see real-time previews.
+- **AI Assistant:** Generate UI code using natural language (powered by Claude or Gemini).
+- **Multi-Framework Support:** Instantly compile to React, Vue, or Svelte.
+- **Error Highlighting:** Get immediate feedback on syntax errors.
 
 ## Getting Started
 
-First, run the development server:
+1.  **Install Dependencies:**
+    ```bash
+    pnpm install
+    ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2.  **Set up Environment Variables:**
+    Create a `.env.local` file in the `playground` directory and add your API keys:
+    ```env
+    # Optional: For Google Gemini (Free Tier available)
+    GOOGLE_API_KEY=your_google_api_key_here
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    # Optional: For Anthropic Claude
+    ANTHROPIC_API_KEY=your_anthropic_api_key_here
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3.  **Run Development Server:**
+    ```bash
+    pnpm dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
+This project is designed to be deployed on **Vercel**.
 
-To learn more about Next.js, take a look at the following resources:
+1.  Push your code to a GitHub repository.
+2.  Import the project into Vercel.
+3.  **Important:** In the Vercel project settings, add the environment variables:
+    *   `GOOGLE_API_KEY` (and/or `ANTHROPIC_API_KEY`)
+4.  Deploy!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Monorepo Note
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This playground is part of the UIH-v2 monorepo. It depends on local packages like `@uih-dsl/compiler`, `@uih-dsl/tokenizer`, etc. Vercel handles pnpm workspaces automatically, so no special build configuration is usually needed beyond the default.

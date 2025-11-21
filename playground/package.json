@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.21.1",
+    "@google/generative-ai": "^0.24.1",
     "@monaco-editor/react": "^4.6.0",
     "@uih-dsl/codegen-react": "workspace:*",
     "@uih-dsl/codegen-svelte": "workspace:*",

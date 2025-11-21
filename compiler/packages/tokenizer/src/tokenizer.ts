@@ -119,6 +119,20 @@ export class Tokenizer {
       throw this.createError(`Forbidden character '${char}'`, startPos);
     }
 
+    // Comments (//)
+    if (char === "/") {
+      if (this.peekNext() === "/") {
+        // Single-line comment: skip until newline
+        while (this.peek() !== "\n" && this.index < this.input.length) {
+          this.advance();
+        }
+        // Recursively get the next token after the comment
+        return this.nextToken();
+      } else {
+        throw this.createError("Unexpected character '/' (only // comments allowed)", startPos);
+      }
+    }
+
     // Newline
     if (char === "\n") {
       this.advance();
@@ -339,15 +353,9 @@ export class Tokenizer {
       while (this.index < this.input.length) {
         const char = this.peek();
 
-        if (this.isLetter(char) || this.isDigit(char)) {
+        if (this.isLetter(char) || this.isDigit(char) || char === "_" || char === "-") {
           value += char;
           this.advance();
-        } else if (char === "_") {
-          // Explicitly forbid underscore
-          throw this.createError(
-            "TagName cannot contain underscores",
-            this.getPosition()
-          );
         } else {
           // End of TagName
           break;
@@ -377,7 +385,7 @@ export class Tokenizer {
       while (this.index < this.input.length) {
         const char = this.peek();
 
-        if (this.isLowerCase(char) || this.isUpperCase(char) || this.isDigit(char)) {
+        if (this.isLowerCase(char) || this.isUpperCase(char) || this.isDigit(char) || char === "-" || char === "_") {
           value += char;
           lastWasDot = false;
           this.advance();

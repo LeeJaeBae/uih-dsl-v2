@@ -3,6 +3,5 @@
   "outputDirectory": ".next",
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "regions": ["icn1"]
+  "framework": "nextjs"
 }

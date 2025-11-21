@@ -55,6 +55,7 @@ function mapToHTMLTag(uihTag: string): string {
     Th: "th",
     // Media
     Img: "img",
+    Image: "img",
     Video: "video",
     Audio: "audio",
     // Other

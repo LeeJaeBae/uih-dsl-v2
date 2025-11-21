@@ -171,8 +171,7 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
         const match = attr.value.match(/toggle\((.*)\)/);
         if (match) {
           const target = match[1];
-          return `${key={() => set${capitalize(target)}(!${target})}}`;
-        }
+                     return `${key}={${"()"} => set${capitalize(target)}(!${target})}`;        }
       }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;

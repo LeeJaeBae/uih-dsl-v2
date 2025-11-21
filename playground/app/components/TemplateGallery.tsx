@@ -223,7 +223,7 @@ layout {
   Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: 'Inter', system-ui, sans-serif; overflow: hidden") {
     
     // Glass Sidebar
-    Div(style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20") {
+    Div(if: "isSidebarOpen" style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20") {
       // Logo
       Div(style: "display: flex; items-center: center; gap: spacing.md; margin-bottom: 60px; padding-left: 8px") {
         Div(style: "width: 40px; height: 40px; background-image: linear-gradient(135deg, color.primary, #c084fc); border-radius: 12px; box-shadow: 0 0 20px color.primaryGlow; display: flex; align-items: center; justify-content: center") {
@@ -288,9 +288,19 @@ layout {
       
       // Header
       Div(style: "height: 100px; display: flex; align-items: center; justify-content: space-between; padding: 0 spacing.xl; border-bottom: 1px solid color.border; background: rgba(9,9,11,0.4); backdrop-filter: blur(10px); z-index: 10") {
-        Div {
-          H2(style: "font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -1px; color: white") { "Overview" }
-          P(style: "font-size: 15px; color: color.textMuted; margin: 6px 0 0") { "Welcome back to your command center." }
+        Div(style: "display: flex; align-items: center; gap: 16px") {
+          // Toggle Button
+          Button(onClick: "toggle(isSidebarOpen)" style: "padding: 8px; background: transparent; border: 1px solid color.border; border-radius: 8px; color: color.textMuted; cursor: pointer; hover: { color: white; background: color.surfaceHighlight }") {
+            Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+              Line(x1:"3" y1:"12" x2:"21" y2:"12")
+              Line(x1:"3" y1:"6" x2:"21" y2:"6")
+              Line(x1:"3" y1:"18" x2:"21" y2:"18")
+            }
+          }
+          Div {
+            H2(style: "font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -1px; color: white") { "Overview" }
+            P(style: "font-size: 15px; color: color.textMuted; margin: 6px 0 0") { "Welcome back to your command center." }
+          }
         }
         Div(style: "display: flex; gap: 16px") {
           Button(style: "width: 48px; height: 48px; border-radius: radius.full; border: 1px solid color.border; background-color: rgba(255,255,255,0.03); color: color.text; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s") { 

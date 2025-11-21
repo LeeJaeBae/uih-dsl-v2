@@ -58,6 +58,18 @@ function mapToHTMLTag(uihTag: string): string {
     Image: "img",
     Video: "video",
     Audio: "audio",
+    // SVG
+    Svg: "svg",
+    Path: "path",
+    Circle: "circle",
+    Rect: "rect",
+    Line: "line",
+    Polyline: "polyline",
+    Polygon: "polyline",
+    G: "g",
+    Defs: "defs",
+    LinearGradient: "linearGradient",
+    Stop: "stop",
     // Other
     A: "a",
     Card: "div",

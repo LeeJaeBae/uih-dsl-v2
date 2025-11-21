@@ -237,30 +237,38 @@ layout {
       Div(style: "display: flex; flex-direction: column; gap: 12px") {
         Button(style: "text-align: left; padding: 16px 20px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2)") { 
           // Icon: Grid
-          Div(style: "width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.8); border-radius: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 2px") {
-             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
-             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
-             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
-             Div(style: "background: rgba(255,255,255,0.8); border-radius: 1px") {}
+          Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+            Path(d:"M3 3h7v7H3z")
+            Path(d:"M14 3h7v7h-7z")
+            Path(d:"M14 14h7v7h-7z")
+            Path(d:"M3 14h7v7H3z")
           }
           Span { "Dashboard" }
         }
         
         Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
           // Icon: Activity
-          Div(style: "width: 20px; height: 20px; border: 2px solid currentColor; border-radius: 50%; position: relative") {}
+          Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+            Polyline(points:"22 12 18 12 15 21 9 3 6 12 2 12")
+          }
           Span { "Activity" }
         }
         
         Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
           // Icon: Wallet
-          Div(style: "width: 20px; height: 16px; border: 2px solid currentColor; border-radius: 4px") {}
+          Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+            Rect(x:"1" y:"4" width:"22" height:"16" rx:"2" ry:"2")
+            Line(x1:"1" y1:"10" x2:"23" y2:"10")
+          }
           Span { "Wallet" }
         }
         
         Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; hover: { background-color: rgba(255,255,255,0.03); color: white }") { 
           // Icon: Settings
-          Div(style: "width: 20px; height: 20px; border: 2px solid currentColor; border-radius: 50%; border-style: dashed") {}
+          Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+            Path(d:"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z")
+            Circle(cx:"12" cy:"12" r:"3")
+          }
           Span { "Settings" }
         }
       }
@@ -300,10 +308,16 @@ layout {
         // Stats Cards
         Div(style: "display: grid; grid-template-columns: repeat(3, 1fr); gap: spacing.lg; margin-bottom: spacing.lg") {
           // Card 1
-          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 32px; border-radius: radius.xl; position: relative; overflow: hidden; box-shadow: shadow.glow; transition: transform 0.2s; hover: { transform: translateY(-4px) }") {
+          Div(style: "background-color: color.surface; border: 1px solid color.border; padding: 24px; border-radius: radius.xl; position: relative; overflow: hidden; box-shadow: shadow.glow; transition: transform 0.2s; hover: { transform: translateY(-4px) }") {
             Div(style: "position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: linear-gradient(135deg, rgba(124,58,237,0.1), transparent); border-radius: 0 0 0 100%") {}
             
-            Div(style: "color: color.textMuted; font-size: 15px; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px") { "Total Revenue" }
+            Div(style: "color: color.textMuted; font-size: 15px; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between") { 
+              Span { "Total Revenue" }
+              Svg(width:"20" height:"20" viewBox:"0 0 24 24" fill:"none" stroke:"currentColor" stroke-width:"2" stroke-linecap:"round" stroke-linejoin:"round") {
+                Polyline(points:"23 6 13.5 15.5 8.5 10.5 1 18")
+                Polyline(points:"17 6 23 6 23 12")
+              }
+            }
             Div(style: "font-size: 42px; font-weight: 800; letter-spacing: -2px; color: white") { "$124,500" }
             
             Div(style: "display: flex; items-center: center; gap: 8px; margin-top: 16px") {

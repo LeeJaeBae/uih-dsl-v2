@@ -30,8 +30,8 @@ layout {
     expect(output.code).toContain("export const metadata");
     expect(output.code).toContain('title: "Test Page"');
     expect(output.code).toContain("export default function Page()");
-    expect(output.code).toContain("<Div");
-    expect(output.code).toContain('class="container"');
+    expect(output.code).toContain("<div");
+    expect(output.code).toContain('className="container"');
     expect(output.code).toContain('{"Hello World"}');
 
     expect(output.style).toContain("--color-primary: #0E5EF7");
@@ -62,15 +62,15 @@ layout {
     const output = generate(ir);
 
     expect(output.code).toContain("<Container>");
-    expect(output.code).toContain("<Header>");
-    expect(output.code).toContain("<H1>");
+    expect(output.code).toContain("<header>");
+    expect(output.code).toContain("<h1>");
     expect(output.code).toContain('{"Title"}');
-    expect(output.code).toContain("<Main>");
-    expect(output.code).toContain("<P>");
+    expect(output.code).toContain("<main>");
+    expect(output.code).toContain("<p>");
     expect(output.code).toContain('{"Content"}');
-    expect(output.code).toContain("</P>");
-    expect(output.code).toContain("</Main>");
-    expect(output.code).toContain("</Header>");
+    expect(output.code).toContain("</p>");
+    expect(output.code).toContain("</main>");
+    expect(output.code).toContain("</header>");
     expect(output.code).toContain("</Container>");
   });
 
@@ -114,7 +114,7 @@ layout {
     const ir = createIR(ast, errors);
     const output = generate(ir);
 
-    expect(output.code).toContain('class="container"');
+    expect(output.code).toContain('className="container"');
     expect(output.code).toContain('id="main"');
     expect(output.code).toContain('role="main"');
   });
@@ -159,7 +159,7 @@ layout {
     expect(output.style).toBeNull();
     expect(output.events).toHaveLength(0);
     expect(output.code).toContain("export default function Page()");
-    expect(output.code).toContain("<Div>");
+    expect(output.code).toContain("<div>");
     expect(output.code).toContain('{"Minimal"}');
   });
 
@@ -177,6 +177,6 @@ layout {
     const ir = createIR(ast, errors);
     const output = generate(ir);
 
-    expect(output.code).toContain("<Hr />");
+    expect(output.code).toContain("<hr />");
   });
 });

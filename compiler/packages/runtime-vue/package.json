@@ -38,6 +38,7 @@
     "vue": "^3.3.0"
   },
   "devDependencies": {
+    "jsdom": "^27.2.0",
     "typescript": "^5.7.3",
     "vitest": "^3.0.0",
     "vue": "^3.3.0"

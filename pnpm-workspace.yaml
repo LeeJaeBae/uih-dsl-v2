@@ -3,5 +3,3 @@ packages:
   - 'compiler/packages/codegen/*'
   - 'vscode-uih'
   - 'playground'
-  - 'mcp-figma'
-  - 'figma-plugin'

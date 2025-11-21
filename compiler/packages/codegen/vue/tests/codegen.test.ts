@@ -63,7 +63,7 @@ layout {
     const ir = createIR(ast, errors);
     const output = generate(ir);
 
-    expect(output.code).toContain("<container>");
+    expect(output.code).toContain("<Container>");
     expect(output.code).toContain("<header>");
     expect(output.code).toContain("<h1>");
     expect(output.code).toContain("Title");
@@ -73,7 +73,7 @@ layout {
     expect(output.code).toContain("</p>");
     expect(output.code).toContain("</main>");
     expect(output.code).toContain("</header>");
-    expect(output.code).toContain("</container>");
+    expect(output.code).toContain("</Container>");
   });
 
   it("should generate Vue event handlers", () => {

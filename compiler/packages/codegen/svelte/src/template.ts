@@ -61,9 +61,11 @@ function mapToHTMLTag(uihTag: string): string {
     A: "a",
     Card: "div",
     CardContent: "div",
+    Hr: "hr",
+    Br: "br",
   };
 
-  return htmlTagMap[uihTag] || "div";
+  return htmlTagMap[uihTag] || uihTag;
 }
 
 function generateNode(node: IRNode, indent: number): string {

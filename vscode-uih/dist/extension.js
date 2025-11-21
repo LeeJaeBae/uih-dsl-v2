@@ -1409,9 +1409,11 @@ function mapToHTMLTag(uihTag) {
     // Other
     A: "a",
     Card: "div",
-    CardContent: "div"
+    CardContent: "div",
+    Hr: "hr",
+    Br: "br"
   };
-  return htmlTagMap[uihTag] || "div";
+  return htmlTagMap[uihTag] || uihTag;
 }
 function generateNode(node, indent) {
   if (node.type === "Text") {
@@ -1618,9 +1620,11 @@ function mapToHTMLTag2(uihTag) {
     // Other
     A: "a",
     Card: "div",
-    CardContent: "div"
+    CardContent: "div",
+    Hr: "hr",
+    Br: "br"
   };
-  return htmlTagMap[uihTag] || "div";
+  return htmlTagMap[uihTag] || uihTag;
 }
 function generateNode2(node, indent) {
   if (node.type === "Text") {
@@ -1834,9 +1838,11 @@ function mapToHTMLTag3(uihTag) {
     // Other
     A: "a",
     Card: "div",
-    CardContent: "div"
+    CardContent: "div",
+    Hr: "hr",
+    Br: "br"
   };
-  return htmlTagMap[uihTag] || "div";
+  return htmlTagMap[uihTag] || uihTag;
 }
 function generateNode3(node, indent) {
   if (node.type === "Text") {

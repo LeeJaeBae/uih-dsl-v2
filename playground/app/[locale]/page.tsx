@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCompiler } from "../hooks/useCompiler";
 import { IframePreview } from "../components/IframePreview";
 import { ChatInterface } from "../components/ChatInterface";
+import { TemplateGallery } from "../components/TemplateGallery";
 import type { Framework } from "../types";
 
 import { EXAMPLES } from "../examples";
@@ -16,6 +17,7 @@ export default function Playground() {
   const [framework, setFramework] = useState<Framework>("react");
   const [viewMode, setViewMode] = useState<"split" | "code" | "preview">("split");
   const [leftMode, setLeftMode] = useState<"editor" | "chat">("chat");
+  const [showGallery, setShowGallery] = useState(false);
 
   const { ast, ir, code, errors } = useCompiler(uihCode, framework);
 
@@ -41,7 +43,17 @@ export default function Playground() {
   }, [errors]);
 
   return (
-    <div className="flex h-screen bg-gray-900 pt-14">
+    <div className="flex h-screen bg-gray-900 pt-14 relative">
+      {showGallery && (
+        <TemplateGallery 
+          onSelect={(code) => {
+            setUihCode(code);
+            setLeftMode("editor");
+          }}
+          onClose={() => setShowGallery(false)}
+        />
+      )}
+
       <div className="absolute top-14 right-4 flex gap-2 z-10">
         <div className="flex bg-gray-800 rounded p-1 mr-4 border border-gray-700">
           <button
@@ -111,26 +123,34 @@ export default function Playground() {
       <div className="flex flex-1">
         <div className="w-1/2 border-r border-gray-700 flex flex-col">
           <div className="h-10 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 shrink-0">
-            <div className="flex items-center gap-2 bg-gray-900 rounded p-1 border border-gray-700">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-gray-900 rounded p-1 border border-gray-700">
+                <button
+                  onClick={() => setLeftMode("editor")}
+                  className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
+                    leftMode === "editor"
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-400 hover:text-gray-200"
+                  }`}
+                >
+                  Code
+                </button>
+                <button
+                  onClick={() => setLeftMode("chat")}
+                  className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
+                    leftMode === "chat"
+                      ? "bg-purple-600 text-white"
+                      : "text-gray-400 hover:text-gray-200"
+                  }`}
+                >
+                  Chat AI
+                </button>
+              </div>
               <button
-                onClick={() => setLeftMode("editor")}
-                className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
-                  leftMode === "editor"
-                    ? "bg-gray-700 text-white"
-                    : "text-gray-400 hover:text-gray-200"
-                }`}
+                onClick={() => setShowGallery(true)}
+                className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded border border-gray-600 transition-colors flex items-center gap-1"
               >
-                Code
-              </button>
-              <button
-                onClick={() => setLeftMode("chat")}
-                className={`px-3 py-0.5 rounded text-xs font-medium transition-colors ${
-                  leftMode === "chat"
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-400 hover:text-gray-200"
-                }`}
-              >
-                Chat AI
+                <span className="text-yellow-400">✨</span> Templates
               </button>
             </div>
             

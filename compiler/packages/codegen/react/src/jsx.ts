@@ -4,7 +4,7 @@
  * Generates JSX code from IR layout tree.
  *
  * @module @uih-dsl/codegen-react/jsx
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 import type { IRNode } from "@uih-dsl/ir";
@@ -92,7 +92,7 @@ function generateNode(node: IRNode, indent: number): string {
 function generateTextNode(node: { type: "Text"; value: string }, indent: number): string {
   const indentStr = " ".repeat(indent);
   const escaped = escapeJSXText(node.value);
-  return `${indentStr}{"${escaped}"}`;
+  return `${indentStr}{${JSON.stringify(escaped)}}`;
 }
 
 const VOID_ELEMENTS = new Set([
@@ -123,17 +123,32 @@ function generateComponentNode(
 ): string {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag(node.tag);
-  const attrs = generateAttributes(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
+  
+  // Handle conditional rendering 'if' attribute
+  const ifAttr = node.attrs.find(a => a.key === "if");
+  const attrs = node.attrs.filter(a => a.key !== "if");
+  
+  const attrsStr = generateAttributes(attrs);
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
+
+  let jsx = "";
 
   if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
-    return `${indentStr}<${tag}${attrsStr} />`;
-  }
-
-  const childrenStr = generateJSX(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+    jsx = `${indentStr}<${tag}${attrsFinal} />`;
+  } else {
+    const childrenStr = generateJSX(node.children, indent + 2);
+    jsx = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
+  }
+
+  if (ifAttr) {
+    return `${indentStr}{${ifAttr.value} && (
+${jsx}
+${indentStr})}`;
+  }
+
+  return jsx;
 }
 
 function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
@@ -144,6 +159,15 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
       if (key === "style") {
         const styleObj = parseStyleString(attr.value);
         return `style={${JSON.stringify(styleObj)}}`;
+      }
+
+      // Handle toggle() magic syntax in events
+      if (attr.key.startsWith("on") && attr.value.startsWith("toggle(")) {
+        const match = attr.value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1];
+          return `${key={() => set${capitalize(target)}(!${target})}}`;
+        }
       }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;
@@ -173,10 +197,14 @@ function toCamelCase(str: string): string {
   return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
 
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function escapeJSXText(text: string): string {
   return text
     .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
+    .replace(/"/g, '\"')
     .replace(/\n/g, "\\n")
     .replace(/\r/g, "\\r")
     .replace(/\t/g, "\\t");

@@ -25,16 +25,17 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
 
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
-  const events = generateScript(ir);
-  const scriptCode = generateScriptExports(events);
+  const scriptData = generateScript(ir); // Now returns { hooks, handlers }
+  const scriptCode = generateScriptExports(scriptData);
 
-  const code = generateFullCode(ir, meta, style, scriptCode, opts);
+  // Pass scriptData to generateComponent so it can inject code INSIDE the component
+  const code = generateFullCode(ir, meta, style, scriptCode, opts, scriptData);
 
   return {
     code,
     style,
     meta,
-    events,
+    events: scriptData.handlers, // Backwards compatibility
   };
 }
 
@@ -43,7 +44,8 @@ function generateFullCode(
   meta: string | null,
   style: string | null,
   scriptCode: string | null,
-  opts: Required<CodegenOptions>
+  opts: Required<CodegenOptions>,
+  scriptData: { hooks: string[]; handlers: string[] }
 ): string {
   const sections: string[] = [];
 
@@ -67,16 +69,13 @@ function generateFullCode(
   }
 
   if (style) {
-    sections.push(`const styles = \`
+    sections.push(`const styles = \
 ${style}
-\`;`);
+\
+`);
   }
 
-  if (scriptCode) {
-    sections.push(scriptCode);
-  }
-
-  const componentCode = generateComponent(ir, opts);
+  const componentCode = generateComponent(ir, opts, scriptData);
   sections.push(componentCode);
 
   return sections.join("\n\n");
@@ -92,10 +91,17 @@ ${errors.join("\n")}
  */`;
 }
 
-function generateComponent(ir: UIHIR, opts: Required<CodegenOptions>): string {
+function generateComponent(
+  ir: UIHIR, 
+  opts: Required<CodegenOptions>,
+  scriptData: { hooks: string[]; handlers: string[] }
+): string {
   const jsx = generateJSX(ir.layout, opts.indentSize);
+  const body = [...scriptData.hooks, ...scriptData.handlers].join("\n  ");
 
   return `export default function ${opts.componentName}() {
+  ${body}
+
   return (
 ${jsx}
   );

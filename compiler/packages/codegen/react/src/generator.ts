@@ -69,10 +69,7 @@ function generateFullCode(
   }
 
   if (style) {
-    sections.push(`const styles = \
-${style}
-\
-`);
+    sections.push(`const styles = ${JSON.stringify(style)};`);
   }
 
   const componentCode = generateComponent(ir, opts, scriptData);

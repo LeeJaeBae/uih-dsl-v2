@@ -44,8 +44,9 @@ program
 
 program
   .command("dev <file>")
-  .description("Development mode with file watching")
+  .description("Development mode with WebSocket server")
   .option("-t, --target <target>", "Target framework (react|vue|svelte)", "react")
+  .option("-p, --port <port>", "WebSocket port (default: 3001)", "3001")
   .action(devCommand);
 
 program

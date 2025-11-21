@@ -1,0 +1,12 @@
+{
+  "name": "uih-vibe-coding-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI-powered Vibe Coding demo for UIH DSL",
+  "scripts": {
+    "demo": "node ai-vibe-coding.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.34.1"
+  }
+}

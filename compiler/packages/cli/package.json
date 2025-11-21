@@ -32,7 +32,10 @@
     "@uih-dsl/codegen-react": "workspace:*",
     "@uih-dsl/codegen-vue": "workspace:*",
     "@uih-dsl/codegen-svelte": "workspace:*",
-    "commander": "^12.0.0"
+    "@uih-dsl/validator": "workspace:*",
+    "commander": "^12.1.0",
+    "chokidar": "^4.0.3",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

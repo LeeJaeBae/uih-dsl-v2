@@ -1,0 +1,176 @@
+meta {
+  title: "User Settings"
+  route: "/settings"
+}
+
+style {
+  color.primary: "#3B82F6"
+  color.secondary: "#6B7280"
+  color.success: "#10B981"
+  color.error: "#EF4444"
+  color.text.primary: "#111827"
+  color.text.secondary: "#6B7280"
+  color.text.muted: "#9CA3AF"
+  color.bg.primary: "#FFFFFF"
+  color.bg.secondary: "#F9FAFB"
+  color.bg.input: "#FFFFFF"
+  color.border: "#D1D5DB"
+  color.border.focus: "#3B82F6"
+  spacing.xs: "4px"
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  spacing.xl: "32px"
+  spacing.2xl: "48px"
+  radius.sm: "4px"
+  radius.md: "8px"
+  radius.lg: "12px"
+  font.size.sm: "14px"
+  font.size.base: "16px"
+  font.size.lg: "18px"
+  font.size.xl: "20px"
+  font.size.2xl: "24px"
+  font.weight.normal: "400"
+  font.weight.medium: "500"
+  font.weight.semibold: "600"
+  font.weight.bold: "700"
+  input.height: "44px"
+  input.padding: "12px 16px"
+}
+
+components {
+  SettingsSection
+  FormField
+  TextInput
+  SelectInput
+  SwitchToggle
+  SaveButton
+}
+
+layout {
+  Div(class: "settings-page", style: "min-height: 100vh; background: var(--color-bg-secondary); padding: var(--spacing-2xl)") {
+    Div(class: "settings-container", style: "max-width: 800px; margin: 0 auto") {
+      Header(class: "page-header", style: "margin-bottom: var(--spacing-2xl)") {
+        H1(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm)") {
+          "Settings"
+        }
+        P(style: "color: var(--color-text-secondary); font-size: var(--font-size-base)") {
+          "Manage your account preferences and settings"
+        }
+      }
+      SettingsSection(class: "profile-section", style: "background: var(--color-bg-primary); padding: var(--spacing-xl); border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: 0 1px 3px rgba(0,0,0,0.1)") {
+        H2(style: "font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-border)") {
+          "Profile Information"
+        }
+        Form(class: "profile-form") {
+          FormField(class: "field-group", style: "margin-bottom: var(--spacing-lg)") {
+            Label(for: "fullName", style: "display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-sm)") {
+              "Full Name"
+            }
+            TextInput(id: "fullName", type: "text", placeholder: "John Doe", style: "width: 100%; height: var(--input-height); padding: var(--input-padding); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); background: var(--color-bg-input)") {
+              ""
+            }
+          }
+          FormField(class: "field-group", style: "margin-bottom: var(--spacing-lg)") {
+            Label(for: "email", style: "display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-sm)") {
+              "Email Address"
+            }
+            TextInput(id: "email", type: "email", placeholder: "john@example.com", style: "width: 100%; height: var(--input-height); padding: var(--input-padding); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); background: var(--color-bg-input)") {
+              ""
+            }
+            Span(style: "display: block; font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: var(--spacing-xs)") {
+              "We'll never share your email with anyone else."
+            }
+          }
+          Div(class: "field-row", style: "display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg)") {
+            FormField(class: "field-group") {
+              Label(for: "phone", style: "display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-sm)") {
+                "Phone Number"
+              }
+              TextInput(id: "phone", type: "tel", placeholder: "+1 (555) 123-4567", style: "width: 100%; height: var(--input-height); padding: var(--input-padding); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); background: var(--color-bg-input)") {
+                ""
+              }
+            }
+            FormField(class: "field-group") {
+              Label(for: "language", style: "display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-sm)") {
+                "Language"
+              }
+              SelectInput(id: "language", style: "width: 100%; height: var(--input-height); padding: var(--input-padding); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); background: var(--color-bg-input); cursor: pointer") {
+                Option(value: "en") {
+                  "English"
+                }
+                Option(value: "es") {
+                  "Español"
+                }
+                Option(value: "fr") {
+                  "Français"
+                }
+              }
+            }
+          }
+        }
+      }
+      SettingsSection(class: "preferences-section", style: "background: var(--color-bg-primary); padding: var(--spacing-xl); border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: 0 1px 3px rgba(0,0,0,0.1)") {
+        H2(style: "font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-border)") {
+          "Preferences"
+        }
+        Div(class: "toggle-group", style: "margin-bottom: var(--spacing-lg)") {
+          Div(class: "toggle-item", style: "display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-bg-secondary); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm)") {
+            Div(class: "toggle-label") {
+              Span(style: "display: block; font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-xs)") {
+                "Email Notifications"
+              }
+              Span(style: "display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary)") {
+                "Receive email updates about your account activity"
+              }
+            }
+            SwitchToggle(id: "email-notif", checked: "true", style: "width: 44px; height: 24px; background: var(--color-primary); border-radius: var(--radius-full); position: relative; cursor: pointer") {
+              ""
+            }
+          }
+          Div(class: "toggle-item", style: "display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-bg-secondary); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm)") {
+            Div(class: "toggle-label") {
+              Span(style: "display: block; font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-xs)") {
+                "Push Notifications"
+              }
+              Span(style: "display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary)") {
+                "Get push notifications on your devices"
+              }
+            }
+            SwitchToggle(id: "push-notif", checked: "false", style: "width: 44px; height: 24px; background: var(--color-secondary); border-radius: var(--radius-full); position: relative; cursor: pointer") {
+              ""
+            }
+          }
+          Div(class: "toggle-item", style: "display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-bg-secondary); border-radius: var(--radius-md)") {
+            Div(class: "toggle-label") {
+              Span(style: "display: block; font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text-primary); margin-bottom: var(--spacing-xs)") {
+                "Two-Factor Authentication"
+              }
+              Span(style: "display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary)") {
+                "Add an extra layer of security to your account"
+              }
+            }
+            SwitchToggle(id: "2fa", checked: "true", style: "width: 44px; height: 24px; background: var(--color-primary); border-radius: var(--radius-full); position: relative; cursor: pointer") {
+              ""
+            }
+          }
+        }
+      }
+      Div(class: "actions", style: "display: flex; gap: var(--spacing-md); justify-content: flex-end") {
+        Button(class: "cancel-btn", style: "padding: var(--spacing-sm) var(--spacing-lg); background: transparent; color: var(--color-text-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); font-weight: var(--font-weight-medium); cursor: pointer") {
+          "Cancel"
+        }
+        SaveButton(class: "save-btn", style: "padding: var(--spacing-sm) var(--spacing-xl); background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); cursor: pointer; box-shadow: 0 2px 4px rgba(59,130,246,0.3)") {
+          "Save Changes"
+        }
+      }
+    }
+  }
+}
+
+script {
+  onLoad: "loadUserSettings"
+  onSubmit: "validateAndSave"
+  onToggleChange: "updatePreference"
+  onCancel: "resetForm"
+}

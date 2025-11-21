@@ -1935,8 +1935,16 @@ ${errors.join("\n")}
 }
 
 // src/extension.ts
+var import_smart_compile = require("@uih-dsl/cli/src/utils/smart-compile.js");
+var import_sdk = __toESM(require("@anthropic-ai/sdk"));
+var statusBarItem;
 function activate(context) {
-  console.log("UIH v2 extension activated");
+  console.log("UIH v2 extension activated with Self-Healing");
+  statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    100
+  );
+  context.subscriptions.push(statusBarItem);
   const previewCommand = vscode.commands.registerCommand(
     "uih.preview",
     async () => {
@@ -1949,7 +1957,14 @@ function activate(context) {
       await handleCompile();
     }
   );
-  context.subscriptions.push(previewCommand, compileCommand);
+  const saveListener = vscode.workspace.onWillSaveTextDocument(async (e) => {
+    if (e.document.languageId !== "uih") return;
+    const config2 = vscode.workspace.getConfiguration("uih");
+    const autoFixEnabled = config2.get("autoFixOnSave", false);
+    if (!autoFixEnabled) return;
+    e.waitUntil(attemptAutoFix(e.document));
+  });
+  context.subscriptions.push(previewCommand, compileCommand, saveListener);
   const config = vscode.workspace.getConfiguration("uih");
   if (config.get("autoPreview")) {
     vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -2170,6 +2185,81 @@ function renderAttributes(attrs) {
 }
 function escapeHtml(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+async function attemptAutoFix(document) {
+  const source = document.getText();
+  try {
+    const tokens = tokenize(source);
+    const parseResult = parse(tokens);
+    if (parseResult.errors.length === 0) {
+      return [];
+    }
+  } catch {
+    return [];
+  }
+  const config = vscode.workspace.getConfiguration("uih");
+  const apiKey = config.get("anthropicApiKey");
+  if (!apiKey || apiKey.trim() === "") {
+    return [];
+  }
+  try {
+    const result = await (0, import_smart_compile.smartCompile)(source, {
+      maxRetries: 1,
+      // Only 1 retry for save performance
+      retryCallback: async (errors) => {
+        const client = new import_sdk.default({ apiKey });
+        const systemPrompt = `You are a UIH DSL code generator. UIH is a strict, LLM-friendly UI language.
+
+Grammar Rules:
+- Fixed block order: meta {...} \u2192 style {...} \u2192 components {...}? \u2192 layout {...} \u2192 script {...}?
+- Property format: key: "value" (colon is REQUIRED)
+- Double quotes only (single quotes forbidden)
+- 2-space indentation (tabs forbidden)
+- No semicolons
+- Lowercase identifiers, Uppercase TagNames
+
+Fix ONLY the syntax errors. Do not change the logic or structure unless necessary for syntax correctness.
+Return ONLY the corrected UIH code, nothing else.`;
+        const response = await client.messages.create({
+          model: "claude-3-5-sonnet-20241022",
+          max_tokens: 2048,
+          system: systemPrompt,
+          messages: [
+            {
+              role: "user",
+              content: `Fix these UIH syntax errors:
+
+Errors:
+${errors.map((e) => `- Line ${e.line}: ${e.message}`).join("\n")}
+
+Current code:
+\`\`\`uih
+${source}
+\`\`\`
+
+Return only the corrected UIH code.`
+            }
+          ]
+        });
+        let fixedCode = response.content[0].text.trim();
+        fixedCode = fixedCode.replace(/^```[\w]*\n/, "").replace(/\n```$/, "").trim();
+        return fixedCode;
+      }
+    });
+    if (result.success && result.finalSource !== source) {
+      statusBarItem.text = "$(check) UIH Auto-fixed";
+      statusBarItem.show();
+      setTimeout(() => statusBarItem.hide(), 3e3);
+      const fullRange = new vscode.Range(
+        document.positionAt(0),
+        document.positionAt(source.length)
+      );
+      return [vscode.TextEdit.replace(fullRange, result.finalSource)];
+    }
+  } catch (error) {
+    console.error("UIH auto-fix failed:", error);
+  }
+  return [];
 }
 function deactivate() {
   console.log("UIH v2 extension deactivated");

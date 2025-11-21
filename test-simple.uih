@@ -11,4 +11,8 @@ layout {
   Div {
     "Hello World"
   }
+
+  Button {
+    "Click Me"
+  }
 }

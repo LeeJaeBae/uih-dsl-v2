@@ -32,9 +32,18 @@ importers:
       '@uih-dsl/tokenizer':
         specifier: workspace:*
         version: link:../tokenizer
+      '@uih-dsl/validator':
+        specifier: workspace:*
+        version: link:../validator
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
       commander:
-        specifier: ^12.0.0
+        specifier: ^12.1.0
         version: 12.1.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.3
     devDependencies:
       '@types/node':
         specifier: ^20.0.0

@@ -32,9 +32,18 @@ importers:
       '@uih-dsl/tokenizer':
         specifier: workspace:*
         version: link:../tokenizer
+      '@uih-dsl/validator':
+        specifier: workspace:*
+        version: link:../validator
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
       commander:
-        specifier: ^12.0.0
+        specifier: ^12.1.0
         version: 12.1.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.3
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -222,6 +231,9 @@ importers:
       '@uih-dsl/parser':
         specifier: workspace:*
         version: link:../parser
+      '@uih-dsl/tokenizer':
+        specifier: workspace:*
+        version: link:../tokenizer
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -302,6 +314,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.21.0
         version: 0.21.1
+      '@uih-dsl/cli':
+        specifier: workspace:*
+        version: link:../compiler/packages/cli
       '@uih-dsl/codegen-react':
         specifier: workspace:*
         version: link:../compiler/packages/codegen/react
@@ -4786,6 +4801,18 @@ packages:
 
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
 
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
@@ -9920,6 +9947,8 @@ snapshots:
 
   wrappy@1.0.2:
     optional: true
+
+  ws@8.18.3: {}
 
   wsl-utils@0.1.0:
     dependencies:

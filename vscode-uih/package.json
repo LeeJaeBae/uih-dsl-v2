@@ -2,7 +2,7 @@
   "name": "vscode-uih",
   "displayName": "UIH",
   "description": "UIH DSL v2 - LLM-friendly UI language with zero ambiguity, live preview, and multi-framework compilation",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publisher": "LeeJaeWon",
   "license": "MIT",
   "icon": "icon.png",
@@ -120,6 +120,11 @@
           "type": "boolean",
           "default": false,
           "description": "Automatically show preview when opening .uih files"
+        },
+        "uih.autoFixOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically fix syntax errors using AI when saving (requires API key)"
         }
       }
     }
@@ -131,6 +136,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.0",
+    "@uih-dsl/cli": "workspace:*",
     "@uih-dsl/tokenizer": "workspace:*",
     "@uih-dsl/parser": "workspace:*",
     "@uih-dsl/ir": "workspace:*",

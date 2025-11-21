@@ -1,0 +1,149 @@
+meta {
+  title: "Product Landing Page"
+  route: "/"
+}
+
+style {
+  color.brand.primary: "#6366F1"
+  color.brand.secondary: "#8B5CF6"
+  color.brand.accent: "#EC4899"
+  color.text.heading: "#1F2937"
+  color.text.body: "#4B5563"
+  color.text.light: "#9CA3AF"
+  color.bg.primary: "#FFFFFF"
+  color.bg.secondary: "#F9FAFB"
+  color.bg.dark: "#111827"
+  spacing.xs: "8px"
+  spacing.sm: "16px"
+  spacing.md: "24px"
+  spacing.lg: "32px"
+  spacing.xl: "48px"
+  spacing.2xl: "64px"
+  spacing.3xl: "96px"
+  radius.sm: "8px"
+  radius.md: "12px"
+  radius.lg: "16px"
+  radius.full: "9999px"
+  font.size.sm: "14px"
+  font.size.base: "16px"
+  font.size.lg: "18px"
+  font.size.xl: "24px"
+  font.size.2xl: "32px"
+  font.size.3xl: "48px"
+  font.size.4xl: "64px"
+  font.weight.normal: "400"
+  font.weight.medium: "500"
+  font.weight.semibold: "600"
+  font.weight.bold: "700"
+  font.weight.extrabold: "800"
+}
+
+components {
+  Header
+  Hero
+  FeatureCard
+  Footer
+  CTAButton
+}
+
+layout {
+  Div(class: "page", style: "min-height: 100vh; background: var(--color-bg-primary)") {
+    Header(class: "header", style: "display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-lg) var(--spacing-3xl); background: var(--color-bg-primary); border-bottom: 1px solid var(--color-bg-secondary)") {
+      Div(class: "logo", style: "font-size: var(--font-size-xl); font-weight: var(--font-weight-extrabold); color: var(--color-brand-primary)") {
+        "ProductName"
+      }
+      Nav(class: "nav", style: "display: flex; gap: var(--spacing-lg); align-items: center") {
+        A(href: "#features", style: "color: var(--color-text-body); text-decoration: none; font-weight: var(--font-weight-medium)") {
+          "Features"
+        }
+        A(href: "#pricing", style: "color: var(--color-text-body); text-decoration: none; font-weight: var(--font-weight-medium)") {
+          "Pricing"
+        }
+        A(href: "#contact", style: "color: var(--color-text-body); text-decoration: none; font-weight: var(--font-weight-medium)") {
+          "Contact"
+        }
+        CTAButton(class: "cta-btn", style: "padding: var(--spacing-sm) var(--spacing-lg); background: var(--color-brand-primary); color: white; border-radius: var(--radius-full); font-weight: var(--font-weight-semibold); cursor: pointer; border: none") {
+          "Get Started"
+        }
+      }
+    }
+    Hero(class: "hero", style: "text-align: center; padding: var(--spacing-3xl) var(--spacing-lg); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white") {
+      H1(style: "font-size: var(--font-size-4xl); font-weight: var(--font-weight-extrabold); margin-bottom: var(--spacing-md); line-height: 1.2") {
+        "Build Faster with AI"
+      }
+      P(style: "font-size: var(--font-size-xl); color: rgba(255, 255, 255, 0.9); max-width: 600px; margin: 0 auto var(--spacing-xl)") {
+        "The most powerful platform for shipping production-ready UI in minutes, not hours."
+      }
+      Div(class: "cta-group", style: "display: flex; gap: var(--spacing-md); justify-content: center") {
+        Button(class: "primary-btn", style: "padding: var(--spacing-md) var(--spacing-xl); background: white; color: var(--color-brand-primary); border-radius: var(--radius-full); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2)") {
+          "Start Free Trial"
+        }
+        Button(class: "secondary-btn", style: "padding: var(--spacing-md) var(--spacing-xl); background: transparent; color: white; border: 2px solid white; border-radius: var(--radius-full); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); cursor: pointer") {
+          "Watch Demo"
+        }
+      }
+    }
+    Section(id: "features", class: "features", style: "padding: var(--spacing-3xl) var(--spacing-xl); background: var(--color-bg-secondary)") {
+      H2(style: "font-size: var(--font-size-3xl); font-weight: var(--font-weight-extrabold); color: var(--color-text-heading); text-align: center; margin-bottom: var(--spacing-2xl)") {
+        "Everything you need to succeed"
+      }
+      Div(class: "features-grid", style: "display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-xl); max-width: 1200px; margin: 0 auto") {
+        FeatureCard(class: "feature", style: "background: var(--color-bg-primary); padding: var(--spacing-xl); border-radius: var(--radius-lg); box-shadow: 0 4px 6px rgba(0,0,0,0.05)") {
+          Div(class: "icon", style: "font-size: 48px; margin-bottom: var(--spacing-md)") {
+            "⚡"
+          }
+          H3(style: "font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text-heading); margin-bottom: var(--spacing-sm)") {
+            "Lightning Fast"
+          }
+          P(style: "color: var(--color-text-body); line-height: 1.6") {
+            "Generate production-ready code in seconds with our AI-powered engine."
+          }
+        }
+        FeatureCard(class: "feature", style: "background: var(--color-bg-primary); padding: var(--spacing-xl); border-radius: var(--radius-lg); box-shadow: 0 4px 6px rgba(0,0,0,0.05)") {
+          Div(class: "icon", style: "font-size: 48px; margin-bottom: var(--spacing-md)") {
+            "🎨"
+          }
+          H3(style: "font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text-heading); margin-bottom: var(--spacing-sm)") {
+            "Beautiful Design"
+          }
+          P(style: "color: var(--color-text-body); line-height: 1.6") {
+            "Every component is crafted with pixel-perfect attention to detail."
+          }
+        }
+        FeatureCard(class: "feature", style: "background: var(--color-bg-primary); padding: var(--spacing-xl); border-radius: var(--radius-lg); box-shadow: 0 4px 6px rgba(0,0,0,0.05)") {
+          Div(class: "icon", style: "font-size: 48px; margin-bottom: var(--spacing-md)") {
+            "🔧"
+          }
+          H3(style: "font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text-heading); margin-bottom: var(--spacing-sm)") {
+            "Fully Customizable"
+          }
+          P(style: "color: var(--color-text-body); line-height: 1.6") {
+            "Tweak every aspect of your design with our flexible token system."
+          }
+        }
+      }
+    }
+    Section(class: "cta-section", style: "padding: var(--spacing-3xl) var(--spacing-xl); background: var(--color-bg-dark); color: white; text-align: center") {
+      H2(style: "font-size: var(--font-size-3xl); font-weight: var(--font-weight-extrabold); margin-bottom: var(--spacing-md)") {
+        "Ready to get started?"
+      }
+      P(style: "font-size: var(--font-size-lg); color: rgba(255,255,255,0.8); margin-bottom: var(--spacing-xl)") {
+        "Join thousands of developers building amazing products."
+      }
+      Button(class: "cta-large", style: "padding: var(--spacing-lg) var(--spacing-2xl); background: var(--color-brand-accent); color: white; border-radius: var(--radius-full); font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(236,72,153,0.3)") {
+        "Start Building Now →"
+      }
+    }
+    Footer(class: "footer", style: "padding: var(--spacing-2xl) var(--spacing-xl); background: var(--color-bg-dark); color: rgba(255,255,255,0.6); text-align: center; border-top: 1px solid rgba(255,255,255,0.1)") {
+      P(style: "margin: 0") {
+        "© 2024 ProductName. All rights reserved."
+      }
+    }
+  }
+}
+
+script {
+  onLoad: "initLandingPage"
+  onCTAClick: "handleSignup"
+  onDemoClick: "playDemoVideo"
+}

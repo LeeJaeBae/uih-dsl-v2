@@ -66,12 +66,7 @@ const App = () => {
       
       if (type === "selection-json") {
         setJsonResult(JSON.stringify(data, null, 2));
-        
-        if (apiKey) {
-            await handleGenerate(data);
-        } else {
-            setActiveTab("json");
-        }
+        setActiveTab("json");
       }
     };
 
@@ -167,23 +162,49 @@ const App = () => {
         />
       </div>
 
-      <div style={{ marginBottom: "16px", flexShrink: 0 }}>
+      <div style={{ marginBottom: "16px", flexShrink: 0, display: "flex", gap: "8px" }}>
         <button 
           onClick={handleScan}
-          disabled={isLoading}
           style={{
-            width: "100%",
+            flex: 1,
             padding: "10px",
-            background: apiKey ? "#18A0FB" : "#999",
+            background: "#fff",
+            color: "#333",
+            border: "1px solid #ddd",
+            borderRadius: "6px",
+            fontWeight: 500,
+            cursor: "pointer"
+          }}
+        >
+          Scan JSON
+        </button>
+        <button 
+          onClick={() => {
+             // Trigger scan first if no JSON, but ideally we assume JSON is scanned or we trigger scan then AI
+             // For simplicity, let's make handleScan just scan, and we add a separate AI trigger if JSON exists
+             // Or better: handleScan does extraction. We need a new function to trigger AI from existing JSON.
+             if (jsonResult) {
+                 handleGenerate(JSON.parse(jsonResult));
+             } else {
+                 // If no JSON, scan and then generate (requires modifying handleScan or message flow)
+                 // For data collection, 'Scan JSON' is primary.
+                 alert("Please Scan JSON first.");
+             }
+          }}
+          disabled={isLoading || !jsonResult}
+          style={{
+            flex: 1,
+            padding: "10px",
+            background: apiKey && jsonResult ? "#18A0FB" : "#999",
             color: "white",
             border: "none",
             borderRadius: "6px",
             fontWeight: 500,
-            cursor: apiKey ? "pointer" : "not-allowed",
+            cursor: apiKey && jsonResult ? "pointer" : "not-allowed",
             opacity: isLoading ? 0.7 : 1
           }}
         >
-          {isLoading ? "Generating..." : "Scan & Convert"}
+          {isLoading ? "Generating..." : "Convert AI"}
         </button>
       </div>
 

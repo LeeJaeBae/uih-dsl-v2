@@ -227,7 +227,7 @@ UIH DSL follows a traditional compiler architecture:
 
 ## Playground
 
-Try UIH DSL in your browser: [Coming Soon]
+Try UIH DSL in your browser: [uih.thebespoke.team](https://uih.thebespoke.team)
 
 ## Use Cases
 

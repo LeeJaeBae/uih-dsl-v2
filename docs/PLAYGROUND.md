@@ -4,7 +4,7 @@ Interactive online playground for experimenting with UIH DSL.
 
 ## Quick Links
 
-- **Playground URL**: [https://playground.uih-dsl.dev](https://playground.uih-dsl.dev) *(Coming Soon)*
+- **Playground URL**: [https://uih.thebespoke.team](https://uih.thebespoke.team)
 - **GitHub**: [github.com/yourusername/uih-v2](https://github.com/yourusername/uih-v2)
 
 ## Features
@@ -34,7 +34,7 @@ Interactive online playground for experimenting with UIH DSL.
 
 ### 1. Open the Playground
 
-Visit [playground.uih-dsl.dev](https://playground.uih-dsl.dev)
+Visit [uih.thebespoke.team](https://uih.thebespoke.team)
 
 ### 2. Try the Examples
 

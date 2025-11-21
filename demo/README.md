@@ -2,6 +2,10 @@
 
 이 디렉토리는 UIH DSL의 "Vibe Coding" 워크플로우를 실제로 시연하는 예제 스크립트를 포함합니다.
 
+## 온라인 데모
+
+웹 브라우저에서 바로 체험해보세요: [uih.thebespoke.team](https://uih.thebespoke.team)
+
 ## 기능
 
 - **자동 에러 수정**: 잘못된 UIH 코드를 Claude AI가 자동으로 수정

@@ -80,12 +80,14 @@ function generateScriptSection(
     scriptParts.push(generateErrorComments(ir));
   }
 
-  if (meta) {
-    scriptParts.push(meta);
-  }
-
+  // scriptCode contains imports, which must come first
   if (scriptCode) {
     scriptParts.push(scriptCode);
+  }
+
+  // meta contains exports, which come after imports
+  if (meta) {
+    scriptParts.push(meta);
   }
 
   if (scriptParts.length === 0) {

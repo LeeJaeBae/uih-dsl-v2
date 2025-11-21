@@ -6,13 +6,15 @@ meta {
 style {
   color.bg: "#09090b"
   color.surface: "rgba(24, 24, 27, 0.8)"
-  color.surfaceHighlight: "rgba(63, 63, 70, 0.4)"
+  color.surfaceHighlight: "rgba(39, 39, 42, 0.6)" // Slightly darker highlight for better contrast
   color.border: "rgba(255, 255, 255, 0.08)"
   color.primary: "#7c3aed"
   color.primaryGlow: "rgba(124, 58, 237, 0.5)"
   color.text: "#fafafa"
   color.textMuted: "#a1a1aa"
   color.success: "#10b981"
+  color.info: "#3b82f6" // For blue accents
+  color.warning: "#f59e0b" // For orange accents
   
   radius.lg: "16px"
   radius.xl: "24px"
@@ -24,15 +26,17 @@ style {
   spacing.xl: "48px"
   
   shadow.glow: "0 0 40px rgba(124, 58, 237, 0.15)"
+  shadow.card: "0 10px 30px rgba(0,0,0,0.3), 0 4px 15px rgba(0,0,0,0.2)" // Deeper card shadow
+  shadow.inner: "inset 0 1px 0 rgba(255,255,255,0.05)" // Subtle inner highlight
 }
 
 layout {
   Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: 'Inter', system-ui, sans-serif; overflow: hidden") {
     
     // Glass Sidebar
-    Div(if: "isSidebarOpen", style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20") {
+    Div(if: "isSidebarOpen", style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20; box-shadow: shadow.card") { // Added card shadow
       // Logo
-      Div(style: "display: flex; items-center: center; gap: spacing.md; margin-bottom: 60px; padding-left: 8px") {
+      Div(style: "display: flex; align-items: center; gap: spacing.md; margin-bottom: 60px; padding-left: 8px") {
         Div(style: "width: 40px; height: 40px; background-image: linear-gradient(135deg, color.primary, #c084fc); border-radius: 12px; box-shadow: 0 0 20px color.primaryGlow; display: flex; align-items: center; justify-content: center") {
            // Simple geometric logo shape
            Div(style: "width: 20px; height: 20px; border: 3px solid white; border-radius: 6px") {}
@@ -42,7 +46,8 @@ layout {
       
       // Navigation
       Div(style: "display: flex; flex-direction: column; gap: 12px") {
-        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2)") { 
+        // Active Button
+        Button(style: "text-align: left; padding: 16px 20px; background: linear-gradient(135deg, color.primary, #c084fc); color: white; border: 1px solid rgba(124, 58, 237, 0.4); border-radius: radius.lg; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; box-shadow: shadow.glow, shadow.inner") { // Enhanced active state
           // Icon: Grid
           Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
             Path(d:"M3 3h7v7H3z")
@@ -53,7 +58,8 @@ layout {
           Span { "Dashboard" }
         }
         
-        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+        // Inactive Buttons - Given a more subtle background and border
+        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surface; color: color.textMuted; border: 1px solid color.border; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; box-shadow: shadow.inner") { 
           // Icon: Activity
           Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
             Path(d:"M22 12h-4l-3 9L9 3l-3 9H2")
@@ -61,7 +67,7 @@ layout {
           Span { "Activity" }
         }
         
-        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surface; color: color.textMuted; border: 1px solid color.border; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; box-shadow: shadow.inner") { 
           // Icon: Users
           Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
             Path(d:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2")
@@ -72,7 +78,7 @@ layout {
           Span { "Team" }
         }
 
-        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surface; color: color.textMuted; border: 1px solid color.border; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; box-shadow: shadow.inner") { 
           // Icon: Settings
           Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
             Circle(cx:"12", cy:"12", r:"3")
@@ -84,7 +90,7 @@ layout {
       
       // User Profile at Bottom
       Div(style: "margin-top: auto; padding-top: 20px; border-top: 1px solid color.border; display: flex; align-items: center; gap: 12px") {
-        Div(style: "width: 40px; height: 40px; border-radius: 50%; background-image: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'); background-size: cover") {}
+        Div(style: "width: 40px; height: 40px; border-radius: 50%; background-image: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'); background-size: cover; border: 1px solid rgba(255,255,255,0.1); box-shadow: shadow.inner") {}
         Div {
           P(style: "font-weight: 600; font-size: 14px; margin: 0") { "Alex Chen" }
           P(style: "color: color.textMuted; font-size: 12px; margin: 0") { "Pro Plan" }
@@ -103,7 +109,7 @@ layout {
       Div(style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; z-index: 10") {
         Div(style: "display: flex; align-items: center; gap: 20px") {
           // Sidebar Toggle
-          Button(onClick: "isSidebarOpen = !isSidebarOpen", style: "background: color.surface; border: 1px solid color.border; color: color.text; width: 40px; height: 40px; border-radius: radius.lg; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s") {
+          Button(onClick: "isSidebarOpen = !isSidebarOpen", style: "background: color.surface; border: 1px solid color.border; color: color.text; width: 40px; height: 40px; border-radius: radius.lg; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: shadow.inner") {
              Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
                Path(d:"M3 12h18")
                Path(d:"M3 6h18")
@@ -112,14 +118,14 @@ layout {
           }
 
           Div {
-            H1(style: "font-size: 32px; font-weight: 700; margin-bottom: 8px; margin-top: 0") { "Welcome back, Alex" }
+            H1(style: "font-size: 32px; font-weight: 700; margin-bottom: 8px; margin-top: 0; background: linear-gradient(to right, #fff, #e4e4e7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;") { "Welcome back, Alex" } // Slightly improved gradient
             P(style: "color: color.textMuted; margin: 0") { "Here's what's happening with your projects today." }
           }
         }
         
         Div(style: "display: flex; gap: 16px") {
-          Button(style: "background: color.surface; border: 1px solid color.border; color: color.text; padding: 10px 20px; border-radius: radius.full; cursor: pointer; font-weight: 500") { "Filter" }
-          Button(style: "background: color.primary; color: white; border: none; padding: 10px 24px; border-radius: radius.full; cursor: pointer; font-weight: 600; box-shadow: 0 0 20px color.primaryGlow") { "+ New Project" }
+          Button(style: "background: color.surface; border: 1px solid color.border; color: color.text; padding: 10px 20px; border-radius: radius.full; cursor: pointer; font-weight: 500; box-shadow: shadow.inner; transition: all 0.2s;") { "Filter" }
+          Button(style: "background: linear-gradient(135deg, color.primary, #c084fc); color: white; border: none; padding: 10px 24px; border-radius: radius.full; cursor: pointer; font-weight: 600; box-shadow: shadow.glow; transition: all 0.2s;") { "+ New Project" } // Consistent primary button gradient
         }
       }
 
@@ -127,7 +133,7 @@ layout {
       Div(style: "display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 280px); gap: 24px; position: relative; z-index: 10") {
         
         // Large Stats Card
-        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden") {
+        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; box-shadow: shadow.card, shadow.inner") { // Added deeper shadow
            Div(style: "position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%); pointer-events: none") {}
            
            Div {
@@ -146,14 +152,14 @@ layout {
              Div(style: "flex: 1; height: 30%; background: color.surfaceHighlight; border-radius: 4px") {}
              Div(style: "flex: 1; height: 80%; background: color.surfaceHighlight; border-radius: 4px") {}
              Div(style: "flex: 1; height: 50%; background: color.surfaceHighlight; border-radius: 4px") {}
-             Div(style: "flex: 1; height: 90%; background: color.primary; box-shadow: 0 0 15px color.primaryGlow; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 90%; background: linear-gradient(to top, color.primary, #c084fc); box-shadow: 0 0 15px color.primaryGlow; border-radius: 4px") {} // Gradient for active bar
              Div(style: "flex: 1; height: 70%; background: color.surfaceHighlight; border-radius: 4px") {}
            }
         }
 
         // Active Users Card
-        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center") {
-          Div(style: "width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #3b82f6") {
+        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: shadow.card, shadow.inner") { // Added deeper shadow
+          Div(style: "width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: color.info") { // Used color.info token
             Svg(width:"30", height:"30", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
                Path(d:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2")
                Circle(cx:"9", cy:"7", r:"4")
@@ -166,7 +172,7 @@ layout {
         }
 
         // System Status
-        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
+        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px; box-shadow: shadow.card, shadow.inner") { // Added deeper shadow
           H4(style: "margin: 0 0 20px; font-size: 16px") { "System Status" }
           Div(style: "display: flex; flex-direction: column; gap: 16px") {
             Div {
@@ -181,10 +187,10 @@ layout {
             Div {
               Div(style: "display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px") {
                 Span(style: "color: color.textMuted") { "Database" }
-                Span(style: "color: #f59e0b") { "Optimizing" }
+                Span(style: "color: color.warning") { "Optimizing" } // Used color.warning token
               }
               Div(style: "height: 6px; background: rgba(255,255,255,0.1); border-radius: radius.full; overflow: hidden") {
-                Div(style: "width: 65%; height: 100%; background: #f59e0b; border-radius: radius.full") {}
+                Div(style: "width: 65%; height: 100%; background: color.warning; border-radius: radius.full") {} // Used color.warning token
               }
             }
             Div {
@@ -200,25 +206,25 @@ layout {
         }
 
         // Recent Activity List
-        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
+        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px; box-shadow: shadow.card, shadow.inner") { // Added deeper shadow
           H4(style: "margin: 0 0 20px; font-size: 18px") { "Recent Activity" }
           Div(style: "display: flex; flex-direction: column; gap: 16px") {
             Div(style: "display: flex; gap: 16px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
-              Div(style: "width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: color.success") { "✓" }
+              Div(style: "width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: color.success") { "✓" } // Used rgba with color.success
               Div(style: "flex: 1") {
                 P(style: "margin: 0; font-weight: 500") { "Project Alpha deployed" }
                 P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "2 minutes ago • by Sarah" }
               }
             }
             Div(style: "display: flex; gap: 16px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
-              Div(style: "width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3b82f6") { "↑" }
+              Div(style: "width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: color.info") { "↑" } // Used rgba with color.info
               Div(style: "flex: 1") {
                 P(style: "margin: 0; font-weight: 500") { "New user registration spike" }
                 P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "1 hour ago • System" }
               }
             }
             Div(style: "display: flex; gap: 16px; align-items: center") {
-              Div(style: "width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f59e0b") { "!" }
+              Div(style: "width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: color.warning") { "!" } // Used rgba with color.warning
               Div(style: "flex: 1") {
                 P(style: "margin: 0; font-weight: 500") { "Storage capacity warning" }
                 P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "3 hours ago • Server" }
@@ -228,11 +234,11 @@ layout {
         }
 
         // Quick Actions
-        Div(style: "grid-column: span 2; background: linear-gradient(135deg, color.primary, #c084fc); border-radius: radius.xl; padding: 32px; display: flex; align-items: center; justify-content: space-between; color: white; position: relative; overflow: hidden") {
+        Div(style: "grid-column: span 2; background: linear-gradient(135deg, color.primary, #c084fc); border-radius: radius.xl; padding: 32px; display: flex; align-items: center; justify-content: space-between; color: white; position: relative; overflow: hidden; box-shadow: shadow.glow, shadow.card") { // Added glow and card shadow
           Div(style: "position: relative; z-index: 10") {
             H3(style: "font-size: 24px; font-weight: 700; margin: 0 0 8px") { "Upgrade to Pro" }
             P(style: "margin: 0 0 24px; opacity: 0.9; max-width: 300px") { "Unlock advanced analytics, custom domains, and priority support." }
-            Button(style: "background: white; color: color.primary; border: none; padding: 12px 24px; border-radius: radius.lg; font-weight: 700; cursor: pointer") { "View Plans" }
+            Button(style: "background: white; color: color.primary; border: none; padding: 12px 24px; border-radius: radius.lg; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 20px rgba(0,0,0,0.2)") { "View Plans" } // Added subtle button shadow
           }
           
           // Decorative elements

@@ -85,33 +85,45 @@ ${cssVarsString}
 </body>
 </html>`;
     } else if (framework === "vue") {
-      // Vue SFC에서 템플릿만 미리 추출
+      // Extract script setup content
+      const scriptMatch = code.match(/<script setup[^>]*>([\s\S]*?)<\/script>/);
+      const scriptContent = scriptMatch ? scriptMatch[1] : "";
+
+      // Extract template content
       const templateMatch = code.match(/<template>([\s\S]*?)<\/template>/);
-      if (!templateMatch) {
+      const templateContent = templateMatch ? templateMatch[1] : "";
+
+      if (!templateContent) {
         html = `<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>:root { ${cssVarsString} } body { margin: 0; padding: 0; }</style>
-</head>
 <body>
   <div style="padding:20px;color:red;font-family:monospace;">
-    <strong>Vue Error:</strong><br/>No template found in Vue SFC
+    <strong>Vue Error:</strong><br/>No template found
   </div>
 </body>
 </html>`;
       } else {
-        const template = templateMatch[1].trim();
-        
-        // Extract component names used in template
+        // Extract component names used in template for dummy registration
         const componentNames = new Set<string>();
         const tagRegex = /<([A-Z][a-zA-Z0-9]*)/g;
         let match;
-        while ((match = tagRegex.exec(template)) !== null) {
+        while ((match = tagRegex.exec(templateContent)) !== null) {
           componentNames.add(match[1]);
         }
         const componentsList = Array.from(componentNames);
+
+        // Pre-process the script content on the TypeScript side to avoid regex escaping issues
+        const processedScriptContent = scriptContent
+          // Remove imports
+          .replace(/import\s+[\s\S]*?from\s+['"][^'"]*['"];?/g, '')
+          // Remove 'export' keywords
+          .replace(/export\s+const\s+/g, 'const ')
+          .replace(/export\s+let\s+/g, 'let ')
+          .replace(/export\s+var\s+/g, 'var ')
+          .replace(/export\s+function\s+/g, 'function ')
+          .replace(/export\s+default\s+/g, 'const __default_export__ = ')
+          .replace(/export\s*\{[\s\S]*?\}\s*;?/g, '')
+          .replace(/export\s*\*\s*from\s+['"][^'"]*['"];?/g, '');
 
         html = `<!DOCTYPE html>
 <html>
@@ -119,6 +131,7 @@ ${cssVarsString}
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     :root {
 ${cssVarsString}
@@ -136,24 +149,72 @@ ${cssVarsString}
     }
   </script>
   <script type="module">
-    import { createApp, h } from "vue";
+    import { createApp, h, ref, reactive, computed, watch, onMounted } from "vue";
+    import * as Vue from "vue";
 
-    const template = ${JSON.stringify(template)};
+    const template = ${JSON.stringify(templateContent)};
     const componentNames = ${JSON.stringify(componentsList)};
+    const tsCode = ${JSON.stringify(processedScriptContent)};
 
     try {
-      const app = createApp({
-        template: template
-      });
+      // 1. Transpile TS to JS
+      const jsCode = Babel.transform(tsCode, {
+        presets: ['typescript'],
+        filename: 'script.ts'
+      }).code;
+
+      // 2. Extract variable names to return from setup()
+      const exposedVars = [];
+      const declRegex = /^\\s*(?:const|let|var)\\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/gm;
+      const funcRegex = /^\\s*function\\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/gm;
       
-      // Register dummy components for all custom tags found
+      let match;
+      while ((match = declRegex.exec(jsCode)) !== null) {
+        exposedVars.push(match[1]);
+      }
+      while ((match = funcRegex.exec(jsCode)) !== null) {
+        exposedVars.push(match[1]);
+      }
+
+      console.log("[Vue Preview] Exposed vars:", exposedVars);
+
+      // 3. Clean up transpiled code
+      let cleanJsCode = jsCode
+        .replace(/"use strict";/g, '')
+        .replace(/'use strict';/g, '');
+
+      const setupBody = 
+        'try {\\n' +
+        cleanJsCode + '\\n' +
+        'return { ' + exposedVars.join(', ') + ' };\\n' +
+        '} catch (e) {\\n' +
+        '  console.error("[Vue Setup Error]", e);\\n' +
+        '  throw e;\\n' +
+        '}';
+
+      // 4. Create Component
+      const App = {
+        template,
+        setup() {
+          // Execute the extracted script
+          return new Function('Vue', 'ref', 'reactive', 'computed', 'watch', 'onMounted', setupBody)(Vue, ref, reactive, computed, watch, onMounted);
+        }
+      };
+
+      const app = createApp(App);
+      
+      // Register dummy components
       componentNames.forEach(name => {
         app.component(name, {
           inheritAttrs: false,
-          template: \`<div v-bind="$attrs" :data-uih-dummy="name"><slot></slot></div>\`,
-          data() { return { name }; }
+          template: '<div v-bind="$attrs" :data-uih-dummy="' + name + '"><slot></slot></div>'
         });
       });
+
+      app.config.errorHandler = (err) => {
+        console.error("[Vue Global Error]", err);
+        document.body.innerHTML += '<div style="color:red;padding:10px;">Runtime Error: ' + err.message + '</div>';
+      };
 
       app.mount("#app");
     } catch (err) {

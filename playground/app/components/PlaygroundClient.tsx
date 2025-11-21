@@ -7,6 +7,7 @@ import { useCompiler } from '../hooks/useCompiler';
 import TemplateGallery from './TemplateGallery';
 import { Template } from '../utils/templates';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChatInterface } from './ChatInterface';
 import { IframePreview } from './IframePreview';
 import type { Framework } from '../types';
 
@@ -19,6 +20,7 @@ export default function PlaygroundClient({ initialTemplates }: PlaygroundClientP
   const [framework, setFramework] = useState<Framework>('react');
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [showGallery, setShowGallery] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplates[0]?.id);
 
   const { code, errors, wsStatus, ir } = useCompiler(uihCode, framework);
@@ -61,6 +63,16 @@ export default function PlaygroundClient({ initialTemplates }: PlaygroundClientP
               <rect x="3" y="14" width="7" height="7"></rect>
             </svg>
           </button>
+
+          <button 
+            onClick={() => setShowChat(!showChat)}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${showChat ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            title="AI Assistant"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
           
           <div className="h-px bg-gray-200 w-8 mx-auto my-2"></div>
           
@@ -80,37 +92,22 @@ export default function PlaygroundClient({ initialTemplates }: PlaygroundClientP
             <span className="font-bold text-sm">Vu</span>
           </button>
 
-                    <button 
-
-                      onClick={() => setFramework('svelte')}
-
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${framework === 'svelte' ? 'bg-orange-50 text-orange-600' : 'text-gray-500 hover:bg-gray-100'}`}
-
-                      title="Svelte Output"
-
-                    >
-
-                      <span className="font-bold text-sm">Sv</span>
-
-                    </button>
-
-                    
-
-                    <button 
-
-                      onClick={() => setFramework('html')}
-
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${framework === 'html' ? 'bg-orange-50 text-orange-600' : 'text-gray-500 hover:bg-gray-100'}`}
-
-                      title="HTML Output"
-
-                    >
-
-                      <span className="font-bold text-sm">Ht</span>
-
-                    </button>
-
-                  </div>
+          <button 
+            onClick={() => setFramework('svelte')}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${framework === 'svelte' ? 'bg-orange-50 text-orange-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            title="Svelte Output"
+          >
+            <span className="font-bold text-sm">Sv</span>
+          </button>
+          
+          <button 
+            onClick={() => setFramework('html')}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${framework === 'html' ? 'bg-orange-50 text-orange-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            title="HTML Output"
+          >
+            <span className="font-bold text-sm">Ht</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -150,6 +147,23 @@ export default function PlaygroundClient({ initialTemplates }: PlaygroundClientP
 
         {/* Workspace */}
         <div className="flex-1 flex overflow-hidden">
+          {/* Chat Panel */}
+          <AnimatePresence>
+            {showChat && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 350, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="border-r border-gray-200 bg-white z-10 overflow-hidden flex flex-col"
+              >
+                <div className="w-[350px] h-full">
+                  <ChatInterface currentCode={uihCode} onCodeGenerated={setUihCode} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Editor Panel */}
           <div className="w-1/2 border-r border-gray-200 flex flex-col bg-white">
             <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">

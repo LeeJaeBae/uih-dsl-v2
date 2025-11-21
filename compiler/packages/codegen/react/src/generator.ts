@@ -47,6 +47,17 @@ function generateFullCode(
 ): string {
   const sections: string[] = [];
 
+  // Generate imports
+  const imports: string[] = ['import React from "react";'];
+  
+  if (ir.components && ir.components.length > 0) {
+    ir.components.forEach((component) => {
+      imports.push(`import { ${component} } from "@/components/${component}";`);
+    });
+  }
+  
+  sections.push(imports.join("\n"));
+
   if (opts.includeComments && ir.errors.length > 0) {
     sections.push(generateErrorComments(ir));
   }

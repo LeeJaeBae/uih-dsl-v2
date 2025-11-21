@@ -1,5 +1,6 @@
 packages:
   - 'compiler/packages/*'
   - 'compiler/packages/codegen/*'
-  - 'vscode-uih'
-  - 'playground'
+  - "compiler/packages/mcp-server"
+  - "vscode-uih"
+  - "playground"

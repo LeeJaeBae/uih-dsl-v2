@@ -1,0 +1,32 @@
+{
+  "name": "@uih-dsl/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for UIH DSL",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "@uih-dsl/tokenizer": "workspace:*",
+    "@uih-dsl/parser": "workspace:*",
+    "@uih-dsl/ir": "workspace:*",
+    "@uih-dsl/validator": "workspace:*",
+    "@uih-dsl/codegen-react": "workspace:*",
+    "@uih-dsl/codegen-vue": "workspace:*",
+    "@uih-dsl/codegen-svelte": "workspace:*",
+    "@uih-dsl/runtime-core": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

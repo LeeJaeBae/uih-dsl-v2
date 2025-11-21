@@ -91,8 +91,8 @@ function generateNode(node: IRNode, indent: number): string {
 
 function generateTextNode(node: { type: "Text"; value: string }, indent: number): string {
   const indentStr = " ".repeat(indent);
-  const escaped = escapeJSXText(node.value);
-  return `${indentStr}{${JSON.stringify(escaped)}}`;
+  // Use JSON.stringify to safely escape text content
+  return `${indentStr}{${JSON.stringify(node.value)}}`;
 }
 
 const VOID_ELEMENTS = new Set([
@@ -154,7 +154,12 @@ ${indentStr})}`;
 function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
   return attrs
     .map((attr) => {
-      const key = attr.key === "class" ? "className" : attr.key;
+      let key = attr.key === "class" ? "className" : attr.key;
+
+      // Convert SVG attributes (e.g., stroke-width) to camelCase for React
+      if (!key.startsWith("data-") && !key.startsWith("aria-") && key.includes("-")) {
+        key = toCamelCase(key);
+      }
 
       if (key === "style") {
         const styleObj = parseStyleString(attr.value);
@@ -162,7 +167,7 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
       }
 
       // Handle toggle() magic syntax in events
-      if (attr.key.startsWith("on") && attr.value.startsWith("toggle(")) {
+      if (key.startsWith("on") && attr.value.includes("toggle(")) {
         const match = attr.value.match(/toggle\((.*)\)/);
         if (match) {
           const target = match[1];
@@ -199,15 +204,6 @@ function toCamelCase(str: string): string {
 
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function escapeJSXText(text: string): string {
-  return text
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\"')
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\r")
-    .replace(/\t/g, "\\t");
 }
 
 function escapeAttributeValue(value: string): string {

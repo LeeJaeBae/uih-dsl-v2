@@ -26,7 +26,7 @@ export function IframePreview({ code, cssVars, framework }: IframePreviewProps) 
     if (framework === "react") {
       const rewrittenCode = code
         .replace(/from\s+["']@\/components\/([^"']+)["']/g, (_, name) => {
-          return `from "data:text/javascript,export default function ${name}(props) { return React.createElement('div', props, props.children); }"`;
+          return `from "data:text/javascript,export function ${name}(props) { return React.createElement('div', { ...props, 'data-uih-dummy': '${name}' }, props.children); } export default ${name};"`;
         })
         .replace(/from\s+["']react["']/g, 'from "https://esm.sh/react@18"')
         .replace(/from\s+["']react-dom\/client["']/g, 'from "https://esm.sh/react-dom@18/client"');
@@ -42,7 +42,7 @@ export function IframePreview({ code, cssVars, framework }: IframePreviewProps) 
     :root {
 ${cssVarsString}
     }
-    body { margin: 0; padding: 0; }
+    html, body, #root { height: 100%; margin: 0; padding: 0; }
   </style>
 </head>
 <body>
@@ -63,7 +63,6 @@ ${cssVarsString}
       }).code;
 
       const wrappedCode = \`
-        import React from "https://esm.sh/react@18";
         \${transformed}
       \`;
 
@@ -106,6 +105,15 @@ ${cssVarsString}
 </html>`;
       } else {
         const template = templateMatch[1].trim();
+        
+        // Extract component names used in template
+        const componentNames = new Set<string>();
+        const tagRegex = /<([A-Z][a-zA-Z0-9]*)/g;
+        let match;
+        while ((match = tagRegex.exec(template)) !== null) {
+          componentNames.add(match[1]);
+        }
+        const componentsList = Array.from(componentNames);
 
         html = `<!DOCTYPE html>
 <html>
@@ -117,7 +125,7 @@ ${cssVarsString}
     :root {
 ${cssVarsString}
     }
-    body { margin: 0; padding: 0; }
+    html, body, #app { height: 100%; margin: 0; padding: 0; }
   </style>
 </head>
 <body>
@@ -130,13 +138,23 @@ ${cssVarsString}
     }
   </script>
   <script type="module">
-    import { createApp } from "vue";
+    import { createApp, h } from "vue";
 
     const template = ${JSON.stringify(template)};
+    const componentNames = ${JSON.stringify(componentsList)};
 
     try {
       const app = createApp({
         template: template
+      });
+      
+      // Register dummy components for all custom tags found
+      componentNames.forEach(name => {
+        app.component(name, {
+          inheritAttrs: false,
+          template: \`<div v-bind="$attrs" :data-uih-dummy="name"><slot></slot></div>\`,
+          data() { return { name }; }
+        });
       });
 
       app.mount("#app");
@@ -149,7 +167,13 @@ ${cssVarsString}
 </html>`;
       }
     } else if (framework === "svelte") {
-      const escapedCode = code
+      // Downgrade custom components to divs for preview
+      let processedCode = code
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove script block completely (including lang="ts")
+        .replace(/<([A-Z][a-zA-Z0-9]*)([^>]*)>/g, '<div data-uih-dummy="$1"$2>')
+        .replace(/<\/([A-Z][a-zA-Z0-9]*)>/g, '</div>');
+        
+      const escapedCode = processedCode
         .replace(/\\/g, "\\\\")
         .replace(/`/g, "\\`")
         .replace(/\$/g, "\\$");
@@ -164,13 +188,23 @@ ${cssVarsString}
     :root {
 ${cssVarsString}
     }
-    body { margin: 0; padding: 0; }
+    html, body, #app { height: 100%; margin: 0; padding: 0; }
   </style>
 </head>
 <body>
   <div id="app"></div>
-  <script src="https://unpkg.com/svelte@4/compiler.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "svelte/internal": "https://esm.sh/svelte@4/internal",
+        "svelte/internal/disclose-version": "https://esm.sh/svelte@4/internal/disclose-version",
+        "svelte": "https://esm.sh/svelte@4"
+      }
+    }
+  </script>
   <script type="module">
+    import * as svelte from "https://esm.sh/svelte@4/compiler";
+
     const svelteCode = \`${escapedCode}\`;
 
     try {

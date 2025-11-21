@@ -82,6 +82,23 @@ function generateTextNode(node: { type: "Text"; value: string }, indent: number)
   return `${indentStr}{"${escaped}"}`;
 }
 
+const VOID_ELEMENTS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
+]);
+
 function generateComponentNode(
   node: {
     type: "Component";
@@ -96,7 +113,7 @@ function generateComponentNode(
   const attrs = generateAttributes(node.attrs);
   const attrsStr = attrs.length > 0 ? " " + attrs : "";
 
-  if (node.children.length === 0) {
+  if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
     return `${indentStr}<${tag}${attrsStr} />`;
   }
 
@@ -107,10 +124,40 @@ ${indentStr}</${tag}>`;
 }
 
 function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
-  return attrs.map((attr) => {
-    const key = attr.key === "class" ? "className" : attr.key;
-    return `${key}="${escapeAttributeValue(attr.value)}"`;
-  }).join(" ");
+  return attrs
+    .map((attr) => {
+      const key = attr.key === "class" ? "className" : attr.key;
+
+      if (key === "style") {
+        const styleObj = parseStyleString(attr.value);
+        return `style={${JSON.stringify(styleObj)}}`;
+      }
+
+      return `${key}="${escapeAttributeValue(attr.value)}"`;
+    })
+    .join(" ");
+}
+
+function parseStyleString(styleStr: string): Record<string, string> {
+  const styleObj: Record<string, string> = {};
+  const rules = styleStr.split(";");
+
+  rules.forEach((rule) => {
+    const [prop, ...values] = rule.split(":");
+    if (prop && values.length > 0) {
+      const key = toCamelCase(prop.trim());
+      const value = values.join(":").trim();
+      if (key && value) {
+        styleObj[key] = value;
+      }
+    }
+  });
+
+  return styleObj;
+}
+
+function toCamelCase(str: string): string {
+  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
 
 function escapeJSXText(text: string): string {

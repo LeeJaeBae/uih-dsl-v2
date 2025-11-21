@@ -1,0 +1,86 @@
+export const PRODUCT_DETAIL = `meta {
+  title: "Product Detail"
+  route: "/product/1"
+}
+
+style {
+  color.text.main: "#111827"
+  color.text.muted: "#6B7280"
+  color.primary: "#000000"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  spacing.xl: "32px"
+}
+
+components {
+  ProductImage
+  ProductInfo
+  StarRating
+  ColorPicker
+  SizePicker
+  AddToCart
+}
+
+layout {
+  Div(class: "product-page", style: "min-height: 100vh; background: white; padding: 48px 24px") {
+    Div(class: "container", style: "max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px") {
+      
+      ProductImage(class: "gallery", style: "display: flex; flex-direction: column; gap: var(--spacing-md)") {
+        Div(style: "width: 100%; aspect-ratio: 1; background: #F3F4F6; border-radius: 16px; overflow: hidden") {
+          Img(src: "https://placehold.co/600x600", style: "width: 100%; height: 100%; object-fit: cover") { "" }
+        }
+        Div(style: "display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-md)") {
+          Div(style: "aspect-ratio: 1; background: #F3F4F6; border-radius: 8px") { "" }
+          Div(style: "aspect-ratio: 1; background: #F3F4F6; border-radius: 8px") { "" }
+          Div(style: "aspect-ratio: 1; background: #F3F4F6; border-radius: 8px") { "" }
+          Div(style: "aspect-ratio: 1; background: #F3F4F6; border-radius: 8px") { "" }
+        }
+      }
+
+      ProductInfo(class: "info") {
+        Div(style: "margin-bottom: var(--spacing-lg)") {
+          H1(style: "font-size: 32px; font-weight: 800; margin-bottom: 8px; color: var(--color-text-main)") {
+            "Basic Tee 6-Pack"
+          }
+          Div(style: "display: flex; align-items: center; gap: 16px") {
+            H2(style: "font-size: 24px; font-weight: 600; color: var(--color-text-main)") { "$192" }
+            StarRating(style: "display: flex; color: #F59E0B") {
+              "★★★★☆ (117 reviews)"
+            }
+          }
+        }
+
+        P(style: "line-height: 1.6; color: var(--color-text-muted); margin-bottom: var(--spacing-xl)") {
+          "The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive white tee. Need to add an extra pop of color to your outfit? Our black tee has you covered."
+        }
+
+        Div(class: "options", style: "margin-bottom: var(--spacing-xl)") {
+          ColorPicker(style: "margin-bottom: var(--spacing-lg)") {
+            H3(style: "font-size: 14px; font-weight: 600; margin-bottom: 12px") { "Color" }
+            Div(style: "display: flex; gap: 8px") {
+              Div(style: "width: 32px; height: 32px; border-radius: 50%; background: white; border: 1px solid #E5E7EB; cursor: pointer") { "" }
+              Div(style: "width: 32px; height: 32px; border-radius: 50%; background: #6B7280; cursor: pointer") { "" }
+              Div(style: "width: 32px; height: 32px; border-radius: 50%; background: black; cursor: pointer") { "" }
+            }
+          }
+
+          SizePicker {
+            H3(style: "font-size: 14px; font-weight: 600; margin-bottom: 12px") { "Size" }
+            Div(style: "display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px") {
+              Button(style: "padding: 10px; border: 1px solid #E5E7EB; background: white; border-radius: 4px; cursor: pointer") { "XS" }
+              Button(style: "padding: 10px; border: 1px solid #E5E7EB; background: white; border-radius: 4px; cursor: pointer") { "S" }
+              Button(style: "padding: 10px; border: 1px solid #E5E7EB; background: white; border-radius: 4px; cursor: pointer") { "M" }
+              Button(style: "padding: 10px; border: 1px solid #E5E7EB; background: white; border-radius: 4px; cursor: pointer") { "L" }
+            }
+          }
+        }
+
+        AddToCart {
+          Button(style: "width: 100%; padding: 16px; background: var(--color-primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px") {
+            "Add to Bag"
+          }
+        }
+      }
+    }
+  }
+}`;

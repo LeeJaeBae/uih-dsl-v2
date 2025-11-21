@@ -82,6 +82,23 @@ function generateTextNode(node: { type: "Text"; value: string }, indent: number)
   return `${indentStr}${escaped}`;
 }
 
+const VOID_ELEMENTS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
+]);
+
 function generateComponentNode(
   node: {
     type: "Component";
@@ -96,7 +113,7 @@ function generateComponentNode(
   const attrs = generateAttributes(node.attrs);
   const attrsStr = attrs.length > 0 ? " " + attrs : "";
 
-  if (node.children.length === 0) {
+  if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
     return `${indentStr}<${tag}${attrsStr} />`;
   }
 

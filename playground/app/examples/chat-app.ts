@@ -1,0 +1,90 @@
+export const CHAT_APP = `meta {
+  title: "Chat App"
+  route: "/chat"
+}
+
+style {
+  color.primary: "#6366F1"
+  color.bg.app: "#F3F4F6"
+  color.bg.white: "#FFFFFF"
+  color.bg.message.me: "#6366F1"
+  color.bg.message.other: "#E5E7EB"
+  color.text.me: "#FFFFFF"
+  color.text.other: "#1F2937"
+  color.text.muted: "#9CA3AF"
+  spacing.sm: "8px"
+  spacing.md: "12px"
+  spacing.lg: "16px"
+  radius.lg: "12px"
+  radius.full: "9999px"
+}
+
+components {
+  Sidebar
+  ChatArea
+  Message
+  InputArea
+}
+
+layout {
+  Div(class: "chat-app", style: "display: flex; height: 100vh; background: var(--color-bg-app)") {
+    Sidebar(style: "width: 280px; background: var(--color-bg-white); border-right: 1px solid #E5E7EB; display: flex; flex-direction: column") {
+      Div(style: "padding: var(--spacing-lg); border-bottom: 1px solid #E5E7EB") {
+        H2(style: "margin: 0; font-size: 18px; font-weight: 600") { "Messages" }
+      }
+      Div(class: "user-list", style: "flex: 1; overflow-y: auto") {
+        Div(class: "user-item active", style: "padding: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm); background: #EFF6FF; cursor: pointer") {
+          Div(style: "width: 40px; height: 40px; background: #3B82F6; border-radius: 50%") { "" }
+          Div {
+            H4(style: "margin: 0; font-size: 14px; font-weight: 600") { "Alice Smith" }
+            P(style: "margin: 0; font-size: 12px; color: var(--color-text-muted)") { "Typing..." }
+          }
+        }
+        Div(class: "user-item", style: "padding: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer") {
+          Div(style: "width: 40px; height: 40px; background: #10B981; border-radius: 50%") { "" }
+          Div {
+            H4(style: "margin: 0; font-size: 14px; font-weight: 600") { "Bob Johnson" }
+            P(style: "margin: 0; font-size: 12px; color: var(--color-text-muted)") { "See you tomorrow!" }
+          }
+        }
+      }
+    }
+    
+    ChatArea(style: "flex: 1; display: flex; flex-direction: column; background: #FFFFFF") {
+      Div(class: "chat-header", style: "padding: var(--spacing-lg); border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: var(--spacing-sm)") {
+        Div(style: "width: 32px; height: 32px; background: #3B82F6; border-radius: 50%") { "" }
+        H3(style: "margin: 0; font-size: 16px") { "Alice Smith" }
+      }
+      
+      Div(class: "messages", style: "flex: 1; padding: var(--spacing-lg); overflow-y: auto; display: flex; flex-direction: column; gap: var(--spacing-md)") {
+        Message(class: "msg-other", style: "align-self: flex-start; max-width: 70%") {
+          Div(style: "background: var(--color-bg-message.other); color: var(--color-text.other); padding: var(--spacing-md); border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0") {
+            "Hey! How is the UIH project going?"
+          }
+          Span(style: "font-size: 10px; color: var(--color-text-muted); margin-left: 4px") { "10:30 AM" }
+        }
+        
+        Message(class: "msg-me", style: "align-self: flex-end; max-width: 70%") {
+          Div(style: "background: var(--color-bg-message.me); color: var(--color-text.me); padding: var(--spacing-md); border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)") {
+            "It's going great! Just added a new chat example."
+          }
+          Span(style: "font-size: 10px; color: var(--color-text-muted); margin-right: 4px; float: right") { "10:31 AM" }
+        }
+
+        Message(class: "msg-other", style: "align-self: flex-start; max-width: 70%") {
+          Div(style: "background: var(--color-bg-message.other); color: var(--color-text.other); padding: var(--spacing-md); border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0") {
+            "Awesome! Can't wait to see it."
+          }
+          Span(style: "font-size: 10px; color: var(--color-text-muted); margin-left: 4px") { "10:32 AM" }
+        }
+      }
+      
+      InputArea(style: "padding: var(--spacing-lg); border-top: 1px solid #E5E7EB; display: flex; gap: var(--spacing-sm)") {
+        Input(type: "text", placeholder: "Type a message...", style: "flex: 1; padding: var(--spacing-md); border: 1px solid #D1D5DB; border-radius: var(--radius-full); outline: none") { "" }
+        Button(style: "width: 40px; height: 40px; background: var(--color-primary); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center") {
+          "➤"
+        }
+      }
+    }
+  }
+}`;

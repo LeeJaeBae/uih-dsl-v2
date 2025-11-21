@@ -1,0 +1,218 @@
+export const ADMIN_DASHBOARD = `meta {
+  title: "Admin Dashboard"
+  route: "/admin"
+}
+
+style {
+  color.primary: "#3B82F6"
+  color.secondary: "#8B5CF6"
+  color.success: "#10B981"
+  color.warning: "#F59E0B"
+  color.danger: "#EF4444"
+  color.text.primary: "#111827"
+  color.text.secondary: "#6B7280"
+  color.text.muted: "#9CA3AF"
+  color.bg.primary: "#FFFFFF"
+  color.bg.secondary: "#F9FAFB"
+  color.bg.card: "#FFFFFF"
+  color.border: "#E5E7EB"
+  spacing.xs: "4px"
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  spacing.xl: "32px"
+  spacing.2xl: "48px"
+  radius.sm: "4px"
+  radius.md: "8px"
+  radius.lg: "12px"
+  shadow.sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+  shadow.md: "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+  shadow.lg: "0 10px 15px -3px rgb(0 0 0 / 0.1)"
+  font.size.sm: "14px"
+  font.size.base: "16px"
+  font.size.lg: "18px"
+  font.size.xl: "20px"
+  font.size.2xl: "24px"
+  font.weight.normal: "400"
+  font.weight.medium: "500"
+  font.weight.semibold: "600"
+  font.weight.bold: "700"
+}
+
+components {
+  Sidebar
+  TopBar
+  StatCard
+  DataTable
+  ChartCard
+}
+
+layout {
+  Div(class: "dashboard-container", style: "display: flex; min-height: 100vh; background: var(--color-bg-secondary)") {
+    Sidebar(class: "sidebar", style: "width: 256px; background: var(--color-bg-card); border-right: 1px solid var(--color-border); padding: var(--spacing-lg)") {
+      Div(class: "logo", style: "margin-bottom: var(--spacing-2xl)") {
+        H2(style: "color: var(--color-primary); font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); margin: 0") {
+          "Dashboard"
+        }
+      }
+      Nav(class: "nav-menu") {
+        Div(class: "nav-item active", style: "padding: var(--spacing-md); margin-bottom: var(--spacing-sm); background: var(--color-primary); color: white; border-radius: var(--radius-md); cursor: pointer") {
+          "📊 Overview"
+        }
+        Div(class: "nav-item", style: "padding: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-secondary); border-radius: var(--radius-md); cursor: pointer") {
+          "👥 Users"
+        }
+        Div(class: "nav-item", style: "padding: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-secondary); border-radius: var(--radius-md); cursor: pointer") {
+          "📈 Analytics"
+        }
+        Div(class: "nav-item", style: "padding: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-secondary); border-radius: var(--radius-md); cursor: pointer") {
+          "⚙️ Settings"
+        }
+      }
+    }
+    Div(class: "main-content", style: "flex: 1; padding: var(--spacing-xl)") {
+      TopBar(class: "top-bar", style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2xl); background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm)") {
+        H1(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0") {
+          "Overview"
+        }
+        Div(class: "user-info", style: "display: flex; align-items: center; gap: var(--spacing-md)") {
+          Span(style: "color: var(--color-text-secondary); font-size: var(--font-size-sm)") {
+            "Admin User"
+          }
+          Div(style: "width: 40px; height: 40px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-semibold)") {
+            "AU"
+          }
+        }
+      }
+      Div(class: "stats-grid", style: "display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl)") {
+        StatCard(class: "stat-card", style: "background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md)") {
+          Div(class: "stat-header", style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md)") {
+            Span(style: "color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium)") {
+              "Total Users"
+            }
+            Span(style: "font-size: 24px") {
+              "👥"
+            }
+          }
+          H3(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0") {
+            "12,543"
+          }
+          P(style: "color: var(--color-success); font-size: var(--font-size-sm); margin-top: var(--spacing-sm)") {
+            "↑ 12.5% from last month"
+          }
+        }
+        StatCard(class: "stat-card", style: "background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md)") {
+          Div(class: "stat-header", style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md)") {
+            Span(style: "color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium)") {
+              "Revenue"
+            }
+            Span(style: "font-size: 24px") {
+              "💰"
+            }
+          }
+          H3(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0") {
+            "$45,231"
+          }
+          P(style: "color: var(--color-success); font-size: var(--font-size-sm); margin-top: var(--spacing-sm)") {
+            "↑ 8.3% from last month"
+          }
+        }
+        StatCard(class: "stat-card", style: "background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md)") {
+          Div(class: "stat-header", style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md)") {
+            Span(style: "color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium)") {
+              "Active Sessions"
+            }
+            Span(style: "font-size: 24px") {
+              "📊"
+            }
+          }
+          H3(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0") {
+            "2,341"
+          }
+          P(style: "color: var(--color-warning); font-size: var(--font-size-sm); margin-top: var(--spacing-sm)") {
+            "↓ 3.1% from last month"
+          }
+        }
+        StatCard(class: "stat-card", style: "background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md)") {
+          Div(class: "stat-header", style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md)") {
+            Span(style: "color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium)") {
+              "Conversion Rate"
+            }
+            Span(style: "font-size: 24px") {
+              "🎯"
+            }
+          }
+          H3(style: "font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0") {
+            "3.24%"
+          }
+          P(style: "color: var(--color-success); font-size: var(--font-size-sm); margin-top: var(--spacing-sm)") {
+            "↑ 0.8% from last month"
+          }
+        }
+      }
+      Div(class: "data-section", style: "background: var(--color-bg-card); padding: var(--spacing-xl); border-radius: var(--radius-lg); box-shadow: var(--shadow-md)") {
+        H2(style: "font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-lg)") {
+          "Recent Activity"
+        }
+        DataTable(class: "activity-table", style: "width: 100%") {
+          Div(class: "table-header", style: "display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg-secondary); border-radius: var(--radius-sm); margin-bottom: var(--spacing-sm)") {
+            Span(style: "font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-sm)") {
+              "User"
+            }
+            Span(style: "font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-sm)") {
+              "Action"
+            }
+            Span(style: "font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-sm)") {
+              "Time"
+            }
+            Span(style: "font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-sm)") {
+              "Status"
+            }
+          }
+          Div(class: "table-row", style: "display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--spacing-md); padding: var(--spacing-md); border-bottom: 1px solid var(--color-border)") {
+            Span(style: "color: var(--color-text-primary)") {
+              "john@example.com"
+            }
+            Span(style: "color: var(--color-text-secondary)") {
+              "Login"
+            }
+            Span(style: "color: var(--color-text-muted); font-size: var(--font-size-sm)") {
+              "2 mins ago"
+            }
+            Span(style: "color: var(--color-success); font-weight: var(--font-weight-medium)") {
+              "✓ Success"
+            }
+          }
+          Div(class: "table-row", style: "display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--spacing-md); padding: var(--spacing-md); border-bottom: 1px solid var(--color-border)") {
+            Span(style: "color: var(--color-text-primary)") {
+              "sarah@example.com"
+            }
+            Span(style: "color: var(--color-text-secondary)") {
+              "Purchase"
+            }
+            Span(style: "color: var(--color-text-muted); font-size: var(--font-size-sm)") {
+              "15 mins ago"
+            }
+            Span(style: "color: var(--color-success); font-weight: var(--font-weight-medium)") {
+              "✓ Success"
+            }
+          }
+          Div(class: "table-row", style: "display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--spacing-md); padding: var(--spacing-md)") {
+            Span(style: "color: var(--color-text-primary)") {
+              "mike@example.com"
+            }
+            Span(style: "color: var(--color-text-secondary)") {
+              "Update Profile"
+            }
+            Span(style: "color: var(--color-text-muted); font-size: var(--font-size-sm)") {
+              "1 hour ago"
+            }
+            Span(style: "color: var(--color-success); font-weight: var(--font-weight-medium)") {
+              "✓ Success"
+            }
+          }
+        }
+      }
+    }
+  }
+}`;

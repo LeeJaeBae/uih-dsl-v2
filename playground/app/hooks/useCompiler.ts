@@ -139,14 +139,23 @@ export function useCompiler(dsl: string, framework: Framework): CompileResult & 
 
       let codeResult;
       switch (framework) {
-        case "react":
-          codeResult = generateReact(irResult);
-          break;
         case "vue":
           codeResult = generateVue(irResult);
           break;
         case "svelte":
           codeResult = generateSvelte(irResult);
+          break;
+        case "html":
+          localResult.errors.push({
+            message: "HTML generation is not currently supported.",
+            line: 1,
+            column: 1,
+          });
+          codeResult = { code: "// HTML generation not supported." }; // Provide a placeholder
+          break;
+        case "react":
+        default:
+          codeResult = generateReact(irResult);
           break;
       }
 

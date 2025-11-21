@@ -25,8 +25,8 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
 
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
-  const events = generateScript(ir);
-  const scriptCode = generateScriptExports(events);
+  const scriptOutput = generateScript(ir);
+  const scriptCode = generateScriptExports(scriptOutput);
 
   const code = generateFullCode(ir, meta, style, scriptCode, opts);
 
@@ -34,7 +34,7 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
     code,
     style,
     meta,
-    events,
+    events: scriptOutput.handlers,
   };
 }
 

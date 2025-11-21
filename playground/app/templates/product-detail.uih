@@ -1,4 +1,4 @@
-export const PRODUCT_DETAIL = `meta {
+meta {
   title: "Product Detail"
   route: "/product/1"
 }
@@ -83,4 +83,4 @@ layout {
       }
     }
   }
-}`;
+}

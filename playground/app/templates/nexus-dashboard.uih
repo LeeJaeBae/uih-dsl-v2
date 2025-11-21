@@ -1,0 +1,249 @@
+meta {
+  title: "Nexus Dashboard"
+  description: "Futuristic dark dashboard"
+}
+
+style {
+  color.bg: "#09090b"
+  color.surface: "rgba(24, 24, 27, 0.8)"
+  color.surfaceHighlight: "rgba(63, 63, 70, 0.4)"
+  color.border: "rgba(255, 255, 255, 0.08)"
+  color.primary: "#7c3aed"
+  color.primaryGlow: "rgba(124, 58, 237, 0.5)"
+  color.text: "#fafafa"
+  color.textMuted: "#a1a1aa"
+  color.success: "#10b981"
+  
+  radius.lg: "16px"
+  radius.xl: "24px"
+  radius.full: "9999px"
+  
+  spacing.sm: "8px"
+  spacing.md: "16px"
+  spacing.lg: "32px"
+  spacing.xl: "48px"
+  
+  shadow.glow: "0 0 40px rgba(124, 58, 237, 0.15)"
+}
+
+layout {
+  Div(style: "display: flex; min-height: 100vh; background-color: color.bg; color: color.text; font-family: 'Inter', system-ui, sans-serif; overflow: hidden") {
+    
+    // Glass Sidebar
+    Div(if: "isSidebarOpen", style: "width: 300px; background-color: rgba(9, 9, 11, 0.6); backdrop-filter: blur(40px); border-right: 1px solid color.border; display: flex; flex-direction: column; padding: spacing.lg; z-index: 20") {
+      // Logo
+      Div(style: "display: flex; items-center: center; gap: spacing.md; margin-bottom: 60px; padding-left: 8px") {
+        Div(style: "width: 40px; height: 40px; background-image: linear-gradient(135deg, color.primary, #c084fc); border-radius: 12px; box-shadow: 0 0 20px color.primaryGlow; display: flex; align-items: center; justify-content: center") {
+           // Simple geometric logo shape
+           Div(style: "width: 20px; height: 20px; border: 3px solid white; border-radius: 6px") {}
+        }
+        H3(style: "font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.5px; background: linear-gradient(to right, #fff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent") { "NEXUS" }
+      }
+      
+      // Navigation
+      Div(style: "display: flex; flex-direction: column; gap: 12px") {
+        Button(style: "text-align: left; padding: 16px 20px; background-color: color.surfaceHighlight; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: radius.lg; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2)") { 
+          // Icon: Grid
+          Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+            Path(d:"M3 3h7v7H3z")
+            Path(d:"M14 3h7v7h-7z")
+            Path(d:"M14 14h7v7h-7z")
+            Path(d:"M3 14h7v7H3z")
+          }
+          Span { "Dashboard" }
+        }
+        
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+          // Icon: Activity
+          Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+            Path(d:"M22 12h-4l-3 9L9 3l-3 9H2")
+          }
+          Span { "Activity" }
+        }
+        
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+          // Icon: Users
+          Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+            Path(d:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2")
+            Circle(cx:"9", cy:"7", r:"4")
+            Path(d:"M23 21v-2a4 4 0 0 0-3-3.87")
+            Path(d:"M16 3.13a4 4 0 0 1 0 7.75")
+          }
+          Span { "Team" }
+        }
+
+        Button(style: "text-align: left; padding: 16px 20px; background-color: transparent; color: color.textMuted; border: 1px solid transparent; border-radius: radius.lg; font-weight: 500; font-size: 15px; cursor: pointer; display: flex; items-center: center; gap: 16px; transition: all 0.2s") { 
+          // Icon: Settings
+          Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+            Circle(cx:"12", cy:"12", r:"3")
+            Path(d:"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z")
+          }
+          Span { "Settings" }
+        }
+      }
+      
+      // User Profile at Bottom
+      Div(style: "margin-top: auto; padding-top: 20px; border-top: 1px solid color.border; display: flex; align-items: center; gap: 12px") {
+        Div(style: "width: 40px; height: 40px; border-radius: 50%; background-image: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'); background-size: cover") {}
+        Div {
+          P(style: "font-weight: 600; font-size: 14px; margin: 0") { "Alex Chen" }
+          P(style: "color: color.textMuted; font-size: 12px; margin: 0") { "Pro Plan" }
+        }
+      }
+    }
+
+    // Main Content Area
+    Div(style: "flex: 1; padding: spacing.xl; overflow-y: auto; position: relative") {
+      
+      // Background Glow Effects
+      Div(style: "position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(0,0,0,0) 70%); pointer-events: none; z-index: 0") {}
+      Div(style: "position: absolute; bottom: -20%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(0,0,0,0) 70%); pointer-events: none; z-index: 0") {}
+
+      // Header
+      Div(style: "display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; z-index: 10") {
+        Div(style: "display: flex; align-items: center; gap: 20px") {
+          // Sidebar Toggle
+          Button(onClick: "isSidebarOpen = !isSidebarOpen", style: "background: color.surface; border: 1px solid color.border; color: color.text; width: 40px; height: 40px; border-radius: radius.lg; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s") {
+             Svg(width:"20", height:"20", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+               Path(d:"M3 12h18")
+               Path(d:"M3 6h18")
+               Path(d:"M3 18h18")
+             }
+          }
+
+          Div {
+            H1(style: "font-size: 32px; font-weight: 700; margin-bottom: 8px; margin-top: 0") { "Welcome back, Alex" }
+            P(style: "color: color.textMuted; margin: 0") { "Here's what's happening with your projects today." }
+          }
+        }
+        
+        Div(style: "display: flex; gap: 16px") {
+          Button(style: "background: color.surface; border: 1px solid color.border; color: color.text; padding: 10px 20px; border-radius: radius.full; cursor: pointer; font-weight: 500") { "Filter" }
+          Button(style: "background: color.primary; color: white; border: none; padding: 10px 24px; border-radius: radius.full; cursor: pointer; font-weight: 600; box-shadow: 0 0 20px color.primaryGlow") { "+ New Project" }
+        }
+      }
+
+      // Bento Grid Layout
+      Div(style: "display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 280px); gap: 24px; position: relative; z-index: 10") {
+        
+        // Large Stats Card
+        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden") {
+           Div(style: "position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%); pointer-events: none") {}
+           
+           Div {
+             P(style: "color: color.textMuted; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px") { "Total Revenue" }
+             H2(style: "font-size: 48px; font-weight: 800; margin: 16px 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent") { "$124,500.00" }
+             Div(style: "display: flex; align-items: center; gap: 8px") {
+               Span(style: "background: rgba(16, 185, 129, 0.2); color: color.success; padding: 4px 12px; border-radius: radius.full; font-size: 13px; font-weight: 600") { "+12.5%" }
+               Span(style: "color: color.textMuted; font-size: 14px") { "vs last month" }
+             }
+           }
+           
+           // Chart Graphic Representation
+           Div(style: "height: 60px; display: flex; align-items: flex-end; gap: 8px; margin-top: 20px") {
+             Div(style: "flex: 1; height: 40%; background: color.surfaceHighlight; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 60%; background: color.surfaceHighlight; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 30%; background: color.surfaceHighlight; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 80%; background: color.surfaceHighlight; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 50%; background: color.surfaceHighlight; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 90%; background: color.primary; box-shadow: 0 0 15px color.primaryGlow; border-radius: 4px") {}
+             Div(style: "flex: 1; height: 70%; background: color.surfaceHighlight; border-radius: 4px") {}
+           }
+        }
+
+        // Active Users Card
+        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center") {
+          Div(style: "width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #3b82f6") {
+            Svg(width:"30", height:"30", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", stroke-width:"2", stroke-linecap:"round", stroke-linejoin:"round") {
+               Path(d:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2")
+               Circle(cx:"9", cy:"7", r:"4")
+               Path(d:"M23 21v-2a4 4 0 0 0-3-3.87")
+               Path(d:"M16 3.13a4 4 0 0 1 0 7.75")
+            }
+          }
+          H3(style: "font-size: 32px; font-weight: 700; margin: 0") { "8.2k" }
+          P(style: "color: color.textMuted; margin-top: 4px") { "Active Users" }
+        }
+
+        // System Status
+        Div(style: "grid-column: span 1; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
+          H4(style: "margin: 0 0 20px; font-size: 16px") { "System Status" }
+          Div(style: "display: flex; flex-direction: column; gap: 16px") {
+            Div {
+              Div(style: "display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px") {
+                Span(style: "color: color.textMuted") { "Server Load" }
+                Span(style: "color: color.success") { "Normal" }
+              }
+              Div(style: "height: 6px; background: rgba(255,255,255,0.1); border-radius: radius.full; overflow: hidden") {
+                Div(style: "width: 35%; height: 100%; background: color.success; border-radius: radius.full") {}
+              }
+            }
+            Div {
+              Div(style: "display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px") {
+                Span(style: "color: color.textMuted") { "Database" }
+                Span(style: "color: #f59e0b") { "Optimizing" }
+              }
+              Div(style: "height: 6px; background: rgba(255,255,255,0.1); border-radius: radius.full; overflow: hidden") {
+                Div(style: "width: 65%; height: 100%; background: #f59e0b; border-radius: radius.full") {}
+              }
+            }
+            Div {
+              Div(style: "display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px") {
+                Span(style: "color: color.textMuted") { "Storage" }
+                Span(style: "color: color.text") { "82%" }
+              }
+              Div(style: "height: 6px; background: rgba(255,255,255,0.1); border-radius: radius.full; overflow: hidden") {
+                Div(style: "width: 82%; height: 100%; background: color.primary; border-radius: radius.full") {}
+              }
+            }
+          }
+        }
+
+        // Recent Activity List
+        Div(style: "grid-column: span 2; background: color.surface; border: 1px solid color.border; border-radius: radius.xl; padding: 24px") {
+          H4(style: "margin: 0 0 20px; font-size: 18px") { "Recent Activity" }
+          Div(style: "display: flex; flex-direction: column; gap: 16px") {
+            Div(style: "display: flex; gap: 16px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
+              Div(style: "width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: color.success") { "✓" }
+              Div(style: "flex: 1") {
+                P(style: "margin: 0; font-weight: 500") { "Project Alpha deployed" }
+                P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "2 minutes ago • by Sarah" }
+              }
+            }
+            Div(style: "display: flex; gap: 16px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05)") {
+              Div(style: "width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3b82f6") { "↑" }
+              Div(style: "flex: 1") {
+                P(style: "margin: 0; font-weight: 500") { "New user registration spike" }
+                P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "1 hour ago • System" }
+              }
+            }
+            Div(style: "display: flex; gap: 16px; align-items: center") {
+              Div(style: "width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f59e0b") { "!" }
+              Div(style: "flex: 1") {
+                P(style: "margin: 0; font-weight: 500") { "Storage capacity warning" }
+                P(style: "margin: 4px 0 0; font-size: 12px; color: color.textMuted") { "3 hours ago • Server" }
+              }
+            }
+          }
+        }
+
+        // Quick Actions
+        Div(style: "grid-column: span 2; background: linear-gradient(135deg, color.primary, #c084fc); border-radius: radius.xl; padding: 32px; display: flex; align-items: center; justify-content: space-between; color: white; position: relative; overflow: hidden") {
+          Div(style: "position: relative; z-index: 10") {
+            H3(style: "font-size: 24px; font-weight: 700; margin: 0 0 8px") { "Upgrade to Pro" }
+            P(style: "margin: 0 0 24px; opacity: 0.9; max-width: 300px") { "Unlock advanced analytics, custom domains, and priority support." }
+            Button(style: "background: white; color: color.primary; border: none; padding: 12px 24px; border-radius: radius.lg; font-weight: 700; cursor: pointer") { "View Plans" }
+          }
+          
+          // Decorative elements
+          Div(style: "position: absolute; right: -50px; top: -50px; width: 200px; height: 200px; border: 20px solid rgba(255,255,255,0.1); border-radius: 50%") {}
+          Div(style: "position: absolute; right: 50px; bottom: -80px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%") {}
+        }
+      }
+    }
+  }
+}
+
+script {
+  isSidebarOpen: "true"
+}

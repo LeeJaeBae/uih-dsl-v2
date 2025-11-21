@@ -1,4 +1,4 @@
-export const LOGIN_PAGE = `meta {
+meta {
   title: "Login"
   route: "/login"
 }
@@ -65,4 +65,3 @@ layout {
     }
   }
 }
-`;

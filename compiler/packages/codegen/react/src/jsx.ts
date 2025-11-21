@@ -162,26 +162,33 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
       }
 
       if (key === "style") {
-        const styleObj = parseStyleString(attr.value);
+        // Transform style tokens: "color.bg" -> "var(--color-bg)"
+        const transformedStyle = attr.value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+        const styleObj = parseStyleString(transformedStyle);
         return `style={${JSON.stringify(styleObj)}}`;
       }
 
             // Handle toggle() magic syntax in events
 
-            if (key.startsWith("on") && attr.value.includes("toggle(")) {
-
-              const match = attr.value.match(/toggle\((.*)\)/);
-
-              if (match) {
-
-                const target = match[1];
-
-                const handlerCode = `() => set${capitalize(target)}(!${target})`;
-
-                return `${key}={${handlerCode}}`;
-
+            // Handle toggle() magic syntax in events
+            if (key.startsWith("on")) {
+              // 1. Handle toggle(var)
+              if (attr.value.includes("toggle(")) {
+                const match = attr.value.match(/toggle\((.*)\)/);
+                if (match) {
+                  const target = match[1];
+                  return `${key}={${"() => set"}${capitalize(target)}(!${target})}`;
+                }
               }
 
+              // 2. Handle simple assignment: var = val
+              // e.g. isSidebarOpen = !isSidebarOpen
+              const assignmentMatch = attr.value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
+              if (assignmentMatch) {
+                const target = assignmentMatch[1];
+                const value = assignmentMatch[2];
+                return `${key}={${"() => set"}${capitalize(target)}(${value})}`;
+              }
             }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;

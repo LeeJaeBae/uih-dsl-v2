@@ -1,4 +1,4 @@
-export const HELLO_WORLD = `meta {
+meta {
   title: "UIH Playground"
   route: "/"
 }
@@ -27,4 +27,4 @@ layout {
       }
     }
   }
-}`;
+}

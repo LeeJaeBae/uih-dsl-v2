@@ -11,4 +11,4 @@ export interface CompileResult {
   errors: CompileError[];
 }
 
-export type Framework = "react" | "vue" | "svelte";
+export type Framework = "react" | "vue" | "svelte" | "html";

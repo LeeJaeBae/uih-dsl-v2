@@ -1,0 +1,47 @@
+meta {
+  title: "Future SaaS"
+  description: "The future of software"
+}
+
+style {
+  color.bg: "#0f172a"
+  color.primary: "#6366f1"
+  color.text: "#f8fafc"
+  color.textMuted: "#94a3b8"
+  color.border: "#1e293b"
+}
+
+layout {
+  Div(style: "background-color: color.bg; min-height: 100vh; color: color.text; font-family: sans-serif") {
+    
+    // Navbar
+    Div(style: "border-bottom: 1px solid color.border; padding: 20px; display: flex; justify-content: space-between; align-items: center") {
+      H3 { "Logo" }
+      Div(style: "display: flex; gap: 20px") {
+        Span(style: "color: color.textMuted; cursor: pointer") { "Features" }
+        Span(style: "color: color.textMuted; cursor: pointer") { "Pricing" }
+        Button(style: "background-color: color.primary; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer") {
+          "Get Started"
+        }
+      }
+    }
+
+    // Hero
+    Div(style: "max-width: 800px; margin: 0 auto; padding: 100px 20px; text-align: center") {
+      H1(style: "font-size: 64px; background: linear-gradient(to right, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px") {
+        "Build faster with AI"
+      }
+      P(style: "font-size: 20px; color: color.textMuted; line-height: 1.6; margin-bottom: 40px") {
+        "Stop wrestling with complex code. Describe your dream UI and let our advanced AI engine build it for you in seconds."
+      }
+      Div(style: "display: flex; gap: 16px; justify-content: center") {
+        Button(style: "background-color: color.primary; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer") {
+          "Start Building Now"
+        }
+        Button(style: "background-color: transparent; color: color.text; border: 1px solid color.border; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer") {
+          "View Documentation"
+        }
+      }
+    }
+  }
+}

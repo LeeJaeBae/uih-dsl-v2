@@ -11,7 +11,7 @@ import type { UIHIR } from "@uih-dsl/ir";
 import type { CodegenOutput, CodegenOptions } from "./types.js";
 import { generateMeta } from "./meta.js";
 import { generateStyle } from "./style.js";
-import { generateScript, generateScriptExports } from "./script.js";
+import { generateScript } from "./script.js";
 import { generateJSX } from "./jsx.js";
 
 const DEFAULT_OPTIONS: CodegenOptions = {
@@ -26,10 +26,10 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
   const scriptData = generateScript(ir); // Now returns { hooks, handlers }
-  const scriptCode = generateScriptExports(scriptData);
+
 
   // Pass scriptData to generateComponent so it can inject code INSIDE the component
-  const code = generateFullCode(ir, meta, style, scriptCode, opts, scriptData);
+  const code = generateFullCode(ir, meta, style, opts, scriptData);
 
   return {
     code,
@@ -43,7 +43,6 @@ function generateFullCode(
   ir: UIHIR,
   meta: string | null,
   style: string | null,
-  scriptCode: string | null,
   opts: Required<CodegenOptions>,
   scriptData: { hooks: string[]; handlers: string[] }
 ): string {

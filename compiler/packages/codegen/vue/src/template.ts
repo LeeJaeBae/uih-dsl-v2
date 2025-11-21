@@ -122,21 +122,60 @@ function generateComponentNode(
 ): string {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag(node.tag);
-  const attrs = generateAttributes(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
+  
+  // Handle conditional rendering 'if' attribute
+  const ifAttr = node.attrs.find(a => a.key === "if");
+  const attrs = node.attrs.filter(a => a.key !== "if");
+  
+  let attrsStr = generateAttributes(attrs);
+  
+  if (ifAttr) {
+    attrsStr = `v-if="${escapeAttributeValue(ifAttr.value)}" ` + attrsStr;
+  }
+  
+  // Trim leading space if needed
+  attrsStr = attrsStr.trim();
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
 
   if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
-    return `${indentStr}<${tag}${attrsStr} />`;
+    return `${indentStr}<${tag}${attrsFinal} />`;
   }
 
   const childrenStr = generateTemplate(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+  return `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
 }
 
 function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
-  return attrs.map((attr) => `${attr.key}="${escapeAttributeValue(attr.value)}"`).join(" ");
+  return attrs.map((attr) => {
+    let key = attr.key;
+    let value = attr.value;
+
+    // Map events: onClick -> @click
+    if (key.startsWith("on") && key.length > 2 && key[2] === key[2].toUpperCase()) {
+      const eventName = key.slice(2).toLowerCase();
+      key = `@${eventName}`;
+
+      // Handle toggle() magic
+      if (value.includes("toggle(")) {
+        const match = value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1].trim();
+          // Vue: isOpen = !isOpen
+          value = `${target} = !${target}`;
+          return `${key}="${value}"`;
+        }
+      }
+    }
+
+    // Transform style tokens: "color.bg" -> "var(--color-bg)"
+    if (key === "style") {
+      value = value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+    }
+
+    return `${key}="${escapeAttributeValue(value)}"`;
+  }).join(" ");
 }
 
 function escapeTemplateText(text: string): string {

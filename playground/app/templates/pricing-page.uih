@@ -1,4 +1,4 @@
-export const PRICING_PAGE = `meta {
+meta {
   title: "Pricing"
   route: "/pricing"
 }
@@ -91,4 +91,3 @@ layout {
     }
   }
 }
-`;

@@ -1,4 +1,4 @@
-export const KANBAN_BOARD = `meta {
+meta {
   title: "Kanban Board"
   route: "/kanban"
 }
@@ -108,4 +108,4 @@ layout {
       }
     }
   }
-}`;
+}

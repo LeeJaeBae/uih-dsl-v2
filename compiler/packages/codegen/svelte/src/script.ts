@@ -9,18 +9,42 @@
 
 import type { UIHIR } from "@uih-dsl/ir";
 
-export function generateScript(ir: UIHIR): string[] {
-  return ir.script.map((entry) => {
-    return `function ${entry.handler}() {
-  // TODO: Implement ${entry.event} handler
-}`;
-  });
+export interface ScriptOutput {
+  state: string[];
+  handlers: string[];
 }
 
-export function generateScriptExports(handlers: string[]): string | null {
-  if (handlers.length === 0) {
+export function generateScript(ir: UIHIR): ScriptOutput {
+  const state: string[] = [];
+  const handlers: string[] = [];
+
+  ir.script.forEach((entry) => {
+    const key = entry.event;
+    const value = entry.handler;
+
+    // Heuristic: If value is "true", "false", a number, or a string literal, it's a STATE.
+    const isStringLiteral = value.startsWith("'") || value.startsWith('"');
+    if (value === "true" || value === "false" || !isNaN(Number(value)) || isStringLiteral) {
+      // Svelte 5 state using runes
+      state.push(`let ${key} = $state(${value});`);
+    } else {
+      // Otherwise, it's a traditional event handler stub
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(value)) {
+        handlers.push(`function ${value}() {
+  // TODO: Implement ${key} handler
+}`);
+      }
+    }
+  });
+
+  return { state, handlers };
+}
+
+export function generateScriptExports(output: ScriptOutput): string | null {
+  const lines = [...output.state, ...output.handlers];
+  if (lines.length === 0) {
     return null;
   }
 
-  return handlers.join("\n\n");
+  return lines.join("\n\n");
 }

@@ -1,4 +1,4 @@
-export const SETTINGS_FORM = `meta {
+meta {
   title: "User Settings"
   route: "/settings"
 }
@@ -166,4 +166,4 @@ layout {
       }
     }
   }
-}`;
+}

@@ -122,6 +122,16 @@ var Tokenizer = class {
     if (this.mode !== TokenizerMode.STRING_LITERAL && this.isForbiddenChar(char)) {
       throw this.createError(`Forbidden character '${char}'`, startPos);
     }
+    if (char === "/") {
+      if (this.peekNext() === "/") {
+        while (this.peek() !== "\n" && this.index < this.input.length) {
+          this.advance();
+        }
+        return this.nextToken();
+      } else {
+        throw this.createError("Unexpected character '/' (only // comments allowed)", startPos);
+      }
+    }
     if (char === "\n") {
       this.advance();
       this.line++;
@@ -255,11 +265,9 @@ var Tokenizer = class {
       this.advance();
       while (this.index < this.input.length) {
         const char = this.peek();
-        if (this.isLetter(char) || this.isDigit(char)) {
+        if (this.isLetter(char) || this.isDigit(char) || char === "_" || char === "-") {
           value += char;
           this.advance();
-        } else if (char === "_") {
-          throw this.createError("TagName cannot contain underscores", this.getPosition());
         } else {
           break;
         }
@@ -274,7 +282,7 @@ var Tokenizer = class {
       let lastWasDot = false;
       while (this.index < this.input.length) {
         const char = this.peek();
-        if (this.isLowerCase(char) || this.isDigit(char)) {
+        if (this.isLowerCase(char) || this.isUpperCase(char) || this.isDigit(char) || char === "-" || char === "_") {
           value += char;
           lastWasDot = false;
           this.advance();
@@ -1345,17 +1353,28 @@ function formatStyleValue(value) {
 
 // ../compiler/packages/codegen/react/dist/script.js
 function generateScript(ir) {
-  return ir.script.map((entry) => {
-    return `function ${entry.handler}() {
-  // TODO: Implement ${entry.event} handler
-}`;
+  const hooks = [];
+  const handlers = [];
+  ir.script.forEach((entry) => {
+    const key = entry.event;
+    const value = entry.handler;
+    const isStringLiteral = value.startsWith("'") || value.startsWith('"');
+    if (value === "true" || value === "false" || !isNaN(Number(value)) || isStringLiteral) {
+      const hookName = `[${key}, set${capitalize(key)}]`;
+      hooks.push(`const ${hookName} = React.useState(${value});`);
+    } else {
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(value)) {
+        handlers.push(`const ${value} = () => {
+    console.log("${value} triggered");
+  };
+`);
+      }
+    }
   });
+  return { hooks, handlers };
 }
-function generateScriptExports(handlers) {
-  if (handlers.length === 0) {
-    return null;
-  }
-  return handlers.join("\n\n");
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 // ../compiler/packages/codegen/react/dist/jsx.js
@@ -1404,8 +1423,21 @@ function mapToHTMLTag(uihTag) {
     Th: "th",
     // Media
     Img: "img",
+    Image: "img",
     Video: "video",
     Audio: "audio",
+    // SVG
+    Svg: "svg",
+    Path: "path",
+    Circle: "circle",
+    Rect: "rect",
+    Line: "line",
+    Polyline: "polyline",
+    Polygon: "polyline",
+    G: "g",
+    Defs: "defs",
+    LinearGradient: "linearGradient",
+    Stop: "stop",
     // Other
     A: "a",
     Card: "div",
@@ -1424,30 +1456,96 @@ function generateNode(node, indent) {
 }
 function generateTextNode(node, indent) {
   const indentStr = " ".repeat(indent);
-  const escaped = escapeJSXText(node.value);
-  return `${indentStr}{"${escaped}"}`;
+  return `${indentStr}{${JSON.stringify(node.value)}}`;
 }
+var VOID_ELEMENTS = /* @__PURE__ */ new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]);
 function generateComponentNode(node, indent) {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag(node.tag);
-  const attrs = generateAttributes(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
-  if (node.children.length === 0) {
-    return `${indentStr}<${tag}${attrsStr} />`;
-  }
-  const childrenStr = generateJSX(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+  const ifAttr = node.attrs.find((a) => a.key === "if");
+  const attrs = node.attrs.filter((a) => a.key !== "if");
+  const attrsStr = generateAttributes(attrs);
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
+  let jsx = "";
+  if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
+    jsx = `${indentStr}<${tag}${attrsFinal} />`;
+  } else {
+    const childrenStr = generateJSX(node.children, indent + 2);
+    jsx = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
+  }
+  if (ifAttr) {
+    return `${indentStr}{${ifAttr.value} && (
+${jsx}
+${indentStr})}`;
+  }
+  return jsx;
 }
 function generateAttributes(attrs) {
   return attrs.map((attr) => {
-    const key = attr.key === "class" ? "className" : attr.key;
+    let key = attr.key === "class" ? "className" : attr.key;
+    if (!key.startsWith("data-") && !key.startsWith("aria-") && key.includes("-")) {
+      key = toCamelCase(key);
+    }
+    if (key === "style") {
+      const transformedStyle = attr.value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+      const styleObj = parseStyleString(transformedStyle);
+      return `style={${JSON.stringify(styleObj)}}`;
+    }
+    if (key.startsWith("on")) {
+      if (attr.value.includes("toggle(")) {
+        const match = attr.value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1];
+          return `${key}={${"() => set"}${capitalize2(target)}(!${target})}`;
+        }
+      }
+      const assignmentMatch = attr.value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
+      if (assignmentMatch) {
+        const target = assignmentMatch[1];
+        const value = assignmentMatch[2];
+        return `${key}={${"() => set"}${capitalize2(target)}(${value})}`;
+      }
+    }
     return `${key}="${escapeAttributeValue(attr.value)}"`;
   }).join(" ");
 }
-function escapeJSXText(text) {
-  return text.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");
+function parseStyleString(styleStr) {
+  const styleObj = {};
+  const rules = styleStr.split(";");
+  rules.forEach((rule) => {
+    const [prop, ...values] = rule.split(":");
+    if (prop && values.length > 0) {
+      const key = toCamelCase(prop.trim());
+      const value = values.join(":").trim();
+      if (key && value) {
+        styleObj[key] = value;
+      }
+    }
+  });
+  return styleObj;
+}
+function toCamelCase(str) {
+  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+}
+function capitalize2(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 function escapeAttributeValue(value) {
   return value.replace(/\\/g, "\\\\").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1463,18 +1561,25 @@ function generate(ir, options = {}) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
-  const events = generateScript(ir);
-  const scriptCode = generateScriptExports(events);
-  const code = generateFullCode(ir, meta, style, scriptCode, opts);
+  const scriptData = generateScript(ir);
+  const code = generateFullCode(ir, meta, style, opts, scriptData);
   return {
     code,
     style,
     meta,
-    events
+    events: scriptData.handlers
+    // Backwards compatibility
   };
 }
-function generateFullCode(ir, meta, style, scriptCode, opts) {
+function generateFullCode(ir, meta, style, opts, scriptData) {
   const sections = [];
+  const imports = ['import React from "react";'];
+  if (ir.components && ir.components.length > 0) {
+    ir.components.forEach((component) => {
+      imports.push(`import { ${component} } from "@/components/${component}";`);
+    });
+  }
+  sections.push(imports.join("\n"));
   if (opts.includeComments && ir.errors.length > 0) {
     sections.push(generateErrorComments(ir));
   }
@@ -1482,14 +1587,9 @@ function generateFullCode(ir, meta, style, scriptCode, opts) {
     sections.push(meta);
   }
   if (style) {
-    sections.push(`const styles = \`
-${style}
-\`;`);
+    sections.push(`const styles = ${JSON.stringify(style)};`);
   }
-  if (scriptCode) {
-    sections.push(scriptCode);
-  }
-  const componentCode = generateComponent(ir, opts);
+  const componentCode = generateComponent(ir, opts, scriptData);
   sections.push(componentCode);
   return sections.join("\n\n");
 }
@@ -1499,9 +1599,12 @@ function generateErrorComments(ir) {
 ${errors.join("\n")}
  */`;
 }
-function generateComponent(ir, opts) {
+function generateComponent(ir, opts, scriptData) {
   const jsx = generateJSX(ir.layout, opts.indentSize);
+  const body = [...scriptData.hooks, ...scriptData.handlers].join("\n  ");
   return `export default function ${opts.componentName}() {
+  ${body}
+
   return (
 ${jsx}
   );
@@ -1556,17 +1659,35 @@ function formatStyleValue2(value) {
 
 // ../compiler/packages/codegen/vue/dist/script.js
 function generateScript2(ir) {
-  return ir.script.map((entry) => {
-    return `const ${entry.handler} = () => {
-  // TODO: Implement ${entry.event} handler
-};`;
+  const refs = [];
+  const handlers = [];
+  ir.script.forEach((entry) => {
+    const key = entry.event;
+    const value = entry.handler;
+    const isStringLiteral = value.startsWith("'") || value.startsWith('"');
+    if (value === "true" || value === "false" || !isNaN(Number(value)) || isStringLiteral) {
+      refs.push(`const ${key} = ref(${value});`);
+    } else {
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(value)) {
+        handlers.push(`const ${value} = () => {
+  // TODO: Implement ${key} handler
+};`);
+      }
+    }
   });
+  return { refs, handlers };
 }
-function generateScriptExports2(handlers) {
-  if (handlers.length === 0) {
+function generateScriptExports2(output) {
+  const lines = [];
+  if (output.refs.length > 0) {
+    lines.push(`import { ref } from 'vue';`);
+    lines.push(...output.refs);
+  }
+  lines.push(...output.handlers);
+  if (lines.length === 0) {
     return null;
   }
-  return handlers.join("\n\n");
+  return lines.join("\n\n");
 }
 
 // ../compiler/packages/codegen/vue/dist/template.js
@@ -1617,6 +1738,18 @@ function mapToHTMLTag2(uihTag) {
     Img: "img",
     Video: "video",
     Audio: "audio",
+    // SVG
+    Svg: "svg",
+    Path: "path",
+    Circle: "circle",
+    Rect: "rect",
+    Line: "line",
+    Polyline: "polyline",
+    Polygon: "polyline",
+    G: "g",
+    Defs: "defs",
+    LinearGradient: "linearGradient",
+    Stop: "stop",
     // Other
     A: "a",
     Card: "div",
@@ -1638,21 +1771,62 @@ function generateTextNode2(node, indent) {
   const escaped = escapeTemplateText(node.value);
   return `${indentStr}${escaped}`;
 }
+var VOID_ELEMENTS2 = /* @__PURE__ */ new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]);
 function generateComponentNode2(node, indent) {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag2(node.tag);
-  const attrs = generateAttributes2(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
-  if (node.children.length === 0) {
-    return `${indentStr}<${tag}${attrsStr} />`;
+  const ifAttr = node.attrs.find((a) => a.key === "if");
+  const attrs = node.attrs.filter((a) => a.key !== "if");
+  let attrsStr = generateAttributes2(attrs);
+  if (ifAttr) {
+    attrsStr = `v-if="${escapeAttributeValue2(ifAttr.value)}" ` + attrsStr;
+  }
+  attrsStr = attrsStr.trim();
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
+  if (node.children.length === 0 || VOID_ELEMENTS2.has(tag)) {
+    return `${indentStr}<${tag}${attrsFinal} />`;
   }
   const childrenStr = generateTemplate(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+  return `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
 }
 function generateAttributes2(attrs) {
-  return attrs.map((attr) => `${attr.key}="${escapeAttributeValue2(attr.value)}"`).join(" ");
+  return attrs.map((attr) => {
+    let key = attr.key;
+    let value = attr.value;
+    if (key.startsWith("on") && key.length > 2 && key[2] === key[2].toUpperCase()) {
+      const eventName = key.slice(2).toLowerCase();
+      key = `@${eventName}`;
+      if (value.includes("toggle(")) {
+        const match = value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1].trim();
+          value = `${target} = !${target}`;
+          return `${key}="${value}"`;
+        }
+      }
+    }
+    if (key === "style") {
+      value = value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+    }
+    return `${key}="${escapeAttributeValue2(value)}"`;
+  }).join(" ");
 }
 function escapeTemplateText(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1671,14 +1845,14 @@ function generate2(ir, options = {}) {
   const opts = { ...DEFAULT_OPTIONS2, ...options };
   const meta = generateMeta2(ir);
   const style = generateStyle2(ir);
-  const events = generateScript2(ir);
-  const scriptCode = generateScriptExports2(events);
+  const scriptOutput = generateScript2(ir);
+  const scriptCode = generateScriptExports2(scriptOutput);
   const code = generateFullCode2(ir, meta, style, scriptCode, opts);
   return {
     code,
     style,
     meta,
-    events
+    events: scriptOutput.handlers
   };
 }
 function generateFullCode2(ir, meta, style, scriptCode, opts) {
@@ -1774,17 +1948,30 @@ function formatStyleValue3(value) {
 
 // ../compiler/packages/codegen/svelte/dist/script.js
 function generateScript3(ir) {
-  return ir.script.map((entry) => {
-    return `function ${entry.handler}() {
-  // TODO: Implement ${entry.event} handler
-}`;
+  const state = [];
+  const handlers = [];
+  ir.script.forEach((entry) => {
+    const key = entry.event;
+    const value = entry.handler;
+    const isStringLiteral = value.startsWith("'") || value.startsWith('"');
+    if (value === "true" || value === "false" || !isNaN(Number(value)) || isStringLiteral) {
+      state.push(`let ${key} = $state(${value});`);
+    } else {
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(value)) {
+        handlers.push(`function ${value}() {
+  // TODO: Implement ${key} handler
+}`);
+      }
+    }
   });
+  return { state, handlers };
 }
-function generateScriptExports3(handlers) {
-  if (handlers.length === 0) {
+function generateScriptExports3(output) {
+  const lines = [...output.state, ...output.handlers];
+  if (lines.length === 0) {
     return null;
   }
-  return handlers.join("\n\n");
+  return lines.join("\n\n");
 }
 
 // ../compiler/packages/codegen/svelte/dist/template.js
@@ -1835,6 +2022,18 @@ function mapToHTMLTag3(uihTag) {
     Img: "img",
     Video: "video",
     Audio: "audio",
+    // SVG
+    Svg: "svg",
+    Path: "path",
+    Circle: "circle",
+    Rect: "rect",
+    Line: "line",
+    Polyline: "polyline",
+    Polygon: "polyline",
+    G: "g",
+    Defs: "defs",
+    LinearGradient: "linearGradient",
+    Stop: "stop",
     // Other
     A: "a",
     Card: "div",
@@ -1856,21 +2055,69 @@ function generateTextNode3(node, indent) {
   const escaped = escapeTemplateText2(node.value);
   return `${indentStr}${escaped}`;
 }
+var VOID_ELEMENTS3 = /* @__PURE__ */ new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]);
 function generateComponentNode3(node, indent) {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag3(node.tag);
-  const attrs = generateAttributes3(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
-  if (node.children.length === 0) {
-    return `${indentStr}<${tag}${attrsStr} />`;
-  }
-  const childrenStr = generateTemplate2(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+  const ifAttr = node.attrs.find((a) => a.key === "if");
+  const attrs = node.attrs.filter((a) => a.key !== "if");
+  const attrsStr = generateAttributes3(attrs);
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
+  let componentCode = "";
+  if (node.children.length === 0 || VOID_ELEMENTS3.has(tag)) {
+    componentCode = `${indentStr}<${tag}${attrsFinal} />`;
+  } else {
+    const childrenStr = generateTemplate2(node.children, indent + 2);
+    componentCode = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
+  }
+  if (ifAttr) {
+    return `${indentStr}{#if ${ifAttr.value}}
+${componentCode}
+${indentStr}{/if}`;
+  }
+  return componentCode;
 }
 function generateAttributes3(attrs) {
-  return attrs.map((attr) => `${attr.key}="${escapeAttributeValue3(attr.value)}"`).join(" ");
+  return attrs.map((attr) => {
+    let key = attr.key;
+    let value = attr.value;
+    if (key.startsWith("on") && key.length > 2 && key[2] === key[2].toUpperCase()) {
+      key = key.toLowerCase();
+      if (value.includes("toggle(")) {
+        const match = value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1].trim();
+          return `${key}={() => ${target} = !${target}}`;
+        }
+      }
+      const isExpression = /[\=\+\-\*\/]/.test(value) || value.includes("(") || value.includes(")");
+      if (isExpression) {
+        return `${key}={() => ${value}}`;
+      }
+      return `${key}={${value}}`;
+    }
+    if (key === "style") {
+      value = value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+    }
+    return `${key}="${escapeAttributeValue3(value)}"`;
+  }).join(" ");
 }
 function escapeTemplateText2(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1889,14 +2136,14 @@ function generate3(ir, options = {}) {
   const opts = { ...DEFAULT_OPTIONS3, ...options };
   const meta = generateMeta3(ir);
   const style = generateStyle3(ir);
-  const events = generateScript3(ir);
-  const scriptCode = generateScriptExports3(events);
+  const scriptOutput = generateScript3(ir);
+  const scriptCode = generateScriptExports3(scriptOutput);
   const code = generateFullCode3(ir, meta, style, scriptCode, opts);
   return {
     code,
     style,
     meta,
-    events
+    events: scriptOutput.handlers
   };
 }
 function generateFullCode3(ir, meta, style, scriptCode, opts) {

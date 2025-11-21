@@ -1,4 +1,4 @@
-export const ADMIN_DASHBOARD = `meta {
+meta {
   title: "Admin Dashboard"
   route: "/admin"
 }
@@ -215,4 +215,4 @@ layout {
       }
     }
   }
-}`;
+}

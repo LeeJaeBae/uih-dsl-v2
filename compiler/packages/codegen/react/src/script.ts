@@ -9,11 +9,7 @@
 
 import type { UIHIR } from "@uih-dsl/ir";
 
-interface StateDefinition {
-  key: string;
-  initialValue: string | boolean | number;
-  setter: string;
-}
+
 
 export interface ScriptOutput {
   hooks: string[];
@@ -39,8 +35,9 @@ export function generateScript(ir: UIHIR): ScriptOutput {
     const key = entry.event; // e.g. "isOpen", "onClick"
     const value = entry.handler; // e.g. "false", "handleClick"
 
-    // Heuristic: If value is "true", "false", or a number, it's a STATE.
-    if (value === "true" || value === "false" || !isNaN(Number(value))) {
+    // Heuristic: If value is "true", "false", a number, or a string literal, it's a STATE.
+    const isStringLiteral = value.startsWith("'") || value.startsWith('"');
+    if (value === "true" || value === "false" || !isNaN(Number(value)) || isStringLiteral) {
       const hookName = `[${key}, set${capitalize(key)}]`;
       // React.useState(false)
       hooks.push(`const ${hookName} = React.useState(${value});`);

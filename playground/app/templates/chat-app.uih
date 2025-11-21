@@ -1,4 +1,4 @@
-export const CHAT_APP = `meta {
+meta {
   title: "Chat App"
   route: "/chat"
 }
@@ -87,4 +87,4 @@ layout {
       }
     }
   }
-}`;
+}

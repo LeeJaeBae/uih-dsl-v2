@@ -122,21 +122,74 @@ function generateComponentNode(
 ): string {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag(node.tag);
-  const attrs = generateAttributes(node.attrs);
-  const attrsStr = attrs.length > 0 ? " " + attrs : "";
+  
+  // Handle conditional rendering 'if' attribute
+  const ifAttr = node.attrs.find(a => a.key === "if");
+  const attrs = node.attrs.filter(a => a.key !== "if");
+  
+  const attrsStr = generateAttributes(attrs);
+  const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
 
+  let componentCode = "";
   if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
-    return `${indentStr}<${tag}${attrsStr} />`;
-  }
-
-  const childrenStr = generateTemplate(node.children, indent + 2);
-  return `${indentStr}<${tag}${attrsStr}>
+    componentCode = `${indentStr}<${tag}${attrsFinal} />`;
+  } else {
+    const childrenStr = generateTemplate(node.children, indent + 2);
+    componentCode = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
+  }
+
+  if (ifAttr) {
+    return `${indentStr}{#if ${ifAttr.value}}
+${componentCode}
+${indentStr}{/if}`;
+  }
+
+  return componentCode;
 }
 
 function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
-  return attrs.map((attr) => `${attr.key}="${escapeAttributeValue(attr.value)}"`).join(" ");
+  return attrs.map((attr) => {
+    let key = attr.key;
+    let value = attr.value;
+
+    // Map events: onClick -> onclick (Svelte 5 uses attributes)
+    if (key.startsWith("on") && key.length > 2 && key[2] === key[2].toUpperCase()) {
+      // Convert onClick -> onclick
+      key = key.toLowerCase();
+
+      // Handle toggle() magic
+      if (value.includes("toggle(")) {
+        const match = value.match(/toggle\((.*)\)/);
+        if (match) {
+          const target = match[1].trim();
+          // Svelte: () => target = !target
+          return `${key}={() => ${target} = !${target}}`;
+        }
+      }
+      
+      // Check if it's an inline assignment or expression
+      // Simple heuristic: contains =, ++, --, +, -, *, / and is NOT just a function name
+      const isExpression = /[\=\+\-\*\/]/.test(value) || value.includes("(") || value.includes(")");
+      
+      if (isExpression) {
+         // If it looks like a function call "handler()", we also wrap it
+         // If it's "count = count + 1", we wrap it
+         return `${key}={() => ${value}}`;
+      }
+      
+      // Standard handler: onclick={handleClick}
+      return `${key}={${value}}`;
+    }
+
+    // Transform style tokens: "color.bg" -> "var(--color-bg)"
+    if (key === "style") {
+      value = value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
+    }
+
+    return `${key}="${escapeAttributeValue(value)}"`;
+  }).join(" ");
 }
 
 function escapeTemplateText(text: string): string {

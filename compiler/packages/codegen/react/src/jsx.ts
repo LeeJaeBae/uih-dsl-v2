@@ -255,15 +255,15 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
 
       // Handle variable references/expressions (e.g. key={item.id}, value={state.value})
       // Matches "word" or "word.word" or "word.word.word"
-      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*(\.[a-zA-Z_$][a-zA-Z0-9_$]*)+$/.test(attr.value) || 
-          /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value)) {
-         // Exclude simple strings that happen to be words if they are not clearly variables? 
-         // The previous logic allowed simple words. We extend to dot notation.
-         // Note: This might catch "true" or "false" if passed as strings, but usually boolean attrs are handled above.
-         // "blue" -> {blue} (variable) or "blue" (string)? 
-         // In UIH, "strings" are quoted in the AST, but in IR/attrs.value they are unquoted strings.
-         // This is a heuristic. If it looks like a variable, we treat it as one.
-         // Ideally, the IR should distinguish identifiers from strings, but currently it doesn't.
+      const isIdentifier = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value);
+      const isDotPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*(\.[a-zA-Z_$][a-zA-Z0-9_$]*)+$/.test(attr.value);
+
+      const STRING_ONLY_ATTRS = new Set([
+        "id", "name", "htmlFor", "type", "placeholder", "aria-label", 
+        "class", "className", "alt", "src", "href", "target", "rel", "action", "method"
+      ]);
+
+      if (isDotPath || (isIdentifier && !STRING_ONLY_ATTRS.has(key))) {
          return `${key}={${attr.value}}`;
       }
 

@@ -28,7 +28,7 @@ export function getTemplates(): Template[] {
       if (id.includes('dashboard')) category = 'Dashboard';
       else if (id.includes('landing')) category = 'Landing Page';
       else if (id.includes('mobile')) category = 'Mobile';
-      else if (id === 'nexus-dashboard') category = 'Showcase';
+      else if (['nexus-dashboard', 'feature-showcase', 'adaptive-components', 'state-machine'].includes(id)) category = 'Showcase';
       
       return {
         id,

@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/codegen-vue",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Vue code generator for UIH DSL - Generate Vue 3 SFC components",
   "type": "module",
   "main": "./dist/index.js",

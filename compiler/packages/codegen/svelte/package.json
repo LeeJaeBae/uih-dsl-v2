@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/codegen-svelte",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Svelte code generator for UIH DSL - Generate Svelte 4/5 components",
   "type": "module",
   "main": "./dist/index.js",

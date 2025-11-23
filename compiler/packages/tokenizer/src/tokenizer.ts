@@ -424,13 +424,14 @@ export class Tokenizer {
         );
       }
 
-      // Create identifier token with optional layout flag
+      // Create identifier token with optional layout/state flags
       return this.createToken(
         TokenType.IDENTIFIER,
         value,
         startPos,
         this.getPosition(),
-        value === "layout" // isPotentialLayoutStart
+        value === "layout", // isPotentialLayoutStart
+        value === "state"   // isPotentialStateStart
       );
     }
   }
@@ -524,6 +525,7 @@ export class Tokenizer {
    * @param start - Starting position (inclusive).
    * @param end - Ending position (exclusive).
    * @param isPotentialLayoutStart - Optional flag for "layout" identifier.
+   * @param isPotentialStateStart - Optional flag for "state" identifier.
    * @returns Constructed token object.
    */
   private createToken(
@@ -531,7 +533,8 @@ export class Tokenizer {
     value: string,
     start: Position,
     end: Position,
-    isPotentialLayoutStart?: boolean
+    isPotentialLayoutStart?: boolean,
+    isPotentialStateStart?: boolean
   ): Token {
     const token: Token = {
       type,
@@ -541,9 +544,12 @@ export class Tokenizer {
       rawIndex: start.index, // v2.1: Original index in source
     };
 
-    // Add optional flag if provided
+    // Add optional flags if provided
     if (isPotentialLayoutStart) {
       token.isPotentialLayoutStart = true;
+    }
+    if (isPotentialStateStart) {
+      token.isPotentialStateStart = true;
     }
 
     return token;

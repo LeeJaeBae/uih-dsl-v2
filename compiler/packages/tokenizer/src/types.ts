@@ -77,6 +77,12 @@ export interface Token {
    * Parser should verify that the next non-whitespace token is LBRACE to confirm layout block.
    */
   isPotentialLayoutStart?: boolean;
+
+  /**
+   * Set to `true` when this token is an IDENTIFIER with value "state".
+   * Allows Parser to identify potential state block starts.
+   */
+  isPotentialStateStart?: boolean;
 }
 
 /**

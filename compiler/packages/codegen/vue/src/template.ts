@@ -167,6 +167,13 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
           return `${key}="${value}"`;
         }
       }
+      
+      // Handle simple assignment: var = val
+      const assignmentMatch = value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
+      if (assignmentMatch) {
+        // Vue allows assignment in template directly
+        return `${key}="${value}"`;
+      }
     }
 
     // Transform style tokens: "color.bg" -> "var(--color-bg)"

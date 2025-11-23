@@ -1,0 +1,44 @@
+
+meta {
+  title: "State Machine Demo"
+  route: "/demo"
+}
+
+style {
+  color.primary: "#0E5EF7"
+}
+
+state {
+  initial: "idle"
+  idle.on.CLICK: "loading"
+  loading.on.SUCCESS: "success"
+  loading.on.ERROR: "error"
+  success.on.RESET: "idle"
+  error.on.RETRY: "loading"
+}
+
+layout {
+  Div(class: "container") {
+    H1 {
+      "State Machine Demo"
+    }
+    Div {
+      "Current State: "
+      Span {
+        "state" // Text replacement logic isn't fully implemented but structural placeholder
+      }
+    }
+    Button(onClick: "handleCLICK") {
+      "Start Action"
+    }
+    Button(onClick: "handleSUCCESS") {
+      "Success Trigger"
+    }
+    Button(onClick: "handleERROR") {
+      "Error Trigger"
+    }
+    Button(onClick: "handleRESET") {
+      "Reset"
+    }
+  }
+}

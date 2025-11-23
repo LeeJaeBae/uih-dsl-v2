@@ -12,6 +12,7 @@ import type { CodegenOutput, CodegenOptions } from "./types.js";
 import { generateMeta } from "./meta.js";
 import { generateStyle } from "./style.js";
 import { generateScript } from "./script.js";
+import { generateState } from "./state.js";
 import { generateJSX } from "./jsx.js";
 
 const DEFAULT_OPTIONS: CodegenOptions = {
@@ -25,17 +26,23 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
 
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
-  const scriptData = generateScript(ir); // Now returns { hooks, handlers }
+  const scriptData = generateScript(ir); // script block
+  const stateData = generateState(ir);   // state block
 
+  // Merge hooks and handlers
+  const mergedScriptData = {
+    hooks: [...stateData.hooks, ...scriptData.hooks],
+    handlers: [...stateData.handlers, ...scriptData.handlers],
+  };
 
-  // Pass scriptData to generateComponent so it can inject code INSIDE the component
-  const code = generateFullCode(ir, meta, style, opts, scriptData);
+  // Pass mergedScriptData to generateComponent so it can inject code INSIDE the component
+  const code = generateFullCode(ir, meta, style, opts, mergedScriptData);
 
   return {
     code,
     style,
     meta,
-    events: scriptData.handlers, // Backwards compatibility
+    events: mergedScriptData.handlers, // Backwards compatibility
   };
 }
 
@@ -52,8 +59,8 @@ function generateFullCode(
   const imports: string[] = ['import React from "react";'];
   
   if (ir.components && ir.components.length > 0) {
-    ir.components.forEach((component) => {
-      imports.push(`import { ${component} } from "@/components/${component}";`);
+    ir.components.forEach((comp) => {
+      imports.push(`import { ${comp.name} } from "@/components/${comp.name}";`);
     });
   }
   

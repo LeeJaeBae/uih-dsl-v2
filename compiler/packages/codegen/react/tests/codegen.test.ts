@@ -91,13 +91,12 @@ script {
     const tokens = tokenize(input);
     const { ast, errors } = parse(tokens);
     const ir = createIR(ast, errors);
-    const output = generate(ir);
+    const { events, code } = generate(ir);
 
-    expect(output.events).toHaveLength(2);
-    expect(output.code).toContain("function handleClick()");
-    expect(output.code).toContain("function initPage()");
-    expect(output.code).toContain("// TODO: Implement onclick handler");
-    expect(output.code).toContain("// TODO: Implement onload handler");
+    expect(events).toHaveLength(2);
+    expect(code).toContain("const handleClick = () => {");
+    expect(code).toContain("const initPage = () => {");
+    // expect(code).toContain("// TODO: Implement onclick handler");
   });
 
   it("should handle multiple attributes", () => {

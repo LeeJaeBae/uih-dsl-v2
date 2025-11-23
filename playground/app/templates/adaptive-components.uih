@@ -1,0 +1,29 @@
+meta {
+  title: "Adaptive Components"
+  description: "Components with role metadata"
+}
+
+style {
+  color.primary: "#ec4899"
+}
+
+components {
+  Card(role: "container", variant: "outlined")
+  Button(role: "action", variant: "filled")
+}
+
+layout {
+  Div(class: "p-6") {
+    H2 {
+      "Adaptive Components"
+    }
+    P(class: "mb-4") {
+      "Check the IR/Console to see component metadata."
+    }
+    Card {
+      Button {
+        "Click Me"
+      }
+    }
+  }
+}

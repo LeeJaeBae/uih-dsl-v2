@@ -20,6 +20,7 @@ export interface ASTRoot {
   type: "Program";
   meta: MetaNode;
   style: StyleNode;
+  state: StateNode | null;
   components: ComponentsNode | null;
   layout: LayoutNode;
   script: ScriptNode | null;
@@ -68,6 +69,27 @@ export interface StyleProperty {
 }
 
 // ========================================================================
+// State Node
+// ========================================================================
+
+/**
+ * State block containing FSM definitions.
+ */
+export interface StateNode {
+  type: "State";
+  properties: StateProperty[];
+}
+
+/**
+ * Single state property (key-value pair).
+ */
+export interface StateProperty {
+  key: string; // e.g. "initial", "idle.on.CLICK"
+  value: string; // e.g. "idle", "loading"
+  location: Range;
+}
+
+// ========================================================================
 // Components Node
 // ========================================================================
 
@@ -80,10 +102,11 @@ export interface ComponentsNode {
 }
 
 /**
- * Single component entry (name only).
+ * Single component entry (name and optional attributes).
  */
 export interface ComponentEntry {
   name: string; // e.g. "Card", "Button"
+  attributes?: Attribute[];
   location: Range;
 }
 

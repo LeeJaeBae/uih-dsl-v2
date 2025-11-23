@@ -1,0 +1,66 @@
+meta {
+  title: "State Machine Logic"
+  description: "Example of strict logic binding using FSM"
+  route: "/state-demo"
+}
+
+style {
+  color.primary: "#3B82F6"
+  color.success: "#10B981"
+  color.error: "#EF4444"
+  color.text: "#1F2937"
+  spacing.md: "16px"
+  spacing.lg: "24px"
+  radius.md: "8px"
+}
+
+state {
+  initial: "idle"
+  idle.on.SUBMIT: "loading"
+  loading.on.SUCCESS: "success"
+  loading.on.ERROR: "error"
+  success.on.RESET: "idle"
+  error.on.RETRY: "loading"
+}
+
+layout {
+  Div(class: "max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-sm bg-white") {
+    H2(class: "text-xl font-bold mb-4") {
+      "Strict Logic Binding Demo"
+    }
+
+    Div(class: "mb-6 p-4 bg-gray-50 rounded") {
+      Span(class: "text-sm text-gray-500 uppercase font-semibold") {
+        "Current State:"
+      }
+      // In a real implementation, we would bind text to state
+      // For now, this is static, but the logic is generated in code
+      Div(class: "mt-1 font-mono text-lg text-blue-600") {
+        "Check console/code for state"
+      }
+    }
+
+    Div(class: "space-y-2") {
+      Button(class: "w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700", onClick: "handleSUBMIT") {
+        "Submit (Idle -> Loading)"
+      }
+      
+      Div(class: "grid grid-cols-2 gap-2") {
+        Button(class: "py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700", onClick: "handleSUCCESS") {
+          "Success (Loading -> Success)"
+        }
+        Button(class: "py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700", onClick: "handleERROR") {
+          "Error (Loading -> Error)"
+        }
+      }
+
+      Button(class: "w-full py-2 px-4 bg-gray-600 text-white rounded hover:bg-gray-700", onClick: "handleRESET") {
+        "Reset (Success -> Idle)"
+      }
+      
+      Button(class: "w-full py-2 px-4 bg-orange-500 text-white rounded hover:bg-orange-600", onClick: "handleRETRY") {
+        "Retry (Error -> Loading)"
+      }
+    }
+  }
+}

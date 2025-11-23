@@ -12,6 +12,7 @@ import type { CodegenOutput, CodegenOptions } from "./types.js";
 import { generateMeta } from "./meta.js";
 import { generateStyle } from "./style.js";
 import { generateScript, generateScriptExports } from "./script.js";
+import { generateState } from "./state.js";
 import { generateTemplate } from "./template.js";
 
 const DEFAULT_OPTIONS: CodegenOptions = {
@@ -25,8 +26,18 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
 
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
+  
+  // Generate script and state logic
   const scriptOutput = generateScript(ir);
-  const scriptCode = generateScriptExports(scriptOutput);
+  const stateOutput = generateState(ir);
+  
+  // Merge script and state outputs
+  const mergedScriptOutput = {
+    state: [...stateOutput.state, ...scriptOutput.state],
+    handlers: [...stateOutput.handlers, ...scriptOutput.handlers],
+  };
+
+  const scriptCode = generateScriptExports(mergedScriptOutput);
 
   const code = generateFullCode(ir, meta, style, scriptCode, opts);
 
@@ -34,7 +45,7 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
     code,
     style,
     meta,
-    events: scriptOutput.handlers,
+    events: mergedScriptOutput.handlers,
   };
 }
 

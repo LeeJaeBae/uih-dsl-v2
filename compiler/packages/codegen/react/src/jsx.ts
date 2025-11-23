@@ -168,28 +168,30 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
         return `style={${JSON.stringify(styleObj)}}`;
       }
 
-            // Handle toggle() magic syntax in events
+      if (key.startsWith("on")) {
+        // 1. Handle toggle(var)
+        if (attr.value.includes("toggle(")) {
+          const match = attr.value.match(/toggle\((.*)\)/);
+          if (match) {
+            const target = match[1];
+            return `${key}={${"() => set"}${capitalize(target)}(!${target})}`;
+          }
+        }
 
-            // Handle toggle() magic syntax in events
-            if (key.startsWith("on")) {
-              // 1. Handle toggle(var)
-              if (attr.value.includes("toggle(")) {
-                const match = attr.value.match(/toggle\((.*)\)/);
-                if (match) {
-                  const target = match[1];
-                  return `${key}={${"() => set"}${capitalize(target)}(!${target})}`;
-                }
-              }
+        // 2. Handle simple assignment: var = val
+        const assignmentMatch = attr.value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
+        if (assignmentMatch) {
+          const target = assignmentMatch[1];
+          const value = assignmentMatch[2];
+          return `${key}={${"() => set"}${capitalize(target)}(${value})}`;
+        }
 
-              // 2. Handle simple assignment: var = val
-              // e.g. isSidebarOpen = !isSidebarOpen
-              const assignmentMatch = attr.value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
-              if (assignmentMatch) {
-                const target = assignmentMatch[1];
-                const value = assignmentMatch[2];
-                return `${key}={${"() => set"}${capitalize(target)}(${value})}`;
-              }
-            }
+        // 3. Handle function references (e.g. handleClick, handleSUBMIT)
+        // If value is a simple identifier, pass it as a reference
+        if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value)) {
+          return `${key}={${attr.value}}`;
+        }
+      }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;
     })

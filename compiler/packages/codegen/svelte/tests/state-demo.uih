@@ -1,0 +1,25 @@
+meta {
+  title: "Svelte State Demo"
+  route: "/svelte-demo"
+}
+
+style {
+  color.primary: "#ff3e00"
+}
+
+state {
+  initial: "idle"
+  idle.on.CLICK: "loading"
+  loading.on.SUCCESS: "success"
+}
+
+layout {
+  Div {
+    Button(onClick: "handleCLICK") {
+      "Start"
+    }
+    Button(onClick: "handleSUCCESS") {
+      "Finish"
+    }
+  }
+}

@@ -21,7 +21,7 @@ Tokenizer 위에서 동작하는 공식 문법 엔진 정의입니다. Token Str
 
 #### Program
 ```
-Program ::= MetaBlock StyleBlock ComponentsBlock? LayoutBlock ScriptBlock? EOF
+Program ::= MetaBlock StyleBlock StateBlock? ComponentsBlock? LayoutBlock ScriptBlock? EOF
 ```
 
 ### 3. Blocks
@@ -30,6 +30,7 @@ Program ::= MetaBlock StyleBlock ComponentsBlock? LayoutBlock ScriptBlock? EOF
 ```
 MetaBlock       ::= "meta" BlockBody(MetaProperty)
 StyleBlock      ::= "style" BlockBody(StyleProperty)
+StateBlock      ::= "state" BlockBody(StateProperty)
 ComponentsBlock ::= "components" BlockBody(ComponentEntry)
 LayoutBlock     ::= "layout" LayoutBody
 ScriptBlock     ::= "script" BlockBody(ScriptProperty)
@@ -68,25 +69,38 @@ StyleValue    ::= STRING | NUMBER | EnumString
 - no boolean
 - layout-like attributes 금지
 
-### 7. COMPONENTS Block Grammar
+### 7. STATE Block Grammar
+
+#### StateProperty
+```
+StateProperty ::= StateKey ":" StateValue
+StateKey      ::= Identifier ( "." Identifier )*
+StateValue    ::= STRING
+```
+
+#### Allowed_State_Formats
+- initial: "stateName"
+- stateName.on.EVENT: "targetStateName"
+
+### 8. COMPONENTS Block Grammar
 
 #### ComponentEntry
 ```
-ComponentEntry ::= ComponentName
+ComponentEntry ::= ComponentName (Attributes)?
 ComponentName  ::= TAGNAME | IDENTIFIER
 ```
 
 #### NOTES
-- but no quotes, no values, one per line
+- Optional attributes for adaptive metadata
+- one per line
 
 #### Examples
 ```
 Card
-Button
-Input
+Button(role:"action", variant:"primary")
 ```
 
-### 8. LAYOUT Block Grammar (Core)
+### 9. LAYOUT Block Grammar (Core)
 
 #### LayoutBody
 ```
@@ -96,7 +110,7 @@ LayoutNode     ::= Tag (Attributes)? (ChildrenBlock)?
 Tag            ::= TAGNAME | IDENTIFIER
 ```
 
-### 9. Attributes Grammar
+### 10. Attributes Grammar
 
 #### Attributes
 ```
@@ -105,7 +119,7 @@ AttributeList ::= Attribute (COMMA Attribute)*
 Attribute     ::= Identifier ":" STRING
 ```
 
-### 10. Children Block Grammar
+### 11. Children Block Grammar
 
 #### ChildrenBlock
 ```
@@ -114,7 +128,7 @@ ChildrenList  ::= (Child NEWLINE)*
 Child         ::= LayoutNode | TEXT_STRING
 ```
 
-### 11. SCRIPT Block Grammar
+### 12. SCRIPT Block Grammar
 
 #### ScriptProperty
 ```
@@ -124,7 +138,7 @@ ScriptProperty ::= Identifier ":" STRING
 #### Allowed_Script_Keys
 - onClick, onLoad, onSubmit, onMount, onChange
 
-### 12. Value Grammars
+### 13. Value Grammars
 
 #### Value_Types
 ```
@@ -134,7 +148,7 @@ BOOLEAN    ::= "true" | "false"
 EnumString ::= STRING   # validated in semantic phase
 ```
 
-### 13. Identifier Grammars
+### 14. Identifier Grammars
 
 #### Identifiers
 ```
@@ -142,12 +156,12 @@ Identifier ::= [a-z][a-z0-9.]*
 TagName    ::= [A-Z][a-zA-Z0-9]*
 ```
 
-### 14. Syntax Constraints (Formal)
+### 15. Syntax Constraints (Formal)
 
 1. 모든 블록은 순서 고정
 2. 각 블록은 1회만 등장
 3. meta/style/layout은 필수
-4. components/script는 optional
+4. state/components/script는 optional
 5. 들여쓰기 2 spaces only
 6. 속성(colon)은 반드시 `<id>: <value>`
 7. semicolon 금지
@@ -155,7 +169,7 @@ TagName    ::= [A-Z][a-zA-Z0-9]*
 9. children 안에서는 TEXT_STRING 또는 LayoutNode만 허용
 10. parser는 ambiguous branch 금지 (LLM-safe)
 
-### 15. Complete Example (BNF-valid)
+### 16. Complete Example (BNF-valid)
 
 ```
 meta {
@@ -169,8 +183,8 @@ style {
 }
 
 components {
-  Card
-  Button
+  Card(role: "container")
+  Button(variant: "primary")
 }
 
 layout {
@@ -200,10 +214,17 @@ Program
 │   ├── StyleProperty (color.primary: "#0E5EF7")
 │   ├── StyleProperty (radius.default: 8)
 │   └── RBRACE
+├── StateBlock
+│   ├── LBRACE
+│   ├── StateProperty (initial: "idle")
+│   ├── StateProperty (idle.on.CLICK: "loading")
+│   └── RBRACE
 ├── ComponentsBlock
 │   ├── LBRACE
 │   ├── ComponentEntry (Card)
+│   │   └── Attributes (role: "container")
 │   ├── ComponentEntry (Button)
+│   │   └── Attributes (variant: "primary")
 │   └── RBRACE
 ├── LayoutBlock
 │   ├── LBRACE
@@ -314,6 +335,6 @@ layout {
 
 ## Version
 
-- Version: 1.0.0
-- Last Update: 2025-11-18
-- Change Summary: Initial creation of UIH DSL Parser BNF Grammar specification.
+- Version: 2.1.0
+- Last Update: 2025-11-22
+- Change Summary: Added Adaptive Component attributes support.

@@ -97,6 +97,38 @@ layout {
   });
 
   /**
+   * Test: State block parsing
+   */
+  it("should parse state block with dot notation", () => {
+    const input = `
+state {
+  initial: "idle"
+  idle.on.CLICK: "loading"
+  loading.on.SUCCESS: "success"
+}
+
+layout {
+  Div {
+    "Content"
+  }
+}
+`;
+
+    const tokens = tokenize(input);
+    const { ast, errors } = parse(tokens);
+
+    expect(errors).toHaveLength(0);
+    expect(ast).not.toBeNull();
+    expect(ast!.state).not.toBeNull();
+    expect(ast!.state!.type).toBe("State");
+    expect(ast!.state!.properties).toHaveLength(3);
+    expect(ast!.state!.properties[0].key).toBe("initial");
+    expect(ast!.state!.properties[0].value).toBe("idle");
+    expect(ast!.state!.properties[1].key).toBe("idle.on.CLICK");
+    expect(ast!.state!.properties[1].value).toBe("loading");
+  });
+
+  /**
    * Test: Components block parsing
    */
   it("should parse components block", () => {

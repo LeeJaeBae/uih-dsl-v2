@@ -17,6 +17,8 @@ export type {
   IRError,
   StyleToken,
   ScriptEntry,
+  StateDefinition,
+  StateTransition,
 } from "./types.js";
 
 // Export type guards

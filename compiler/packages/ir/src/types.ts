@@ -33,9 +33,20 @@ export interface UIHIR {
   };
 
   /**
-   * Declared component names (from components block)
+   * Declared component names and metadata
    */
-  components: string[];
+  components: Array<{
+    name: string;
+    attrs: Array<{ key: string; value: string }>;
+  }>;
+
+  /**
+   * State machine definitions
+   */
+  state: {
+    initial: string | null;
+    states: StateDefinition[];
+  };
 
   /**
    * Normalized layout tree
@@ -135,4 +146,20 @@ export interface StyleToken {
 export interface ScriptEntry {
   event: string;
   handler: string;
+}
+
+/**
+ * State definition for FSM
+ */
+export interface StateDefinition {
+  name: string;
+  transitions: StateTransition[];
+}
+
+/**
+ * State transition
+ */
+export interface StateTransition {
+  event: string;
+  target: string;
 }

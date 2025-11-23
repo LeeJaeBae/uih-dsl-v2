@@ -308,8 +308,10 @@ var Tokenizer = class {
         value,
         startPos,
         this.getPosition(),
-        value === "layout"
+        value === "layout",
         // isPotentialLayoutStart
+        value === "state"
+        // isPotentialStateStart
       );
     }
   }
@@ -394,9 +396,10 @@ var Tokenizer = class {
    * @param start - Starting position (inclusive).
    * @param end - Ending position (exclusive).
    * @param isPotentialLayoutStart - Optional flag for "layout" identifier.
+   * @param isPotentialStateStart - Optional flag for "state" identifier.
    * @returns Constructed token object.
    */
-  createToken(type, value, start, end, isPotentialLayoutStart) {
+  createToken(type, value, start, end, isPotentialLayoutStart, isPotentialStateStart) {
     const token = {
       type,
       value,
@@ -408,6 +411,9 @@ var Tokenizer = class {
     };
     if (isPotentialLayoutStart) {
       token.isPotentialLayoutStart = true;
+    }
+    if (isPotentialStateStart) {
+      token.isPotentialStateStart = true;
     }
     return token;
   }
@@ -573,6 +579,7 @@ var Parser = class {
     this.skipNewlines();
     const meta = this.parseBlock("meta");
     const style = this.parseBlock("style");
+    const state = this.parseBlock("state");
     const components = this.parseBlock("components");
     const layout = this.parseBlock("layout");
     const script = this.parseBlock("script");
@@ -596,6 +603,7 @@ var Parser = class {
       type: "Program",
       meta: finalMeta,
       style: finalStyle,
+      state,
       components,
       layout,
       script
@@ -640,6 +648,9 @@ var Parser = class {
           break;
         case "style":
           result = this.parseStyle();
+          break;
+        case "state":
+          result = this.parseState();
           break;
         case "components":
           result = this.parseComponents();
@@ -765,6 +776,52 @@ var Parser = class {
     };
   }
   /**
+   * Parse state block content with error recovery.
+   *
+   * @returns StateNode
+   */
+  parseState() {
+    const properties = [];
+    while (!this.match(TokenType.RBRACE) && !this.isAtEnd()) {
+      this.skipNewlines();
+      if (this.match(TokenType.RBRACE)) {
+        break;
+      }
+      if (!this.match(TokenType.IDENTIFIER)) {
+        this.recordError("Expected state key (IDENTIFIER)", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+      const keyToken = this.consume();
+      if (!this.match(TokenType.COLON)) {
+        this.recordError("Expected COLON after state key", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+      this.consume();
+      if (!this.match(TokenType.STRING)) {
+        this.recordError("Expected STRING for state value", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+      const valueToken = this.consume();
+      const location = {
+        start: keyToken.range.start,
+        end: valueToken.range.end
+      };
+      properties.push({
+        key: keyToken.value,
+        value: valueToken.value,
+        location
+      });
+      this.skipNewlines();
+    }
+    return {
+      type: "State",
+      properties
+    };
+  }
+  /**
    * Parse components block content with error recovery.
    *
    * @returns ComponentsNode
@@ -782,9 +839,24 @@ var Parser = class {
         continue;
       }
       const nameToken = this.consume();
+      let attributes = [];
+      if (this.match(TokenType.LPAREN)) {
+        this.consume();
+        attributes = this.parseAttributes();
+        if (!this.match(TokenType.RPAREN)) {
+          this.recordError("Expected RPAREN after attributes", this.peek().range.start);
+          this.skipUntilRecoveryPoint();
+        } else {
+          this.consume();
+        }
+      }
       components.push({
         name: nameToken.value,
-        location: nameToken.range
+        attributes: attributes.length > 0 ? attributes : void 0,
+        location: {
+          start: nameToken.range.start,
+          end: this.tokens[this.current - 1].range.end
+        }
       });
       this.skipNewlines();
     }
@@ -1172,9 +1244,6 @@ function isValidScriptKey(key) {
 function isEmptyScriptValue(value) {
   return value.trim() === "";
 }
-function sortStringArray(arr) {
-  return [...arr].sort();
-}
 function sortStyleTokens(tokens) {
   return [...tokens].sort((a, b) => {
     const pathA = a.path.join(".");
@@ -1198,6 +1267,7 @@ function createIR(ast, parserErrors) {
     return {
       meta: {},
       style: { tokens: [] },
+      state: { initial: null, states: [] },
       components: [],
       layout: [],
       script: [],
@@ -1206,6 +1276,7 @@ function createIR(ast, parserErrors) {
   }
   const meta = createMetaIR(ast.meta, translationErrors);
   const style = createStyleIR(ast.style, translationErrors);
+  const state = createStateIR(ast.state, translationErrors);
   const components = createComponentsIR(ast.components);
   const layout = createLayoutIR(ast.layout);
   const script = createScriptIR(ast.script, translationErrors);
@@ -1213,6 +1284,7 @@ function createIR(ast, parserErrors) {
   return {
     meta,
     style,
+    state,
     components,
     layout,
     script,
@@ -1250,12 +1322,51 @@ function createStyleIR(node, errors) {
   const sortedTokens = sortStyleTokens(tokens);
   return { tokens: sortedTokens };
 }
+function createStateIR(node, errors) {
+  if (!node) {
+    return { initial: null, states: [] };
+  }
+  let initial = null;
+  const stateMap = /* @__PURE__ */ new Map();
+  for (const prop of node.properties) {
+    if (prop.key === "initial") {
+      initial = prop.value;
+      continue;
+    }
+    const parts = prop.key.split(".");
+    if (parts.length === 3 && parts[1] === "on") {
+      const stateName = parts[0];
+      const eventName = parts[2];
+      const targetState = prop.value;
+      if (!stateMap.has(stateName)) {
+        stateMap.set(stateName, { name: stateName, transitions: [] });
+      }
+      const stateDef = stateMap.get(stateName);
+      const existingTransition = stateDef.transitions.find((t) => t.event === eventName);
+      if (existingTransition) {
+        pushError(errors, `Duplicate transition for event '${eventName}' in state '${stateName}'`, prop.location.start);
+      } else {
+        stateDef.transitions.push({ event: eventName, target: targetState });
+      }
+    } else {
+      pushError(errors, `Invalid state key '${prop.key}'. Use 'initial' or 'STATE.on.EVENT' format.`, prop.location.start);
+    }
+  }
+  const states = Array.from(stateMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  for (const state of states) {
+    state.transitions.sort((a, b) => a.event.localeCompare(b.event));
+  }
+  return { initial, states };
+}
 function createComponentsIR(node) {
   if (!node) {
     return [];
   }
-  const names = node.components.map((comp) => comp.name);
-  return sortStringArray(names);
+  const components = node.components.map((comp) => ({
+    name: comp.name,
+    attrs: comp.attributes ? normalizeAttributes(comp.attributes) : []
+  }));
+  return components.sort((a, b) => a.name.localeCompare(b.name));
 }
 function createLayoutIR(node) {
   return node.children.map((child) => transformLayoutElement(child));
@@ -1374,6 +1485,47 @@ function generateScript(ir) {
   return { hooks, handlers };
 }
 function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ../compiler/packages/codegen/react/dist/state.js
+function generateState(ir) {
+  const hooks = [];
+  const handlers = [];
+  if (!ir.state || !ir.state.initial) {
+    return { hooks, handlers };
+  }
+  hooks.push(`const [state, setState] = React.useState("${ir.state.initial}");`);
+  const eventMap = /* @__PURE__ */ new Map();
+  ir.state.states.forEach((stateDef) => {
+    stateDef.transitions.forEach((transition) => {
+      if (!eventMap.has(transition.event)) {
+        eventMap.set(transition.event, /* @__PURE__ */ new Map());
+      }
+      eventMap.get(transition.event).set(stateDef.name, transition.target);
+    });
+  });
+  eventMap.forEach((transitions, eventName) => {
+    const cases = [];
+    transitions.forEach((targetState, currentState) => {
+      cases.push(`      case "${currentState}":
+        setState("${targetState}");
+        break;`);
+    });
+    const handlerCode = `const handle${capitalize2(eventName)} = () => {
+    switch (state) {
+${cases.join("\n")}
+      default:
+        console.warn(\`Unhandled event '${eventName}' in state '\${state}'\`);
+    }
+  };`;
+    handlers.push(handlerCode);
+  });
+  return { hooks, handlers };
+}
+function capitalize2(s) {
+  if (s.length === 0)
+    return s;
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
@@ -1513,14 +1665,17 @@ function generateAttributes(attrs) {
         const match = attr.value.match(/toggle\((.*)\)/);
         if (match) {
           const target = match[1];
-          return `${key}={${"() => set"}${capitalize2(target)}(!${target})}`;
+          return `${key}={${"() => set"}${capitalize3(target)}(!${target})}`;
         }
       }
       const assignmentMatch = attr.value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
       if (assignmentMatch) {
         const target = assignmentMatch[1];
         const value = assignmentMatch[2];
-        return `${key}={${"() => set"}${capitalize2(target)}(${value})}`;
+        return `${key}={${"() => set"}${capitalize3(target)}(${value})}`;
+      }
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value)) {
+        return `${key}={${attr.value}}`;
       }
     }
     return `${key}="${escapeAttributeValue(attr.value)}"`;
@@ -1544,7 +1699,7 @@ function parseStyleString(styleStr) {
 function toCamelCase(str) {
   return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
-function capitalize2(str) {
+function capitalize3(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 function escapeAttributeValue(value) {
@@ -1562,12 +1717,17 @@ function generate(ir, options = {}) {
   const meta = generateMeta(ir);
   const style = generateStyle(ir);
   const scriptData = generateScript(ir);
-  const code = generateFullCode(ir, meta, style, opts, scriptData);
+  const stateData = generateState(ir);
+  const mergedScriptData = {
+    hooks: [...stateData.hooks, ...scriptData.hooks],
+    handlers: [...stateData.handlers, ...scriptData.handlers]
+  };
+  const code = generateFullCode(ir, meta, style, opts, mergedScriptData);
   return {
     code,
     style,
     meta,
-    events: scriptData.handlers
+    events: mergedScriptData.handlers
     // Backwards compatibility
   };
 }
@@ -1575,8 +1735,8 @@ function generateFullCode(ir, meta, style, opts, scriptData) {
   const sections = [];
   const imports = ['import React from "react";'];
   if (ir.components && ir.components.length > 0) {
-    ir.components.forEach((component) => {
-      imports.push(`import { ${component} } from "@/components/${component}";`);
+    ir.components.forEach((comp) => {
+      imports.push(`import { ${comp.name} } from "@/components/${comp.name}";`);
     });
   }
   sections.push(imports.join("\n"));
@@ -1688,6 +1848,47 @@ function generateScriptExports2(output) {
     return null;
   }
   return lines.join("\n\n");
+}
+
+// ../compiler/packages/codegen/vue/dist/state.js
+function generateState2(ir) {
+  const refs = [];
+  const handlers = [];
+  if (!ir.state || !ir.state.initial) {
+    return { refs, handlers };
+  }
+  refs.push(`const state = ref("${ir.state.initial}");`);
+  const eventMap = /* @__PURE__ */ new Map();
+  ir.state.states.forEach((stateDef) => {
+    stateDef.transitions.forEach((transition) => {
+      if (!eventMap.has(transition.event)) {
+        eventMap.set(transition.event, /* @__PURE__ */ new Map());
+      }
+      eventMap.get(transition.event).set(stateDef.name, transition.target);
+    });
+  });
+  eventMap.forEach((transitions, eventName) => {
+    const cases = [];
+    transitions.forEach((targetState, currentState) => {
+      cases.push(`    case "${currentState}":
+      state.value = "${targetState}";
+      break;`);
+    });
+    const handlerCode = `const handle${capitalize4(eventName)} = () => {
+  switch (state.value) {
+${cases.join("\n")}
+    default:
+      console.warn(\`Unhandled event '${eventName}' in state '\${state.value}'\`);
+  }
+};`;
+    handlers.push(handlerCode);
+  });
+  return { refs, handlers };
+}
+function capitalize4(s) {
+  if (s.length === 0)
+    return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 // ../compiler/packages/codegen/vue/dist/template.js
@@ -1821,6 +2022,10 @@ function generateAttributes2(attrs) {
           return `${key}="${value}"`;
         }
       }
+      const assignmentMatch = value.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)\s*$/);
+      if (assignmentMatch) {
+        return `${key}="${value}"`;
+      }
     }
     if (key === "style") {
       value = value.replace(/\b([a-z][a-zA-Z0-9]*)\.([a-zA-Z0-9]+)\b/g, "var(--$1-$2)");
@@ -1846,13 +2051,18 @@ function generate2(ir, options = {}) {
   const meta = generateMeta2(ir);
   const style = generateStyle2(ir);
   const scriptOutput = generateScript2(ir);
-  const scriptCode = generateScriptExports2(scriptOutput);
+  const stateOutput = generateState2(ir);
+  const mergedScriptOutput = {
+    refs: [...stateOutput.refs, ...scriptOutput.refs],
+    handlers: [...stateOutput.handlers, ...scriptOutput.handlers]
+  };
+  const scriptCode = generateScriptExports2(mergedScriptOutput);
   const code = generateFullCode2(ir, meta, style, scriptCode, opts);
   return {
     code,
     style,
     meta,
-    events: scriptOutput.handlers
+    events: mergedScriptOutput.handlers
   };
 }
 function generateFullCode2(ir, meta, style, scriptCode, opts) {
@@ -1876,11 +2086,11 @@ function generateScriptSection(ir, meta, scriptCode, opts) {
   if (opts.includeComments && ir.errors.length > 0) {
     scriptParts.push(generateErrorComments2(ir));
   }
-  if (meta) {
-    scriptParts.push(meta);
-  }
   if (scriptCode) {
     scriptParts.push(scriptCode);
+  }
+  if (meta) {
+    scriptParts.push(meta);
   }
   if (scriptParts.length === 0) {
     return null;
@@ -1972,6 +2182,47 @@ function generateScriptExports3(output) {
     return null;
   }
   return lines.join("\n\n");
+}
+
+// ../compiler/packages/codegen/svelte/dist/state.js
+function generateState3(ir) {
+  const state = [];
+  const handlers = [];
+  if (!ir.state || !ir.state.initial) {
+    return { state, handlers };
+  }
+  state.push(`let state = $state("${ir.state.initial}");`);
+  const eventMap = /* @__PURE__ */ new Map();
+  ir.state.states.forEach((stateDef) => {
+    stateDef.transitions.forEach((transition) => {
+      if (!eventMap.has(transition.event)) {
+        eventMap.set(transition.event, /* @__PURE__ */ new Map());
+      }
+      eventMap.get(transition.event).set(stateDef.name, transition.target);
+    });
+  });
+  eventMap.forEach((transitions, eventName) => {
+    const cases = [];
+    transitions.forEach((targetState, currentState) => {
+      cases.push(`    case "${currentState}":
+      state = "${targetState}";
+      break;`);
+    });
+    const handlerCode = `function handle${capitalize5(eventName)}() {
+  switch (state) {
+${cases.join("\n")}
+    default:
+      console.warn(\`Unhandled event '${eventName}' in state '\${state}'\`);
+  }
+}`;
+    handlers.push(handlerCode);
+  });
+  return { state, handlers };
+}
+function capitalize5(s) {
+  if (s.length === 0)
+    return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 // ../compiler/packages/codegen/svelte/dist/template.js
@@ -2137,13 +2388,18 @@ function generate3(ir, options = {}) {
   const meta = generateMeta3(ir);
   const style = generateStyle3(ir);
   const scriptOutput = generateScript3(ir);
-  const scriptCode = generateScriptExports3(scriptOutput);
+  const stateOutput = generateState3(ir);
+  const mergedScriptOutput = {
+    state: [...stateOutput.state, ...scriptOutput.state],
+    handlers: [...stateOutput.handlers, ...scriptOutput.handlers]
+  };
+  const scriptCode = generateScriptExports3(mergedScriptOutput);
   const code = generateFullCode3(ir, meta, style, scriptCode, opts);
   return {
     code,
     style,
     meta,
-    events: scriptOutput.handlers
+    events: mergedScriptOutput.handlers
   };
 }
 function generateFullCode3(ir, meta, style, scriptCode, opts) {

@@ -1,0 +1,29 @@
+meta {
+  title: "Adaptive Components"
+  route: "/adaptive"
+}
+
+style {
+  color.primary: "#6366f1"
+}
+
+components {
+  Card(role: "container", shadow: "sm")
+  Button(variant: "primary", size: "lg")
+}
+
+layout {
+  Div(class: "p-8") {
+    H1 {
+      "Adaptive Component Metadata"
+    }
+    P {
+      "The compiler now understands component roles."
+    }
+    Card {
+      Button {
+        "Click Me"
+      }
+    }
+  }
+}

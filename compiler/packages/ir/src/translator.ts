@@ -12,6 +12,7 @@ import type {
   ASTRoot,
   MetaNode,
   StyleNode,
+  StateNode,
   ComponentsNode,
   LayoutNode,
   LayoutElement,
@@ -20,7 +21,7 @@ import type {
   ScriptNode,
   ParserError,
 } from "@uih-dsl/parser";
-import type { UIHIR, IRNode, IRError, StyleToken, ScriptEntry } from "./types.js";
+import type { UIHIR, IRNode, IRError, StyleToken, ScriptEntry, StateDefinition } from "./types.js";
 import {
   normalizeAttributes,
   splitStylePath,
@@ -29,7 +30,6 @@ import {
   pushError,
   isValidScriptKey,
   isEmptyScriptValue,
-  sortStringArray,
   sortStyleTokens,
   sortScriptEntries,
 } from "./normalize.js";
@@ -61,6 +61,7 @@ export function createIR(ast: ASTRoot | null, parserErrors: ParserError[]): UIHI
     return {
       meta: {},
       style: { tokens: [] },
+      state: { initial: null, states: [] },
       components: [],
       layout: [],
       script: [],
@@ -71,6 +72,7 @@ export function createIR(ast: ASTRoot | null, parserErrors: ParserError[]): UIHI
   // Transform each block
   const meta = createMetaIR(ast.meta, translationErrors);
   const style = createStyleIR(ast.style, translationErrors);
+  const state = createStateIR(ast.state, translationErrors);
   const components = createComponentsIR(ast.components);
   const layout = createLayoutIR(ast.layout);
   const script = createScriptIR(ast.script, translationErrors);
@@ -81,6 +83,7 @@ export function createIR(ast: ASTRoot | null, parserErrors: ParserError[]): UIHI
   return {
     meta,
     style,
+    state,
     components,
     layout,
     script,
@@ -182,26 +185,105 @@ function createStyleIR(node: StyleNode, errors: IRError[]): { tokens: StyleToken
 }
 
 // ========================================================================
+// State Block Translation
+// ========================================================================
+
+/**
+ * Create state IR from StateNode.
+ * Parses dot-notation keys into state machine structure.
+ *
+ * @param node - State AST node
+ * @param errors - Error collection array
+ * @returns State object with definition array
+ */
+function createStateIR(
+  node: StateNode | null,
+  errors: IRError[]
+): { initial: string | null; states: StateDefinition[] } {
+  if (!node) {
+    return { initial: null, states: [] };
+  }
+
+  let initial: string | null = null;
+  const stateMap = new Map<string, StateDefinition>();
+
+  for (const prop of node.properties) {
+    // Handle initial state declaration
+    if (prop.key === "initial") {
+      initial = prop.value;
+      continue;
+    }
+
+    // Handle transition definitions: STATE.on.EVENT
+    const parts = prop.key.split(".");
+    if (parts.length === 3 && parts[1] === "on") {
+      const stateName = parts[0];
+      const eventName = parts[2];
+      const targetState = prop.value;
+
+      if (!stateMap.has(stateName)) {
+        stateMap.set(stateName, { name: stateName, transitions: [] });
+      }
+      
+      // Check for duplicate event handlers in same state
+      const stateDef = stateMap.get(stateName)!;
+      const existingTransition = stateDef.transitions.find(t => t.event === eventName);
+      
+      if (existingTransition) {
+        pushError(
+          errors,
+          `Duplicate transition for event '${eventName}' in state '${stateName}'`,
+          prop.location.start
+        );
+      } else {
+        stateDef.transitions.push({ event: eventName, target: targetState });
+      }
+    } else {
+      pushError(
+        errors,
+        `Invalid state key '${prop.key}'. Use 'initial' or 'STATE.on.EVENT' format.`,
+        prop.location.start
+      );
+    }
+  }
+
+  // Convert map to sorted array for deterministic output
+  const states = Array.from(stateMap.values()).sort((a, b) => 
+    a.name.localeCompare(b.name)
+  );
+
+  // Sort transitions within each state
+  for (const state of states) {
+    state.transitions.sort((a, b) => a.event.localeCompare(b.event));
+  }
+
+  return { initial, states };
+}
+
+// ========================================================================
 // Components Block Translation
 // ========================================================================
 
 /**
  * Create components IR from ComponentsNode.
- * Extracts component names.
+ * Extracts component names and attributes.
  * Sorts alphabetically for deterministic output.
  *
  * @param node - Components AST node (optional)
- * @returns Array of component names
+ * @returns Array of component objects
  */
-function createComponentsIR(node: ComponentsNode | null): string[] {
+function createComponentsIR(node: ComponentsNode | null): Array<{ name: string; attrs: Array<{ key: string; value: string }> }> {
   if (!node) {
     return [];
   }
 
-  const names = node.components.map((comp) => comp.name);
+  const components = node.components.map((comp) => ({
+    name: comp.name,
+    attrs: comp.attributes ? normalizeAttributes(comp.attributes) : [],
+  }));
 
   // Sort for deterministic output
-  return sortStringArray(names);
+  return components.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // ========================================================================

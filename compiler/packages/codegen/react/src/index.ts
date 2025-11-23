@@ -12,4 +12,5 @@ export type { CodegenOutput, CodegenOptions } from "./types.js";
 export { generateMeta } from "./meta.js";
 export { generateStyle } from "./style.js";
 export { generateScript, generateScriptExports } from "./script.js";
+export { generateState } from "./state.js";
 export { generateJSX } from "./jsx.js";

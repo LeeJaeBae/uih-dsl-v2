@@ -15,6 +15,8 @@ export type {
   MetaProperty,
   StyleNode,
   StyleProperty,
+  StateNode,
+  StateProperty,
   ComponentsNode,
   ComponentEntry,
   LayoutNode,

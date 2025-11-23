@@ -21,6 +21,8 @@ import type {
   MetaProperty,
   StyleNode,
   StyleProperty,
+  StateNode,
+  StateProperty,
   ComponentsNode,
   ComponentEntry,
   LayoutNode,
@@ -87,6 +89,7 @@ export class Parser {
 
     const meta = this.parseBlock("meta") as MetaNode | null;
     const style = this.parseBlock("style") as StyleNode | null;
+    const state = this.parseBlock("state") as StateNode | null;
     const components = this.parseBlock("components") as ComponentsNode | null;
     const layout = this.parseBlock("layout") as LayoutNode | null;
     const script = this.parseBlock("script") as ScriptNode | null;
@@ -119,6 +122,7 @@ export class Parser {
           type: "Program",
           meta: finalMeta,
           style: finalStyle,
+          state,
           components,
           layout,
           script,
@@ -143,7 +147,7 @@ export class Parser {
    */
   private parseBlock(
     expectedBlockName: string
-  ): MetaNode | StyleNode | ComponentsNode | LayoutNode | ScriptNode | null {
+  ): MetaNode | StyleNode | StateNode | ComponentsNode | LayoutNode | ScriptNode | null {
     this.skipNewlines();
 
     const token = this.peek();
@@ -170,6 +174,7 @@ export class Parser {
     let result:
       | MetaNode
       | StyleNode
+      | StateNode
       | ComponentsNode
       | LayoutNode
       | ScriptNode
@@ -182,6 +187,9 @@ export class Parser {
           break;
         case "style":
           result = this.parseStyle();
+          break;
+        case "state":
+          result = this.parseState();
           break;
         case "components":
           result = this.parseComponents();
@@ -333,6 +341,64 @@ export class Parser {
   }
 
   /**
+   * Parse state block content with error recovery.
+   *
+   * @returns StateNode
+   */
+  private parseState(): StateNode {
+    const properties: StateProperty[] = [];
+
+    while (!this.match(TokenType.RBRACE) && !this.isAtEnd()) {
+      this.skipNewlines();
+
+      if (this.match(TokenType.RBRACE)) {
+        break;
+      }
+
+      if (!this.match(TokenType.IDENTIFIER)) {
+        this.recordError("Expected state key (IDENTIFIER)", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+
+      const keyToken = this.consume();
+
+      if (!this.match(TokenType.COLON)) {
+        this.recordError("Expected COLON after state key", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+      this.consume();
+
+      if (!this.match(TokenType.STRING)) {
+        this.recordError("Expected STRING for state value", this.peek().range.start);
+        this.skipUntilRecoveryPoint();
+        continue;
+      }
+
+      const valueToken = this.consume();
+
+      const location: Range = {
+        start: keyToken.range.start,
+        end: valueToken.range.end,
+      };
+
+      properties.push({
+        key: keyToken.value,
+        value: valueToken.value,
+        location,
+      });
+
+      this.skipNewlines();
+    }
+
+    return {
+      type: "State",
+      properties,
+    };
+  }
+
+  /**
    * Parse components block content with error recovery.
    *
    * @returns ComponentsNode
@@ -355,9 +421,25 @@ export class Parser {
 
       const nameToken = this.consume();
 
+      let attributes: Attribute[] = [];
+      if (this.match(TokenType.LPAREN)) {
+        this.consume();
+        attributes = this.parseAttributes();
+        if (!this.match(TokenType.RPAREN)) {
+          this.recordError("Expected RPAREN after attributes", this.peek().range.start);
+          this.skipUntilRecoveryPoint();
+        } else {
+          this.consume();
+        }
+      }
+
       components.push({
         name: nameToken.value,
-        location: nameToken.range,
+        attributes: attributes.length > 0 ? attributes : undefined,
+        location: {
+          start: nameToken.range.start,
+          end: this.tokens[this.current - 1].range.end,
+        },
       });
 
       this.skipNewlines();

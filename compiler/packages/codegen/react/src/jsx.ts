@@ -9,8 +9,8 @@
 
 import type { IRNode } from "@uih-dsl/ir";
 
-export function generateJSX(nodes: IRNode[], indent: number = 0): string {
-  return nodes.map((node) => generateNode(node, indent)).join("\n");
+export function generateJSX(nodes: IRNode[], indent: number = 0, definedVars: Set<string> = new Set()): string {
+  return nodes.map((node) => generateNode(node, indent, definedVars)).join("\n");
 }
 
 function mapToHTMLTag(uihTag: string): string {
@@ -102,11 +102,11 @@ function mapToHTMLTag(uihTag: string): string {
   return htmlTagMap[uihTag] || uihTag;
 }
 
-function generateNode(node: IRNode, indent: number): string {
+function generateNode(node: IRNode, indent: number, definedVars: Set<string>): string {
   if (node.type === "Text") {
     return generateTextNode(node, indent);
   } else {
-    return generateComponentNode(node, indent);
+    return generateComponentNode(node, indent, definedVars);
   }
 }
 
@@ -156,7 +156,8 @@ function generateComponentNode(
     attrs: Array<{ key: string; value: string }>;
     children: IRNode[];
   },
-  indent: number
+  indent: number,
+  definedVars: Set<string>
 ): string {
   const indentStr = " ".repeat(indent);
   const tag = mapToHTMLTag(node.tag);
@@ -178,7 +179,21 @@ function generateComponentNode(
     return true;
   });
   
-  const attrsStr = generateAttributes(attrs);
+  // Update scope if we are in a loop
+  let localVars = definedVars;
+  let loopItemVar = "";
+  
+  if (loopAttr) {
+    const match = loopAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
+    if (match) {
+      loopItemVar = match[1]; // "item"
+      // Create new scope with loop variable
+      localVars = new Set(definedVars);
+      localVars.add(loopItemVar);
+    }
+  }
+
+  const attrsStr = generateAttributes(attrs, localVars);
   const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
 
   let jsx = "";
@@ -186,13 +201,13 @@ function generateComponentNode(
   if (node.children.length === 0 || VOID_ELEMENTS.has(tag)) {
     jsx = `${indentStr}<${tag}${attrsFinal} />`;
   } else {
-    const childrenStr = generateJSX(node.children, indent + 2);
+    const childrenStr = generateJSX(node.children, indent + 2, localVars);
     jsx = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
   }
 
-  if (loopAttr) {
+  if (loopAttr && loopItemVar) {
     const match = loopAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
     if (match) {
       const [_, item, items] = match;
@@ -216,7 +231,7 @@ ${indentStr})}`;
   return jsx;
 }
 
-function generateAttributes(attrs: Array<{ key: string; value: string }>): string {
+function generateAttributes(attrs: Array<{ key: string; value: string }>, definedVars: Set<string>): string {
   return attrs
     .map((attr) => {
       let key = attr.key === "class" ? "className" : attr.key;
@@ -263,18 +278,16 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
         }
       }
 
-      // Handle variable references/expressions (e.g. key={item.id}, value={state.value})
-      // Matches "word" or "word.word" or "word.word.word"
-      const isIdentifier = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value);
-      const isDotPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*(\.[a-zA-Z_$][a-zA-Z0-9_$]*)+$/.test(attr.value);
-
-      const STRING_ONLY_ATTRS = new Set([
-        "id", "name", "htmlFor", "type", "placeholder", "aria-label", 
-        "class", "className", "alt", "src", "href", "target", "rel", "action", "method",
-        "value", "checked"
-      ]);
-
-      if (isDotPath || (isIdentifier && !STRING_ONLY_ATTRS.has(key))) {
+      // Handle variable references/expressions
+      // Logic: If it contains dots, OR if it is a known variable in scope -> Expression
+      // Otherwise -> String Literal
+      const isDotPath = attr.value.includes("."); // Simple check for dot notation
+      const isDefinedVar = definedVars.has(attr.value);
+      
+      // Also check if it looks like a variable but isn't defined (for safety or strict mode?)
+      // Currently we default to string if not defined. This allows 'value="junior"' to be string.
+      
+      if (isDotPath || isDefinedVar) {
          return `${key}={${attr.value}}`;
       }
 

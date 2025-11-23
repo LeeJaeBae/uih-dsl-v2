@@ -14,11 +14,13 @@ import type { UIHIR } from "@uih-dsl/ir";
 export interface ScriptOutput {
   hooks: string[];
   handlers: string[];
+  stateKeys: string[];
 }
 
 export function generateScript(ir: UIHIR): ScriptOutput {
   const hooks: string[] = [];
   const handlers: string[] = [];
+  const stateKeys: string[] = [];
 
   // 1. Identify state variables (simple values like true/false, numbers, strings)
   // If it looks like an event handler (starts with 'handle' or is a function name), treat as handler stub
@@ -41,6 +43,7 @@ export function generateScript(ir: UIHIR): ScriptOutput {
       const hookName = `[${key}, set${capitalize(key)}]`;
       // React.useState(false)
       hooks.push(`const ${hookName} = React.useState(${value});`);
+      stateKeys.push(key);
     } else {
       // Otherwise, it's a traditional event handler stub
       // Only generate if it looks like a function name (no spaces, etc)
@@ -53,7 +56,7 @@ export function generateScript(ir: UIHIR): ScriptOutput {
     }
   });
 
-  return { hooks, handlers };
+  return { hooks, handlers, stateKeys };
 }
 
 export function generateScriptExports(output: ScriptOutput): string | null {

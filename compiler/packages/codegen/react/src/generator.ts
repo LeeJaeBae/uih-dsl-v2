@@ -29,6 +29,14 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
   const scriptData = generateScript(ir); // script block
   const stateData = generateState(ir);   // state block
 
+  // Collect defined variables (state keys)
+  const definedVars = new Set<string>(scriptData.stateKeys);
+  
+  // If FSM state exists, add 'state' variable
+  if (stateData.hooks.length > 0) {
+    definedVars.add("state");
+  }
+
   // Merge hooks and handlers
   const mergedScriptData = {
     hooks: [...stateData.hooks, ...scriptData.hooks],
@@ -36,7 +44,7 @@ export function generate(ir: UIHIR, options: CodegenOptions = {}): CodegenOutput
   };
 
   // Pass mergedScriptData to generateComponent so it can inject code INSIDE the component
-  const code = generateFullCode(ir, meta, style, opts, mergedScriptData);
+  const code = generateFullCode(ir, meta, style, opts, mergedScriptData, definedVars);
 
   return {
     code,
@@ -51,7 +59,8 @@ function generateFullCode(
   meta: string | null,
   style: string | null,
   opts: Required<CodegenOptions>,
-  scriptData: { hooks: string[]; handlers: string[] }
+  scriptData: { hooks: string[]; handlers: string[] },
+  definedVars: Set<string>
 ): string {
   const sections: string[] = [];
 
@@ -78,7 +87,7 @@ function generateFullCode(
     sections.push(`const styles = ${JSON.stringify(style)};`);
   }
 
-  const componentCode = generateComponent(ir, opts, scriptData);
+  const componentCode = generateComponent(ir, opts, scriptData, definedVars);
   sections.push(componentCode);
 
   return sections.join("\n\n");
@@ -97,9 +106,10 @@ ${errors.join("\n")}
 function generateComponent(
   ir: UIHIR, 
   opts: Required<CodegenOptions>,
-  scriptData: { hooks: string[]; handlers: string[] }
+  scriptData: { hooks: string[]; handlers: string[] },
+  definedVars: Set<string>
 ): string {
-  const jsx = generateJSX(ir.layout, opts.indentSize);
+  const jsx = generateJSX(ir.layout, opts.indentSize, definedVars);
   const body = [...scriptData.hooks, ...scriptData.handlers].join("\n  ");
 
   return `export default function ${opts.componentName}() {

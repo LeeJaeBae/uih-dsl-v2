@@ -3,6 +3,7 @@
  * Updated for UIH DSL v2 specification with Self-Healing AI
  */
 
+import { UIHCompletionItemProvider } from "./completions";
 import * as vscode from "vscode";
 import { tokenize } from "@uih-dsl/tokenizer";
 import { parse } from "@uih-dsl/parser";
@@ -26,6 +27,16 @@ export function activate(context: vscode.ExtensionContext) {
     100
   );
   context.subscriptions.push(statusBarItem);
+
+  // Register completion provider
+  const completionProvider = vscode.languages.registerCompletionItemProvider(
+    "uih",
+    new UIHCompletionItemProvider(),
+    "(",
+    ":",
+    " "
+  );
+  context.subscriptions.push(completionProvider);
 
   // Register preview command
   const previewCommand = vscode.commands.registerCommand(

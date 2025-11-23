@@ -997,9 +997,14 @@ _Box     // underscore 시작
 - `class:"p-4"` 형태처럼 inline만 허용
 - 각 attribute는 콤마(`,`)로 구분
 
+##### CONTROL_FLOW_ATTRIBUTES (Special)
+- `if`: 조건부 렌더링 (e.g., `if: "isLoggedIn"`)
+- `for` (or `each`): 리스트 렌더링 (e.g., `for: "item in items"`)
+- `key`: 리스트 렌더링 시 고유 키 (e.g., `key: "item.id"`)
+
 ##### EXAMPLE
 ```
-Div(class:"p-4", id:"main", ref:"root")
+Div(class:"p-4", if:"isVisible", for:"user in users", key:"user.id")
 ```
 
 ##### STRICT_RULES
@@ -2241,6 +2246,22 @@ IRTextNode { value: "Hello" }
 - 텍스트는 JSX children 표현
 - 특수문자는 자동 escape
 
+##### 6.3 Control Flow
+- **Conditional (`if`)**:
+  ```jsx
+  {condition && (
+    <Div>...</Div>
+  )}
+  ```
+- **List (`for`/`each`)**:
+  ```jsx
+  {items.map((item, i) => (
+    <Div key={item.id}>...</Div>
+  ))}
+  ```
+- **Key Handling**:
+  - `key:"user.id"` becomes `key={user.id}` (expression binding)
+
 #### 7. Script Event Codegen
 
 ##### IRScript.events → export mapping
@@ -2743,6 +2764,19 @@ const styleTokens = {
 <Button onClick={handleClick} onChange={handleChange} onLoad={init}>
 ```
 
+## SECTION E — Control Flow Conversion
+
+### Conditional Rendering (`if`)
+- **Vue**: `v-if="condition"`
+- **Svelte**: `{#if condition}...{/if}`
+- **React**: `{condition && ...}`
+
+### List Rendering (`for`)
+- DSL: `for: "item in items"`
+- **Vue**: `v-for="item in items"`
+- **Svelte**: `{#each items as item}...{/each}` (supports `(key)` syntax)
+- **React**: `{items.map((item) => ...)}`
+
 ### Edge Cases
 
 - Vue에서 컴포넌트 이름이 kebab-case로 변환 필요 시 자동 처리
@@ -2861,13 +2895,45 @@ script {
 }
 ```
 
+### Control Flow & Semantic HTML Example
+
+```
+meta {
+  title: "Feature Showcase"
+}
+
+layout {
+  Section {
+    H2 { "Users List" }
+    
+    // List Rendering
+    Ul(class:"list-disc") {
+      Li(for:"user in users", key:"user.id") {
+        Span(class:"font-bold") { "user.name" }
+        Span(if:"user.isAdmin", class:"badge") { "Admin" }
+      }
+    }
+
+    // Semantic Form
+    Form(onsubmit:"handleSubmit") {
+      Fieldset {
+        Legend { "Login" }
+        Label(for:"email") { "Email" }
+        Input(type:"email", id:"email", required:"true")
+        Button(type:"submit") { "Login" }
+      }
+    }
+  }
+}
+```
+
 ---
 
 ## Version
 
-- **Version**: 1.0.0
-- **Last Update**: 2025-11-18
-- **Change Summary**: Complete guide consolidating all UIH DSL specifications
+- **Version**: 1.1.0
+- **Last Update**: 2025-11-24
+- **Change Summary**: Added HTML5 semantic tags, form tags, and control flow (`if`, `for`) specifications.
 
 ---
 

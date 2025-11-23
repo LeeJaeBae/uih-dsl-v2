@@ -163,10 +163,20 @@ function generateComponentNode(
   
   // Handle conditional rendering 'if' attribute
   const ifAttr = node.attrs.find(a => a.key === "if");
+  
   // Handle list rendering 'for' or 'each' attribute
-  const forAttr = node.attrs.find(a => a.key === "for" || a.key === "each");
+  // 'for' is ambiguous: it can be 'htmlFor' (label) or loop.
+  // We differentiate by checking if value contains " in ".
+  const loopAttr = node.attrs.find(a => 
+    a.key === "each" || (a.key === "for" && a.value.includes(" in "))
+  );
 
-  const attrs = node.attrs.filter(a => a.key !== "if" && a.key !== "for" && a.key !== "each");
+  const attrs = node.attrs.filter(a => {
+    if (a.key === "if") return false;
+    if (a.key === "each") return false;
+    if (a.key === "for" && a.value.includes(" in ")) return false;
+    return true;
+  });
   
   const attrsStr = generateAttributes(attrs);
   const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
@@ -182,8 +192,8 @@ ${childrenStr}
 ${indentStr}</${tag}>`;
   }
 
-  if (forAttr) {
-    const match = forAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
+  if (loopAttr) {
+    const match = loopAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
     if (match) {
       const [_, item, items] = match;
       // If no key is provided, React warns. 
@@ -260,7 +270,8 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
 
       const STRING_ONLY_ATTRS = new Set([
         "id", "name", "htmlFor", "type", "placeholder", "aria-label", 
-        "class", "className", "alt", "src", "href", "target", "rel", "action", "method"
+        "class", "className", "alt", "src", "href", "target", "rel", "action", "method",
+        "value", "checked"
       ]);
 
       if (isDotPath || (isIdentifier && !STRING_ONLY_ATTRS.has(key))) {

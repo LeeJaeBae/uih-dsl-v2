@@ -1,6 +1,6 @@
 {
   "name": "@uih-dsl/codegen-react",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "React code generator for UIH DSL - Generate React/Next.js components",
   "type": "module",
   "main": "./dist/index.js",

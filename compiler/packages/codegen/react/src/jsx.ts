@@ -42,6 +42,12 @@ function mapToHTMLTag(uihTag: string): string {
     Label: "label",
     Select: "select",
     Option: "option",
+    Fieldset: "fieldset",
+    Legend: "legend",
+    Datalist: "datalist",
+    Optgroup: "optgroup",
+    Meter: "meter",
+    Progress: "progress",
     // List
     Ul: "ul",
     Ol: "ol",
@@ -70,6 +76,21 @@ function mapToHTMLTag(uihTag: string): string {
     Defs: "defs",
     LinearGradient: "linearGradient",
     Stop: "stop",
+    // Semantic & Interactive
+    Address: "address",
+    Dialog: "dialog",
+    Figure: "figure",
+    Figcaption: "figcaption",
+    Details: "details",
+    Summary: "summary",
+    Menu: "menu",
+    Time: "time",
+    Mark: "mark",
+    Blockquote: "blockquote",
+    Code: "code",
+    Pre: "pre",
+    Iframe: "iframe",
+    Canvas: "canvas",
     // Other
     A: "a",
     Card: "div",
@@ -112,6 +133,22 @@ const VOID_ELEMENTS = new Set([
   "wbr",
 ]);
 
+const BOOLEAN_ATTRIBUTES = new Set([
+  "checked",
+  "disabled",
+  "readonly",
+  "required",
+  "selected",
+  "hidden",
+  "autofocus",
+  "multiple",
+  "muted",
+  "loop",
+  "controls",
+  "default",
+  "reversed",
+]);
+
 function generateComponentNode(
   node: {
     type: "Component";
@@ -126,7 +163,10 @@ function generateComponentNode(
   
   // Handle conditional rendering 'if' attribute
   const ifAttr = node.attrs.find(a => a.key === "if");
-  const attrs = node.attrs.filter(a => a.key !== "if");
+  // Handle list rendering 'for' or 'each' attribute
+  const forAttr = node.attrs.find(a => a.key === "for" || a.key === "each");
+
+  const attrs = node.attrs.filter(a => a.key !== "if" && a.key !== "for" && a.key !== "each");
   
   const attrsStr = generateAttributes(attrs);
   const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
@@ -142,6 +182,21 @@ ${childrenStr}
 ${indentStr}</${tag}>`;
   }
 
+  if (forAttr) {
+    const match = forAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
+    if (match) {
+      const [_, item, items] = match;
+      // If no key is provided, React warns. 
+      // We rely on the user to provide a key attribute, or the index if safe.
+      // If the user provided key:"item.id", generateAttributes handles the expression.
+      // If no key attr is present, we could inject key={i}, but let's stick to raw map for now or use index as fallback?
+      // Let's expose index 'i' in the map callback so it can be used.
+      jsx = `${indentStr}{${items}.map((${item}, i) => (
+${jsx}
+${indentStr}))}`;
+    }
+  }
+
   if (ifAttr) {
     return `${indentStr}{${ifAttr.value} && (
 ${jsx}
@@ -155,10 +210,15 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
   return attrs
     .map((attr) => {
       let key = attr.key === "class" ? "className" : attr.key;
+      if (key === "for") key = "htmlFor";
 
       // Convert SVG attributes (e.g., stroke-width) to camelCase for React
       if (!key.startsWith("data-") && !key.startsWith("aria-") && key.includes("-")) {
         key = toCamelCase(key);
+      }
+
+      if (BOOLEAN_ATTRIBUTES.has(attr.key) && (attr.value === "true" || attr.value === "")) {
+        return key;
       }
 
       if (key === "style") {
@@ -191,6 +251,20 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
         if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value)) {
           return `${key}={${attr.value}}`;
         }
+      }
+
+      // Handle variable references/expressions (e.g. key={item.id}, value={state.value})
+      // Matches "word" or "word.word" or "word.word.word"
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*(\.[a-zA-Z_$][a-zA-Z0-9_$]*)+$/.test(attr.value) || 
+          /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(attr.value)) {
+         // Exclude simple strings that happen to be words if they are not clearly variables? 
+         // The previous logic allowed simple words. We extend to dot notation.
+         // Note: This might catch "true" or "false" if passed as strings, but usually boolean attrs are handled above.
+         // "blue" -> {blue} (variable) or "blue" (string)? 
+         // In UIH, "strings" are quoted in the AST, but in IR/attrs.value they are unquoted strings.
+         // This is a heuristic. If it looks like a variable, we treat it as one.
+         // Ideally, the IR should distinguish identifiers from strings, but currently it doesn't.
+         return `${key}={${attr.value}}`;
       }
 
       return `${key}="${escapeAttributeValue(attr.value)}"`;

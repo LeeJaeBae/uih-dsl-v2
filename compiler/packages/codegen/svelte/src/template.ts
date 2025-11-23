@@ -42,6 +42,12 @@ function mapToHTMLTag(uihTag: string): string {
     Label: "label",
     Select: "select",
     Option: "option",
+    Fieldset: "fieldset",
+    Legend: "legend",
+    Datalist: "datalist",
+    Optgroup: "optgroup",
+    Meter: "meter",
+    Progress: "progress",
     // List
     Ul: "ul",
     Ol: "ol",
@@ -69,6 +75,21 @@ function mapToHTMLTag(uihTag: string): string {
     Defs: "defs",
     LinearGradient: "linearGradient",
     Stop: "stop",
+    // Semantic & Interactive
+    Address: "address",
+    Dialog: "dialog",
+    Figure: "figure",
+    Figcaption: "figcaption",
+    Details: "details",
+    Summary: "summary",
+    Menu: "menu",
+    Time: "time",
+    Mark: "mark",
+    Blockquote: "blockquote",
+    Code: "code",
+    Pre: "pre",
+    Iframe: "iframe",
+    Canvas: "canvas",
     // Other
     A: "a",
     Card: "div",
@@ -111,6 +132,22 @@ const VOID_ELEMENTS = new Set([
   "wbr",
 ]);
 
+const BOOLEAN_ATTRIBUTES = new Set([
+  "checked",
+  "disabled",
+  "readonly",
+  "required",
+  "selected",
+  "hidden",
+  "autofocus",
+  "multiple",
+  "muted",
+  "loop",
+  "controls",
+  "default",
+  "reversed",
+]);
+
 function generateComponentNode(
   node: {
     type: "Component";
@@ -125,7 +162,10 @@ function generateComponentNode(
   
   // Handle conditional rendering 'if' attribute
   const ifAttr = node.attrs.find(a => a.key === "if");
-  const attrs = node.attrs.filter(a => a.key !== "if");
+  // Handle list rendering 'for' or 'each' attribute
+  const forAttr = node.attrs.find(a => a.key === "for" || a.key === "each");
+  
+  const attrs = node.attrs.filter(a => a.key !== "if" && a.key !== "for" && a.key !== "each");
   
   const attrsStr = generateAttributes(attrs);
   const attrsFinal = attrsStr.length > 0 ? " " + attrsStr : "";
@@ -138,6 +178,27 @@ function generateComponentNode(
     componentCode = `${indentStr}<${tag}${attrsFinal}>
 ${childrenStr}
 ${indentStr}</${tag}>`;
+  }
+
+  // Wrap in #each block if 'for' attribute is present
+  if (forAttr) {
+    const match = forAttr.value.match(/^\s*(.+?)\s+in\s+(.+?)\s*$/);
+    if (match) {
+      const [_, item, items] = match;
+      // Check for key attribute in original attrs (it's already in attrsStr as key="{...}")
+      // Svelte syntax: {#each items as item (key)} ... {/each}
+      // We need to extract the raw value of the key attribute to put it in the each block
+      const keyAttr = node.attrs.find(a => a.key === "key");
+      let eachStart = `{#each ${items} as ${item}}`;
+      
+      if (keyAttr) {
+        eachStart = `{#each ${items} as ${item} (${keyAttr.value})}`;
+      }
+      
+      componentCode = `${indentStr}${eachStart}
+${componentCode}
+${indentStr}{/each}`;
+    }
   }
 
   if (ifAttr) {
@@ -153,6 +214,10 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
   return attrs.map((attr) => {
     let key = attr.key;
     let value = attr.value;
+
+    if (BOOLEAN_ATTRIBUTES.has(key) && (value === "true" || value === "")) {
+      return key;
+    }
 
     // Map events: onClick -> onclick (Svelte 5 uses attributes)
     if (key.startsWith("on") && key.length > 2 && key[2] === key[2].toUpperCase()) {
@@ -181,6 +246,17 @@ function generateAttributes(attrs: Array<{ key: string; value: string }>): strin
       
       // Standard handler: onclick={handleClick}
       return `${key}={${value}}`;
+    }
+
+    // Bind dynamic values
+    // If key="item.id", render as key={item.id} to avoid string literal "item.id"
+    // But wait, if we use keyed each block `{#each ... (key)}`, we might not want `key={...}` on the element itself?
+    // Svelte warns if key attribute is used on element inside keyed each? No, React does. Svelte uses (key) syntax.
+    // However, if the user put `key` attr, it might be intended for the loop.
+    // We leave it on the element too? Usually harmless or used for other libs.
+    // Let's handle expressions generally.
+    if (/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/.test(value) && !BOOLEAN_ATTRIBUTES.has(key)) {
+         return `${key}={${value}}`;
     }
 
     // Transform style tokens: "color.bg" -> "var(--color-bg)"
